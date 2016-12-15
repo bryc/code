@@ -1,0 +1,101 @@
+Play notes on keyboard<br><input type=checkbox>Pythagorean tuning
+
+<script>
+// Equal temperament tuning
+var pianoMap2 = {
+    90: 261.626, // C-4
+    83: 277.183, // C#-4
+    88: 293.665, // D-4
+    68: 311.127, // D#-4
+    67: 329.628, // E-4
+    86: 349.228, // F-4
+    71: 369.994, // F#-4
+    66: 391.995, // G-4
+    72: 415.305, // G#-4
+    78: 440.000, // A-4
+    74: 466.164, // A#-4
+    77: 493.883, // B-4
+    81: 523.251, // C-5
+    50: 554.365, // C#-5
+    87: 587.330, // D-5
+    51: 622.254, // D#-5
+    69: 659.255, // E-5
+    82: 698.456, // F-5
+    53: 739.989, // F#-5
+    84: 783.991, // G-5
+    54: 830.609, // G#-5
+    89: 880.000, // A-5
+    55: 932.328, // A#-5
+    85: 987.767, // B-5
+    73: 1046.50, // C-6
+    57: 1108.73, // C#-6
+    79: 1174.66, // D-6
+    48: 1244.51, // D#-6
+    80: 1318.51, // E-6
+};
+
+// Pythagorean tuning
+var pianoMap = {
+    90: 260.74,  // C-4
+    83: 278.44,  // C#-4
+    88: 293.33,  // D-4
+    68: 309.03,  // D#-4
+    67: 330.00,  // E-4
+    86: 347.65,  // F-4
+    71: 371.25,  // F#-4
+    66: 391.11,  // G-4
+    72: 417.66,  // G#-4
+    78: 440.00,  // A-4
+    74: 463.54,  // A#-4
+    77: 495.00,  // B-4
+    81: 521.48,  // C-5
+    50: 556.87,  // C#-5
+    87: 586.67,  // D-5
+    51: 618.05,  // D#-5
+    69: 660.00,  // E-5
+    82: 695.31,  // F-5
+    53: 742.50,  // F#-5
+    84: 782.22,  // G-5
+    54: 835.31,  // G#-5
+    89: 880.00,  // A-5
+    55: 927.08,  // A#-5
+    85: 990.00,  // B-5
+    73: 1042.96, // C-6
+    57: 1113.75, // C#-6
+    79: 1173.33, // D-6
+    48: 1236.10, // D#-6
+    80: 1320.00, // E-6
+};
+
+var ctx = new AudioContext();
+var amp = ctx.createGain();
+
+amp.gain.value = 0.2; // prevent distortion
+amp.connect(ctx.destination);
+
+var active = {};
+
+function voice(note) {
+    var osc = ctx.createOscillator();
+    osc.type = "sawtooth"
+    osc.frequency.value = note;
+    osc.connect(amp);
+    osc.start();
+    active[note] = osc;
+}
+ 
+window.onkeydown = function(e) {
+    var note = document.querySelector("input").checked ? pianoMap[e.keyCode] : pianoMap2[e.keyCode];
+    if(note && !active[note]) {
+        voice(note);
+    }
+};
+
+window.onkeyup = function(e) {
+    var note = document.querySelector("input").checked ? pianoMap[e.keyCode] : pianoMap2[e.keyCode];
+    if(active[note]) {
+        active[note].stop();
+        delete active[note];
+    }
+};
+</script>

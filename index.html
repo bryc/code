@@ -1,0 +1,11 @@
+<script src="synthplayer.js"></script>
+<script src="song-mono.js"></script>
+
+<button onclick="stopPlaying()">Stop playing</button>
+
+
+<script>
+function stopPlaying(){clearInterval(player.x);player.lastOsc.stop();}
+init();
+
+</script>
