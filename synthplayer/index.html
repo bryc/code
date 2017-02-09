@@ -1,0 +1,15 @@
+<script src="songs/song-mono.js"></script>
+<script src="synthplayer.js"></script>
+<button id=b>Play</button><button id=a>Pause</button>
+<script>
+var x = true;
+document.querySelector("button#a").onclick = function(e) {
+    x ? (ctx.suspend(), this.innerHTML = "Resume"):(ctx.resume(), this.innerHTML = "Pause"), x = !x;
+};
+document.querySelector("button#b").onclick = function() {
+    ctx.close();
+    ctx = new AudioContext(), amp = ctx.createGain();
+    amp.connect(ctx.destination);
+    play();
+}
+</script>
