@@ -74,13 +74,6 @@ var play = function() {
     
     worker.onmessage = function(e) {
         schedule(time, osc, amp);
-        console.log(q)
-        q += 1;
-        if(q === 2) {
-            //document.location.reload();
-        }
-        
-
     };
 
     for(var i = 0; i < osc.length; i++) {
