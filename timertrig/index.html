@@ -1,0 +1,94 @@
+<script src="songs/song-cool.js"></script>
+
+<script>
+var bsp = {
+    ctx: new AudioContext(),
+    speed: 60/SONG.speed/(SONG.divide||4),
+    time: 0,
+    songLength: SONG.seq[0].length,
+
+    // Debug timing stuff
+    count: 0, perf: 0
+};
+bsp.freq = function() {
+    var freq={},i=-57,o="c,c#,d,d#,e,f,f#,g,g#,a,a#,b".split(",");
+    for(var n=0,p=0;63>i;i++)freq[o[n++]+p]=440*Math.pow(Math.pow(2,1/12),i),12==n&&(p++,n=0);
+    return freq;
+}()
+
+document.addEventListener("visibilitychange", function() {
+    if (document.hidden) console.log("==== [Visibility Change: Document is HIDDEN]");
+    else console.log("====  [Visibility Change: Document is SHOWN]");
+});
+
+bsp.worker = (function() {
+    var body = function() {
+        function tic(n,t){function i(){n(),u||setTimeout(i,t)}
+        var u = 0;return i(),function(){u = 1}}
+        self.onmessage = function(e) {
+            tic(function(){self.postMessage(0)}, 10)
+        }
+};
+    var blob = new Blob([body.toString().replace(/(^.*?\{|\}$)/g,"")],{type:"text/javascript"});
+    return new Worker(URL.createObjectURL(blob));
+}());
+
+//////////////////////////////////////////
+
+bsp.worker.onmessage = function(e) {
+    var b = 3;
+    if(bsp.ctx.currentTime > bsp.time-bsp.speed*b) {
+        console.log(`Reached ${bsp.songLength-b} of ${bsp.songLength} scheduled events. Scheduling another buffer.`);
+        bsp.schedule();  
+    }
+};
+
+bsp.schedule = function() {
+    var ctx = bsp.ctx, osc = bsp.osc, amp = bsp.amp,
+        startTime = bsp.time;
+
+    for(var j = 0; j < SONG.seq.length; j++) {
+        for(var i = 0, ofs = 0; i < SONG.seq[j].length; i++, ofs = i*bsp.speed)  {
+            var fixedVal = Math.round((startTime + ofs)*1000000)/1000000;
+            var step = SONG.seq[j][i];
+            if(step && bsp.freq[step[0]]) {
+                osc[j].frequency.setValueAtTime((bsp.freq[step[0]]/2), fixedVal);
+                amp[j].gain.setValueAtTime(step[1]||0.2, fixedVal);
+            } else if(step) {
+                amp[j].gain.setValueAtTime(0, fixedVal);
+            }
+        }
+    }
+
+    bsp.time = startTime + ofs;
+    var perf = performance.now();
+    console.log(`Scheduled song buffer (${(bsp.songLength*bsp.speed).toFixed(2)} s)`, ++bsp.count, `time${bsp.count>1?'s':''} (${(bsp.time/60).toFixed(4)} mins). Ahead by`,
+        Math.round((bsp.time - ctx.currentTime)*1000)/1000, `s. Time since last:`, bsp.count>1?
+        Math.round((perf - bsp.perf)*1000)/1000:undefined, `ms`);
+    bsp.perf = perf;
+};
+
+bsp.play = function() {
+    //console.log("Playing song. Length (sec):", Math.round(bsp.songLength*bsp.speed*1000)/1000);
+
+    bsp.osc = [], bsp.amp = [];
+    var ctx = bsp.ctx, osc = bsp.osc, amp = bsp.amp;
+    var waves = ["sine", "square", "triangle", "sawtooth"];
+
+    for(var j = 0; j < SONG.seq.length; j++) {
+        osc[j] = ctx.createOscillator();
+        osc[j].type = waves[SONG.wave[j]] || waves[1];
+        amp[j] = ctx.createGain(); // osc gain volume 
+        amp[j].gain.value = 0;
+        osc[j].connect(amp[j]);
+        amp[j].connect(ctx.destination);
+    }
+    for(var i = 0; i < osc.length; i++) osc[i].start(ctx.currentTime);
+    
+    bsp.schedule();
+    bsp.worker.postMessage(0);
+};
+
+bsp.play();
+ 
+</script>
