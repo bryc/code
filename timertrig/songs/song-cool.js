@@ -3,31 +3,33 @@ SONG = {}
 SONG.title  = "cool"
 SONG.author = "bryc"
 SONG.comment = "lets see what we can do with funky time signatures!"
-SONG.speed  = 85
-SONG.wave   = [1,3,0,2]
+SONG.bpm    = 85
+SONG.wave   = [1,3,1,1]
 SONG.divide = 6
+SONG.cVol   = [0.15,0.17,0.1,0.1]
+
 
 SONG.seq = [
 [//BASS
     ['b2'], null, null, ['d4'], null, ['a2'],
     -1, null, ['e2'], ['d3'], null, -1,
-    ['d3'], -1, ['d3'], ['d3',0.2/1.3], -1, ['g3'],
+    ['d3'], -1, ['d3'], ['d3',1/1.3], -1, ['g3'],
     -1, null, ['b3'], ['d4'], null, -1,
 
     ['b2'], null, null, ['d4'], null, ['a2'],
     -1, null, ['e2'], ['d3'], null, -1,
-    ['g3'], -1, ['g3'], ['g3',0.2/1.3], -1, ['g2'],
+    ['g3'], -1, ['g3'], ['g3',1/1.3], -1, ['g2'],
     null, null, ['e3'], null, null, ['d3']
 ],
 [//MELO
-    ['b6'], null, -1, ['b6',0.2/2], null, ['d7'],
-    ['b6',0.2/3], null, ['g7'], null, -1, ['g7',0.2/2],
-    ['f#7'], null, ['d7'], ['e7'], ['d7',0.2/2], ['g7'],
-    null, -1, null, ['g7',0.2/3], null, -1,
+    ['b6'], null, -1, ['b6',1/2], null, ['d7'],
+    ['b6',1/3], null, ['g7'], null, -1, ['g7',1/2],
+    ['f#7'], null, ['d7'], ['e7'], ['d7',1/2], ['g7'],
+    null, -1, null, ['g7',1/3], null, -1,
 
-    ['b6'], null, -1, ['b6',0.2/2], null, ['d7'],
-    ['b6',0.2/3], null, ['g7'], null, -1, ['g7',0.2/2],
-    ['b7'], null, ['g7'], ['a7'], ['g7',0.2/2], ['f#7'],
+    ['b6'], null, -1, ['b6',1/2], null, ['d7'],
+    ['b6',1/3], null, ['g7'], null, -1, ['g7',1/2],
+    ['b7'], null, ['g7'], ['a7'], ['g7',1/2], ['f#7'],
     null, -1, ['d7'], ['c#7'], ['a6'], ['f#6']
 ],
 [//CHORD1

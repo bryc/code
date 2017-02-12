@@ -4,49 +4,59 @@ SONG.title   = "poly"
 SONG.author  = "bryc"
 SONG.date    = "feb-09-2017"
 SONG.comment = "first polyphonic tune! still pretty alpha."
-SONG.speed   = 100
-SONG.wave    = [1,2,0,3]
+SONG.bpm     = 98
+SONG.wave    = [0,2,2,0,3]
+SONG.cVol    = [0.2,0.2,0.18,0.15,0.13]
 
 SONG.seq = [
-
 [
-    ['a1'],null,null,null,
+    ['a3'],null,null,null,
     null,null,null,null,
-    ['c#2'],null,null,null,
+    ['c#4'],null,null,null,
     null,null,null,null,
-    ['f#2'],null,null,null,
+    ['f#4'],null,null,null,
     null,null,null,null,
-    ['e2'],null,null,null,
+    ['e4'],null,null,null,
     null,null,null,null,
 ],
 [
-    ['e5',0.2],['c#5',0.15],['e5',0.1],['c#5',0.05],
-    ['e5',0.02],['c#5',0.05],['e5',0.1],['c#5',0.15],
-    ['e5',0.2],['c#5',0.15],['e5',0.1],['c#5',0.05],
-    ['e5',0.02],['c#5',0.05],['e5',0.1],['c#5',0.15],
-    ['a5',0.2],['f#5',0.2],['a5',0.2],['f#5',0.2],
-    ['a5',0.2],['f#5',0.2],['a5',0.2],['f#5',0.2],
-    ['g#5',0.2],['e5',0.15],['g#5',0.1],['e5',0.05],
-    ['g#5',0.02],['e5',0.05],['g#5',0.1],['e5',0.15],
+    ['a2'],null,null,null,
+    null,null,null,null,
+    ['c#3'],null,null,null,
+    null,null,null,null,
+    ['f#3'],null,null,null,
+    null,null,null,null,
+    ['e3'],null,null,null,
+    null,null,null,null,
 ],
 [
-    ['c#4',0.1],null,null,null,
-    null,null,['e6'],-1,
-    ['g#6'],-1,null,['g#6'],
-    -1,null,['g#6'],-1,
-    ['a6'],null,null,null,
-    -1,null,['a6'],-1,
-    ['g#6'],null,null,-1,
-    ,['a4'],null,null,
+    ['e6'],['c#6',0.75],['e6',0.5],['c#6',0.25],
+    ['e6',0.1],['c#6',0.25],['e6',0.5],['c#6',0.75],
+    ['e6'],['c#6',0.75],['e6',0.5],['c#6',0.25],
+    ['e6',0.1],['c#6',0.25],['e6',0.5],['c#6',0.75],
+    ['a6'],['f#6'],['a6'],['f#6'],
+    ['a6'],['f#6'],['a6'],['f#6'],
+    ['g#6'],['e6',0.75],['g#6',0.5],['e6',0.25],
+    ['g#6',0.1],['e6',0.25],['g#6',0.5],['e6',0.75],
 ],
 [
-    ['e4'],null,-1,['e4',0.1],
-    null,-1,['e4',0.05],null,
-    -1,['e4',0.01],null,-1,
-    ['e4',0.1],-1,['e4',0.2],null,
-    ['a3'],null,-1,['a3',0.1],
-    null,-1,['a3',0.04],null,
-    ['g#3'],null,-1,['g#3',0.1],
-    null,-1,['g#3',0.04],null,
+    ['c#5'],null,null,null,
+    null,-1,['e7'],-1,
+    ['g#7'],-1,null,['g#7'],
+    -1,null,['g#7'],-1,
+    ['a7'],null,null,null,
+    -1,null,['a7'],-1,
+    ['g#7'],null,null,-1,
+    ,['a5'],null,null,
+],
+[
+    ['e5'],null,-1,['e5',0.3],
+    null,-1,['e5',0.15],null,
+    -1,['e5',0.1],null,-1,
+    ['e5',0.05],-1,['e4',0.5],null,
+    ['a4'],null,-1,['a4',0.3],
+    null,-1,['a4',0.15],null,
+    ['g#4'],null,-1,['g#4',0.3],
+    null,-1,['g#4',0.15],null,
 ],
 ]
