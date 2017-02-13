@@ -1,4 +1,5 @@
-<script src="songs/song-cool.js"></script>
+<meta charset=utf-8>
+<script src="songs/song-swell.js"></script>
 <script>
 var bsp = {
     ctx: new AudioContext(),
@@ -32,6 +33,9 @@ bsp.worker = (function() {
 }());
 
 //////////////////////////////////////////
+var fix = function(n) {
+    return Math.round(n*1000)/1000;
+};
 
 bsp.schedule = function() {
     for(var j = 0; j < SONG.seq.length; j++) {
@@ -39,11 +43,17 @@ bsp.schedule = function() {
             var step = SONG.seq[j][i];
             if(step && bsp.freq[step[0]]) {
                 bsp.osc[j].frequency.setValueAtTime((bsp.freq[step[0]]/2), tick);
-                bsp.amp[1][j].gain.setValueAtTime(step[1] || 1, tick);
-            } else if(step) {
                 bsp.amp[1][j].gain.setValueAtTime(0, tick);
+                bsp.amp[1][j].gain.linearRampToValueAtTime(step[1] || 1, fix(tick + 0.00100) );
+                if(tick > 0) { 
+                    bsp.amp[1][j].gain.setTargetAtTime(0, fix(tick - 0.00200),  0.00100); 
+                }
+            } else if(step) {
+                if(tick > 0) {
+                    bsp.amp[1][j].gain.setTargetAtTime(0, fix(tick - 0.00200),  0.00100);
+                }
             }
-            tick = Math.round((bsp.time + (++i * bsp.speed)) * 10000) / 10000;
+            tick = fix((bsp.time + (++i * bsp.speed)));
         }
     }
     bsp.time = tick;
@@ -71,9 +81,15 @@ bsp.play = function() {
 
     for(var j = 0; j < SONG.seq.length; j++) {
         bsp.osc[j] = bsp.ctx.createOscillator();
-        bsp.osc[j].type = waves[SONG.wave[j]] || waves[1];
+        if(SONG.wave[j].constructor === Array) {
+            var waveform = bsp.ctx.createPeriodicWave(SONG.wave[j][0], SONG.wave[j][1]);
+            bsp.osc[j].setPeriodicWave(waveform);
+        } else {
+            bsp.osc[j].type = waves[SONG.wave[j]] || waves[1];
+        }
         bsp.amp[0][j] = bsp.ctx.createGain(); // Osc Channel Volume 
         bsp.amp[1][j] = bsp.ctx.createGain(); // Osc Note Volume 
+        bsp.amp[1][j].gain.value = 0;
         bsp.amp[0][j].gain.value = SONG.cVol[j];
         bsp.osc[j].connect(bsp.amp[1][j]);
         bsp.amp[1][j].connect(bsp.amp[0][j]);

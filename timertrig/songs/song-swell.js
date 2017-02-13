@@ -5,7 +5,7 @@ SONG.author  = "bryc"
 SONG.date    = "feb-10-2017"
 SONG.comment = "remake of swell.v2m"
 SONG.bpm     = 94
-SONG.wave    = [2,2,2,1,3]
+SONG.wave    = [2,2,2,1,3,1]
 SONG.cVol    = [0.17,0.17,0.17, 0.2,0.2,0.17]
 
 SONG.seq = [
