@@ -4,21 +4,11 @@ SONG.title   = "poly"
 SONG.author  = "bryc"
 SONG.date    = "feb-09-2017"
 SONG.comment = "first polyphonic tune! still pretty alpha."
-SONG.bpm     = 98
-SONG.wave    = [0,2,2,0,3]
-SONG.cVol    = [0.2,0.2,0.18,0.15,0.13]
+SONG.bpm     = 100
+SONG.wave    = [0,2,0,3]
+SONG.cVol    = [0.2,0.18,0.15,0.13]
 
 SONG.seq = [
-[
-    ['a3'],null,null,null,
-    null,null,null,null,
-    ['c#4'],null,null,null,
-    null,null,null,null,
-    ['f#4'],null,null,null,
-    null,null,null,null,
-    ['e4'],null,null,null,
-    null,null,null,null,
-],
 [
     ['a2'],null,null,null,
     null,null,null,null,

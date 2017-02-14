@@ -1,12 +1,25 @@
 SONG = {}
 
-SONG.title  = "cool"
-SONG.author = "bryc"
+var w = [
+    new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+    new Float32Array([0, 0, 1, 0, 0, 0.25, 0, 0, 0.1111, 0, 0, 0.0625, 0, 0, 0.04])
+],w2 = [
+    new Float32Array([0, 0, 0, 0, 0, 0, 0, 0]),
+    new Float32Array([0, 1, 0.8, 0, 0, 0, -0.1, -0.1])
+],w3 = [
+    new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+    new Float32Array([0, 1, 0, 0.3333, 0, 0.2000, 0, 0.1429, 0, 0.1111, 0, 0.0909, 0, 0.0769, 0, 0.0666, 0, 0.0588, 0, 0.0526])
+];
+
+SONG.title   = "cool"
+SONG.author  = "bryc"
 SONG.comment = "lets see what we can do with funky time signatures!"
-SONG.bpm    = 85
-SONG.wave   = [1,3,1,1]
-SONG.divide = 6
-SONG.cVol   = [0.15,0.17,0.1,0.1]
+SONG.bpm     = 85
+SONG.wave    = [w3,w,w,w2]
+//SONG.wave  = [1,3,1,1]
+SONG.divide  = 6
+SONG.cVol    = [0.25,0.17,0.2,0.2]
+
 
 
 SONG.seq = [
