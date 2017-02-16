@@ -1,6 +1,3 @@
-<meta charset=utf-8>
-<script src="songs/song-poly.js"></script>
-<script>
 var bsp = {
     ctx: new AudioContext(),
     speed: 60 / SONG.bpm / (SONG.divide || 4),
@@ -105,4 +102,3 @@ bsp.play = function() {
 };
 
 bsp.play();
-</script>
