@@ -1,2 +1,29 @@
-<script src=bsp.js></script>
-<script src=songs/swell.js></script>
+<div id=z7i></div>
+<style>
+a{text-decoration:none;font-size:24px;color:#000;background:#FFF;display:inline-block;padding:16px;outline:2px solid #DDD;}a:hover{outline:none;color:#777;background:#DDD;}
+body{width:640px;margin:auto;margin-top:64px;
+background:#333;font-family:-apple-system,system-ui,BlinkMacSystemFont,Segoe UI,Ubuntu,Roboto,"Helvetica Neue",sans-serif}
+</style>
+<script>
+var BSP = {},
+songs = [
+"swell",
+"poly",
+"organ",
+"mono",
+"cool",
+"old",
+];
+
+for(var s='',i = 0; i < songs.length; i++) {
+    s+=`<a href=?${songs[i]}>${songs[i]}</a>`;
+}
+document.querySelector("div#z7i").innerHTML = s;
+
+if(location.search.length && songs.indexOf(location.search.slice(1))>-1) {
+    var s2 = document.createElement("script"), s = document.createElement("script");
+    s.src = "bsp.js";
+    s2.src = "songs/"+location.search.slice(1)+".js";
+    document.head.append(s), document.head.append(s2);
+} 
+</script>

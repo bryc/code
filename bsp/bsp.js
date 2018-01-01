@@ -1,7 +1,6 @@
 (function(){
 /* ------------------------ */
 
-var BSP = {};
 
 var schedule = function() {
     var SONG = BSP.SONG;
@@ -98,7 +97,6 @@ var init = function() {
     };
 
     BSP.play = startSong;
-    window.BSP = BSP;
     window.addEventListener("load", function() {
         BSP.play();
     });
