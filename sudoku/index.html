@@ -1,0 +1,31 @@
+<style>
+body{text-align:center;margin:5px;margin-top:20px;color:#335;font:14px tahoma;}
+table{margin:auto;color:#335;margin-top:5px;border:3px solid;border-collapse:collapse;}
+
+td{outline:none;height:35px;min-width:35px;text-align:center;
+ border-top:1px solid #AAC;border-left:1px solid #DDE;}
+
+    td:nth-child(3n+3) {border-right:3px solid; }
+    tr:nth-child(3n+3) {border-bottom:3px solid; }
+    td:focus{background:#EEF;}
+
+    input{outline:none;color:#335;border:1px solid #AAC;background:#F5F5FF;text-align:center;margin-top:3px;display:block;width:100%;padding:5px;font-size:16px;font-family:monospace;}
+    span{font-weight:bold;font-size:12px;}
+</style>
+
+<span class="label">Puzzle code:</span>
+<input class="code" spellcheck=false placeholder="Paste sudoku string here">
+
+<table class="sudoku" border>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+</table>
+<div class="info"></div>
+<script src="app.js"></script>

@@ -1,0 +1,80 @@
+<script src=pixicon.js></script>
+<style>
+* {font: 14px Segoe UI,Trebuchet MS,Tahoma,sans-serif}
+body {background:#36393E;text-align:center;padding-top:64px}
+div#p {width: 552px;margin-right:3px}
+div#p2 {width: 277px}
+div#u, div#uu {
+    box-shadow: 2px 2px 20px #232427;
+    border-radius: 4px;
+    padding: 8px;
+    display: inline-flex;
+    background: #5B616A
+}
+input,button {
+    text-shadow: 0.6px 0.6px 0px #FFF;
+    border-radius: 2px;
+    margin: 3px;
+    padding: 2px;
+    outline: none;
+    width: 547px;
+    color: #555;
+    text-align: center;
+    border: none;
+    background: #D8DADE;
+    margin-top: 4px;
+    height: 32px;
+    box-shadow: 1px 1px 3px #232427;
+}
+
+input {width:273px}
+input:hover,button:hover {background:#D0D2D7}
+button:active,input:focus{background:#C7C9CF;}
+button:active{cursor:pointer;}
+canvas {
+    border-radius: 2px;box-shadow: 1px 1px 3px #232427;
+    background: #EEE;
+    margin: 3px;
+    padding: 3px;
+    border: 1px solid #EAEAEA;
+
+}
+canvas#q{padding:6.2px 7px;width:256px; height:256px;} /* multiples of 8 only! */
+</style>
+
+<div id=u >
+    <div id=p><div id=o></div><button>Generate more</button></div>
+    <div id=p2><canvas id=q width=256 height=256></canvas><input type=text placeholder='Type something here'></div>
+</div>
+
+<script>
+    function arst(a){return a.trim?Array.apply(0,Array(a.length)).map(function(x,i){return a[i].charCodeAt()}):String.fromCharCode.apply(0,a)}
+
+var cyrb32 = function(data) {
+    var i, tmp, sum = 0x9CB85729, len = data.length;
+    for(i = 0; i < len; i++) {
+        sum = sum + data[i];
+        sum = sum + (sum << ((sum & 7)+1));
+    } 
+    for(tmp = sum >>> 0; tmp > 0; tmp >>>= 1) {
+        if(tmp & 1) sum = sum + (sum << ((sum & 7)+1)) + tmp;
+    }
+    return sum >>> 0;
+};
+
+function more() {
+    for(var i=0;i<cnt;i++) {pixicon(cnv[i]);}
+}
+
+pixicon(document.querySelector("canvas#q"));
+document.querySelector("input").oninput = function() {
+    pixicon(document.querySelector("canvas#q"), cyrb32(arst(this.value)));
+};
+
+for(var cnt = 72, cnv = [], i = 0; i < cnt; i++) {
+    var c = document.createElement("canvas");
+    cnv.push(c);
+    document.querySelector("div#o").appendChild(c);
+    if(i===cnt-1) more(), document.querySelector("button").onclick=more;
+}
+</script>
