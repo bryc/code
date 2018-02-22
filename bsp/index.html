@@ -56,3 +56,14 @@ document.querySelector("#wat").onclick = function () {
     }
 }
 </script>
+<!--
+<input style="width:768px;" step = 1 min=0 max=22050 type=range>
+
+<script>
+
+    document.querySelector("input").oninput = function() {
+        var x = this.value;
+        BSP.Filter.frequency.setValueAtTime(x,0);
+    }
+</script>
+-->
