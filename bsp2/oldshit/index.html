@@ -1,0 +1,347 @@
+<link href="style.css" rel="stylesheet">
+<div class=main>
+    <hr>
+<div class=slider>
+    <span class=lab>Change Octave</span>
+  <input name=Octave list="mul" type="range" min=0 max=6><span class=val>0</span>
+</div>
+<h1>Apollo Synth (WIP)</h1>
+
+
+<b>Patch code (Copy/Paste code here):</b><br>
+<input id=patch> <button>Load</button>
+
+<div class=slider>
+    <span class=lab>OSC Wave</span>
+  <input name=OscWave type="range" min="0" max="3"><span class=val>0</span>
+</div>
+
+<hr> <!-- ENV -->
+
+<div class=slider>
+    <span class=lab>Env Attack Rate</span>
+  <input name=EnvAtkR type="range" step=0.01 min="0" max="2"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>Env Decay Rate</span>
+  <input name=EnvDecR type="range" step=0.01 min="0" max="2"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>Env Sustain Level</span>
+  <input name=EnvSusL type="range" step=0.01 min="0" max="1"><span class=val>0</span>
+</div>
+
+<hr style="opacity:0.5;height:1px">
+
+<div class=slider>
+    <span class=lab>Env Amp Enable</span>
+  <input name=EnvAmpE type="range" min="0" max="1"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>Env Filter Amount</span>
+  <input name=EnvFilt type="range" min="-24000" max="24000"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>Env Pitch Amount</span>
+  <input name=EnvPitc type="range" min="-4186" max="4186"><span class=val>0</span>
+</div>
+
+<hr> <!-- LFO -->
+
+<div class=slider>
+    <span class=lab>LFO Wave</span>
+  <input name=LfoWave type="range" min="0" max="3"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>LFO Rate</span>
+  <input name=LfoRate type="range" step=.01 min="0" max="300"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>LFO Amp Level</span>
+  <input name=LfoAmpL type="range" step=.01 min="0" max="1"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>LFO Filter Level</span>
+  <input name=LfoFilt type="range" min="-24000" max="24000"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>LFO Pitch Level</span>
+  <input name=LfoPitc type="range" step=.01 min="0" max="300"><span class=val>0</span>
+</div>
+
+<hr> <!-- Filter -->
+
+<div class=slider>
+    <span class=lab>Filter Type</span>
+  <input name=FilType type="range" min="0" max="7"><span class=val>0</span>
+</div>
+
+
+<div class=slider>
+    <span class=lab>Filter Frequency</span>
+  <input name=FilFreq type="range" min="0" max="24000"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>Filter Q factor</span>
+  <input name=FilQFac type="range" step=.1 min="0" max="50"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>Filter Gain</span>
+  <input name=FilGain type="range" step=.1 min="-50" max="50"><span class=val>0</span>
+</div>
+
+<hr> <!-- Delay -->
+
+<div class=slider>
+    <span class=lab>Delay Level</span>
+  <input name=DlyLeve type="range" step=0.01 min="0" max="1"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>Delay Feedback</span>
+  <input name=DlyFdbk type="range" step=0.01 min="0" max="1"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>Delay Time</span>
+  <input name=DlyTime type="range" step=0.001 min="0" max="1"><span class=val>0</span>
+</div>
+
+
+
+<pre style="padding:32px;text-align:left;font-family:Segoe UI">
+    <b>TODO</b>:
+
+    a) Make app automatically load/save presets.
+    2) Add PWM
+    3) Add Noise
+    1) Add PeriodicWave
+    4) Go from there...
+
+    - <s>Selectable LFO waveform</s>
+    - <s>Add Filter Type</s>
+    - <s>Add Filter LFO</s>
+    - <s>Add Gain LFO (tremolo)</s>
+    - <s>Add Delay Level. </s>
+    - <s>Add Amp Envelope Generator.</s>
+    - Add Waveform: Noise
+    - Add Waveform: PWM
+    - Add Waveform: PeriodicWave
+    - Add PWM and Noise waveforms (+ LFO for PWM)
+    - ReTrigger LFO mode.
+    
+    https://github.com/web-audio-components/overdrive
+    https://github.com/mohayonao/fm-synth
+    https://github.com/Sambego/audio-effects
+    https://noisehack.com/custom-audio-effects-javascript-web-audio-api/
+    - See if ConvolverNode can be useful to the synth, or not.
+    - Distortion / Overdrive?
+    - Bitcrusher seems very simple.
+    - FM doesn't seem too hard
+    - Flanger / chorus / phaser would be useful
+    - see if DynamicsCompression can help me mix/master effectively.
+
+
+    - Fix Amp EG Enable to be an actual Gain Amount modifier.. figure it out.
+    - Bug: Amp LFO fucks up the Amp EG. Status: Unfixed.
+
+    - Seriously consider 2x LFOs and 2x EGs
+    - See what can be done about FM synthesis
+    - See what can be done about distortion/bit-crush
+    - Add fine and coarse pitch control for Osc
+    - Add Panning support for Stereo effects
+    - Seriously consider dual delay (ping/pong) with additional filter.
+    - LFO delay envelope .. see what can be done.
+
+    - <s>???Add LFO+EG Destination Matrix.???</s>
+
+    <b>Info</b>: This is a WIP synthesizer. The end goal is to make a simple yet effective synth using core WebAudioAPI functionality.
+    No samples, no libraries, no crazy complicated synthesis engines.
+</p>
+
+</div>
+<script src="bsp2.js"></script>
+<script>
+var filt = ['lowpass','highpass','bandpass','lowshelf','highshelf','peaking','notch','allpass'];
+var wave = ['sine','square','triangle','sawtooth'];
+
+var dest = {
+    "FilType":  [Apollo.ch[0].Filter], /////////////////
+    "FilFreq": [Apollo.ch[0].Filter.frequency],
+    "FilQFac": [Apollo.ch[0].Filter.Q],
+    "FilGain": [Apollo.ch[0].Filter.gain],
+    "EnvAtkR": [Apollo.ch[0].Atk],
+    "EnvDecR": [Apollo.ch[0].Dec],
+    "EnvSusL": [Apollo.ch[0].Sus],
+    "EnvAmpE": [Apollo.ch[0].AmpEG],
+    "EnvPitc": [Apollo.ch[0].PitchEnv],
+    "EnvFilt": [Apollo.ch[0].FilterEnv],
+    "LfoWave":  [Apollo.ch[0].LFO], //////////////////////fix//
+    "LfoRate": [Apollo.ch[0].LFO.frequency],
+    "LfoAmpL": [Apollo.ch[0].LFOAmp.gain],
+    "LfoPitc": [Apollo.ch[0].LFOFreq.gain],
+    "LfoFilt": [Apollo.ch[0].LFOFilter.gain],
+    "DlyTime": [Apollo.ch[0].Delay.delayTime],
+    "DlyFdbk": [Apollo.ch[0].DelayFeedback.gain],
+    "DlyLeve": [Apollo.ch[0].DelayLevel.gain],
+    "OscWave":  [Apollo.ch[0].Osc], //////////////////////////
+}
+
+var shit = 1;
+var els = document.querySelectorAll(".slider");
+
+    function cyb(key, seed = 999) {
+        var m = 1540483477, h = seed ^ key.length;
+        for(var i=0,k,chunk=-4&key.length; i<chunk; i+=4) {
+            k = key[i+3]<<24 | key[i+2]<<16 | key[i+1]<<8 | key[i];
+            k = Math.imul(k, m), k ^= k >>> 24;
+            k = Math.imul(k, m), h = Math.imul(h, m) ^ k;
+        }
+        switch (3 & key.length) {
+            case 3: h ^= key[i+2] << 16;
+            case 2: h ^= key[i+1] << 8;
+            case 1: h ^= key[i], h = Math.imul(h, m);
+        }
+        h ^= h >>> 13, h = Math.imul(h, m), h ^= h >>> 15;
+        return h >>> 0;
+    }
+function makeString() {
+
+
+    var ids = Object.keys(dest);
+
+    for(var arr=[],q=ids.length,str="",i = 0; i < q; i++) {
+        arr[i] = Number(dest[ids[i]][1].value);
+    }
+    var cybA = cyb(arr.toString()) & 0x1FF;
+    arr.push(cybA);
+
+    console.log(arr);
+
+    var cybB = cyb(arr.toString().split(',').slice(0,-1).map(Number).toString()) & 0x1FF;
+    console.log(cybA, cybB);
+    document.querySelector("input#patch").value = arr;
+}
+
+
+function getParameters() {
+    var ids = Object.keys(dest);
+
+    for(var arr=[], q=ids.length, str="", i = 0; i < q; i++) {
+       // arr[i] = Number(dest[ids[i]][1].value);
+       var param = null;
+        switch(dest[ids[i]][0].constructor) {
+            case Number: param = dest[ids[i]][0]; break;
+            case OscillatorNode: param = wave.indexOf(dest[ids[i]][0].type); break;
+            case BiquadFilterNode: param = filt.indexOf(dest[ids[i]][0].type); break;
+            case AudioParam: param = dest[ids[i]][0].value; break;
+        }
+
+        arr[i] = param;
+    }
+    console.log(arr);
+}
+
+function setParameters() {
+
+    var data = document.querySelector("input#patch").value.split(',').map(Number);
+
+    var check = data.slice(-1)[0] === (cyb(data.slice(0,-1).toString())&0x1FF);
+
+    if(!check) {console.error("integrity check failed");return false;}
+
+    var ids = Object.keys(dest);
+
+    for(var q=ids.length, i = 0; i < q; i++) {
+        switch(ids[i]) {
+            case "FilType": dest[ids[i]][0].type = filt[data[i]]; break;
+            case "FilFreq": Apollo.ch[0].FilterBase = parseFloat(data[i]);
+                            dest[ids[i]][0].setValueAtTime(data[i], 0); break;
+            case "FilQFac": dest[ids[i]][0].setValueAtTime(data[i], 0); break;
+            case "FilGain": dest[ids[i]][0].setValueAtTime(data[i], 0); break;
+            case "EnvAtkR": Apollo.ch[0].Atk = parseFloat(data[i]); break;
+            case "EnvDecR": Apollo.ch[0].Dec = parseFloat(data[i]); break;
+            case "EnvSusL": Apollo.ch[0].Sus = parseFloat(data[i]); break;
+            case "EnvFilt": Apollo.ch[0].FilterEnv = parseFloat(data[i]); break;
+            case "EnvPitc": Apollo.ch[0].PitchEnv = parseFloat(data[i]); break;
+            case "EnvAmpE": Apollo.ch[0].AmpEG = parseFloat(data[i]); break;
+            case "LfoWave": dest[ids[i]][0].type = wave[data[i]]; break; 
+            case "LfoRate": dest[ids[i]][0].setValueAtTime(data[i], 0); break;
+            case "LfoAmpL": dest[ids[i]][0].setValueAtTime(data[i], 0); break;
+            case "LfoPitc": dest[ids[i]][0].setValueAtTime(data[i], 0); break;
+            case "LfoFilt": dest[ids[i]][0].setValueAtTime(data[i], 0); break;
+            case "DlyTime": dest[ids[i]][0].setValueAtTime(data[i], 0); break;
+            case "DlyFdbk": dest[ids[i]][0].setValueAtTime(data[i], 0); break;
+            case "DlyLeve": dest[ids[i]][0].setValueAtTime(data[i], 0); break;
+            case "OscWave": dest[ids[i]][0].type = wave[data[i]]; break; 
+        }
+        dest[ids[i]][1].value = data[i];
+        dest[ids[i]][1].parentNode.querySelector(".val").innerHTML = data[i];
+    }
+}
+
+document.querySelector("button").onclick = setParameters;
+
+window.onload = function() {
+    for(var i = 0; i < els.length; i++) {
+        var el = els[i].querySelector("input");
+
+        if(dest[el.name]) {
+            switch(dest[el.name][0].constructor) {
+                case Number: el.value = dest[el.name][0]; break;
+                case OscillatorNode: el.value = wave.indexOf(dest[el.name][0].type); break;
+                case BiquadFilterNode: el.value = filt.indexOf(dest[el.name][0].type); break;
+                case AudioParam: el.value = dest[el.name][0].value; break;
+            }
+            dest[el.name][1] = el;
+           // el.value = dest[el.name][0].value || dest[el.name][0];
+            console.log(el.name, dest[el.name][0].constructor, el.value);
+        }
+
+        el.oninput=function(){
+            var h = this.parentNode.querySelector(".val");
+            h.innerHTML = this.value;
+            var vals = [1/8,1/4,1/2,  1  ,1*2,1*4,1*8];
+
+            switch(this.name) {
+                case "FilType": dest[this.name][0].type = filt[this.value]; break;
+                case "FilFreq": Apollo.ch[0].FilterBase=parseFloat(this.value);
+                                dest[this.name][0].setValueAtTime(this.value, 0); break;
+                case "FilQFac": dest[this.name][0].setValueAtTime(this.value, 0); break;
+                case "FilGain": dest[this.name][0].setValueAtTime(this.value, 0); break;
+                case "EnvAtkR": Apollo.ch[0].Atk = parseFloat(this.value); break;
+                case "EnvDecR": Apollo.ch[0].Dec = parseFloat(this.value); break;
+                case "EnvSusL": Apollo.ch[0].Sus = parseFloat(this.value); break;
+                case "EnvFilt": Apollo.ch[0].FilterEnv = parseFloat(this.value); break;
+                case "EnvPitc": Apollo.ch[0].PitchEnv = parseFloat(this.value); break;
+                case "EnvAmpE": Apollo.ch[0].AmpEG = parseFloat(this.value); break;
+                case "LfoWave": dest[this.name][0].type = wave[this.value]; break; 
+                case "LfoRate": dest[this.name][0].setValueAtTime(this.value, 0); break;
+                case "LfoAmpL": dest[this.name][0].setValueAtTime(this.value, 0); break;
+                case "LfoPitc": dest[this.name][0].setValueAtTime(this.value, 0); break;
+                case "LfoFilt": dest[this.name][0].setValueAtTime(this.value, 0); break;
+                case "DlyTime": dest[this.name][0].setValueAtTime(this.value, 0); break;
+                case "DlyFdbk": dest[this.name][0].setValueAtTime(this.value, 0); break;
+                case "DlyLeve": dest[this.name][0].setValueAtTime(this.value, 0); break;
+                case "OscWave": dest[this.name][0].type = wave[this.value]; break;
+                case 'Octave': shit = vals[this.value];console.log(this.value); break
+            }
+            makeString();
+        }
+
+        if(el.value) el.nextElementSibling.innerHTML = el.value;
+    }
+    makeString();
+}
+</script>
+

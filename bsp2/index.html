@@ -1,0 +1,27 @@
+<script src=bsp.js></script>
+<script src=song.js></script>
+<script>
+    BSP.worker = (function() {
+        var body = function() {
+            function tic(n,t){function i(){n(),u||setTimeout(i,t)}var u=0;return i(),function(){u=1}}
+            self.onmessage = function(e) {tic(function(){self.postMessage(0)}, 5);};
+    };
+        var blob = new Blob([body.toString().replace(/(^.*?\{|\}$)/g,"")],{type:"text/javascript"});
+        return new Worker(URL.createObjectURL(blob));
+    }());
+
+    BSP.worker.onmessage = function(e) {
+        // if running out of time, schedule the next loop of the song
+        if(BSP.ctx.currentTime >= BSP.timer-(BSP.speed*BSP.sub)) {
+            BSP.play();  
+        }
+    };
+
+    window.addEventListener("load", function() {
+        BSP.speed   = 60 / BSP.SONG.bpm / (BSP.SONG.divide || 4);
+        BSP.sub     = BSP.SONG.seq[0].length;
+        BSP.timer   = 0;
+        BSP.play();
+        BSP.worker.postMessage(0);
+    });
+</script>

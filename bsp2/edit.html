@@ -1,0 +1,111 @@
+<script src="bsp.js"></script>
+
+<link href="style.css" rel="stylesheet">
+<div class=main>
+<b>Patch code (Copy/Paste code here):</b><br>
+<input id=patch> <button>Load</button>
+
+<div class=slider>
+    <span class=lab>Osc Gain</span>
+  <input id=0 type="range" step=0.01 min="0" max="1"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span id=wat class=lab>Osc Wave</span>
+  <input id=1 type="range" min="0" max="3"><span class=val>0</span>
+</div>
+
+<hr> <!-- LFO -->
+
+<div class=slider>
+    <span id=wat class=lab>LFO Waveform</span>
+  <input id=9 type="range" min="0" max="3"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>LFO Rate</span>
+  <input id=10 type="range" step=.01 min="0" max="300"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>LFOGain Osc freq</span>
+  <input id=11 type="range" step=.01 min="0" max="300"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>LFOGain Filter freq</span>
+  <input id=12 type="range" min="-24000" max="24000"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>LFOGain Osc vol</span>
+  <input id=13 type="range" step=.01 min="0" max="1"><span class=val>0</span>
+</div>
+
+<hr> <!-- Filter -->
+
+<div class=slider>
+    <span id=wat class=lab>Filter Type</span>
+  <input id=5 type="range" min="0" max="7"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>Filter Frequency</span>
+  <input id=6 type="range" min="0" max="1000"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>Filter Q factor</span>
+  <input id=7 type="range" step=.1 min="0" max="50"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>Filter Gain</span>
+  <input id=8 type="range" step=.1 min="-50" max="50"><span class=val>0</span>
+</div>
+
+<hr> <!-- Delay -->
+
+<div class=slider>
+    <span class=lab>Delay Gain</span>
+  <input id=2 type="range" step=0.01 min="0" max="1"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>Delay Feedback</span>
+  <input id=3 type="range" step=0.01 min="0" max="1"><span class=val>0</span>
+</div>
+
+<div class=slider>
+    <span class=lab>Delay Time</span>
+  <input id=4 type="range" step=0.001 min="0" max="1"><span class=val>0</span>
+</div>
+
+</div>
+
+<script>
+
+var init = [0,2,0,0,0,0,0,0,0,0,8,4,0,0];
+var syn = new BSP.BSPSynth(init);
+
+var els = document.querySelectorAll("div.slider");
+
+for(var i = 0; i < els.length; i++) {
+    var el = els[i].querySelector("input");
+    //var h = this.parentNode.querySelector(".val");
+    el.value = init[el.id];
+
+    el.oninput = function() {
+        this.parentNode.querySelector(".val").innerHTML = this.value;
+        var param = {};
+
+        param[this.id] = Number(this.value);
+        syn.setParams(param);
+
+        document.querySelector("#patch").value = Object.values(syn.params);
+    }
+
+    if(el.value) els[i].querySelector(".val").innerHTML = el.value;
+}
+
+</script>
