@@ -1,0 +1,196 @@
+<style>
+body {
+    font-family:Segoe UI,sans-serif;
+}
+
+.slider {
+    border:1px solid #999;background:#EEE;
+    display:inline-block;
+    margin:1px;padding:4px;
+}
+.slider>input[type=range] {
+    margin:0;
+    outline: none;
+    width:128px;
+    -webkit-appearance: none;
+    height: 5px;
+    background: #b7bcbf;
+    border-bottom:1px solid #00000020;
+}
+.slider>input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border: 0;
+    border-radius: 20%;
+    background: #2c3e50c0;
+    cursor: pointer;
+}
+
+.slider>input[type=range]::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    border: 0;
+    border-radius: 20%;
+    background: #2c3e50c0;
+    cursor: pointer;
+}
+
+::-moz-range-track {
+    background: #d7dcdf;
+    border: 0;
+}
+
+.slider>input[type=range]::-webkit-slider-thumb:hover {
+    background: #2c3e50;
+}
+.slider>span.lab {
+    text-align:right;
+    display: inline-block;
+
+    margin-right:4px;
+    font-weight:bold;
+    font-size:14px;
+}
+
+.slider>span.val {
+    display: inline-block;
+    font-weight:bold;
+    width: 50px;
+    font-size:14px;
+    color: #fff;
+    line-height: 21px;
+    text-align: center;
+    border-radius: 3px;
+    background: #2c3e50;
+    margin-left:5px;
+    margin-bottom:2px;
+}
+
+table{font-size:12px;table-layout: fixed;border-collapse:collapse;margin:8px;padding:8px;background: #2c3e5010;}
+td{
+    background:#FFF;
+    border:1px solid #CCC;
+    width:35px !important;
+    height:25px;
+    padding:4px;
+    text-align:center;white-space: nowrap
+}
+
+.flox {display:flex;}
+.panel {flex-basis:200px;flex-shrink:0;width:150px;background:#CCC;display:flex;}
+.sequence {flex-grow: 1;display:flex;overflow-x:scroll;}
+</style>
+<div class=slider>
+    <span class=lab>BPM</span>
+    <input id=bpm type=number min=10 max=700 value=112>
+</div>
+<div class=slider>
+    <span class=lab>Steps/beat</span>
+    <input id=steps type=range min=2 max=8 value=4><span class=val>4</span>
+</div>
+<div class=slider>
+    <span class=lab>Beats/bar</span>
+    <input id=beats type=range min=2 max=8 value=4><span class=val>4</span>
+</div>
+<div class=slider>
+    <span class=lab>Bars</span>
+    <input id=bars type=range min=1 max=32 value=4><span class=val>4</span>
+</div>
+<br>
+<div class=slider>
+    <span class=lab>Channel</span>
+    <input id=chan type=number min=0 max=200 value=0>
+</div>
+<div class=slider>
+    <span class=lab>Octave</span>
+    <input id=octave type=range min=1 max=8 value=5><span class=val>5</span>
+</div>
+<br>
+<div class=slider>
+    <span class=lab>Pattern</span>
+    <input id=pat type=number min=0 max=200 value=0>
+</div>
+<div class=slider>
+    <span class=lab>Sequence</span>
+    <button>-</button><button>+</button>
+    <table style='display:inline'><tr><td>0</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr></table> 
+</div>
+<div class=flox>
+    <div class=panel>(channel/cell/pattern options here)</div>
+    <div class=sequence><table class=edit></table></div>
+</div>
+
+<script>
+function replace(target, replacement) {
+    while(target.firstChild) target.removeChild(target.firstChild);
+    target.appendChild(replacement);
+}
+
+function elem(options) {
+    var el = document.createDocumentFragment();
+    var tag = options[0];
+    var prop = options[1];
+
+    if(typeof tag === "string") {
+        el = document.createElement(tag);
+    }
+
+    if(typeof prop === "object") {
+        for (var item in prop) {
+            el[item] = prop[item];
+        }
+    } else if(prop) {
+        el.innerHTML = prop;
+    }
+
+    for(var i = 1; i < arguments.length; i++) {
+        if(arguments[i].nodeType > 0) {
+            el.appendChild(arguments[i]);
+        }
+    }
+
+    return el;
+}
+
+
+var inputs = document.querySelectorAll("input");
+
+
+for(var i = 0; i < inputs.length; i++) {
+    var el = inputs[i];
+    el.oninput = function() {
+        if(this.type==="range") {
+            this.parentNode.querySelector(".val").innerHTML = this.value;
+        }
+        buildEditTable();
+    }
+}
+
+
+function buildEditTable() {
+    var steps = Number(document.getElementById('steps').value);
+    var beats = Number(document.getElementById('beats').value);
+    var bars = Number(document.getElementById('bars').value);
+    var bpm   = Number(document.getElementById('bpm').value);
+
+    var out = elem([]);
+
+    for(var i = 0; i < bars; i++) {
+        var tr = elem(["tr"]);
+        var total = steps*beats;
+        for(var j1=0,j0=0,j = 0; j < total; j++) {
+            var td = elem(["td"]);
+            td.style.background = j1 ? '#DDD':'#EEE';
+            if(++j0 === steps && j < total-1) {j1^=1;j0=0;td.style.borderRight="2px solid #888"}
+            td.innerHTML = "C-5";
+            tr.appendChild(td);
+        }
+        out.appendChild(tr);
+    }
+    replace(document.querySelector("table.edit"), out);
+}
+
+buildEditTable();
+</script>
