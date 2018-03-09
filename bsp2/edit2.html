@@ -69,15 +69,19 @@ body {
 }
 
 table{font-size:12px;table-layout: fixed;border-collapse:collapse;margin:8px;padding:8px;background: #2c3e5010;}
+
 td{
-    background:#FFF;
+    font-family:monospace;
+
     border:1px solid #CCC;
     width:35px !important;
     height:25px;
     padding:4px;
-    text-align:center;white-space: nowrap
+    text-align:center;white-space: nowrap;
+
 }
 
+td:hover{outline:1px solid #888;}
 .flox {display:flex;}
 .panel {flex-basis:200px;flex-shrink:0;width:150px;background:#CCC;display:flex;}
 .sequence {flex-grow: 1;display:flex;overflow-x:scroll;}
@@ -123,6 +127,60 @@ td{
 </div>
 
 <script>
+var keymap = {
+     90: 48, // C-4
+     83: 49, // C#-4
+     88: 50, // D-4
+     68: 51, // D#-4
+     67: 52, // E-4
+     86: 53, // F-4
+     71: 54, // F#-4
+     66: 55, // G-4
+     72: 56, // G#-4
+     78: 57, // A-4
+     74: 58, // A#-4
+     77: 59, // B-4
+    188: 60, // ---- C-5 dupe
+    190: 62, // ---- D-5 dupe
+    191: 64, // ---- E-5 dupe
+     81: 60, // C-5
+     50: 61, // C#-5
+     87: 62, // D-5
+     51: 63, // D#-5
+     69: 64, // E-5
+     82: 65, // F-5
+     53: 66, // F#-5
+     84: 67, // G-5
+     54: 68, // G#-5
+     89: 69, // A-5
+     55: 70, // A#-5
+     85: 71, // B-5
+     73: 72, // C-6
+     57: 73, // C#-6
+     79: 74, // D-6
+     48: 75, // D#-6
+     80: 76, // E-6
+    219: 77, // F-6
+    221: 79, // F#6 or G-6????
+};
+
+window.onkeydown = function(e) {
+    if(current && keymap[e.keyCode]) {
+        var note = current.patIdx;
+        current.innerHTML = freq[keymap[e.keyCode]][1].toUpperCase();
+    }
+
+};
+
+var frq0 = function(){for(var t={},o=-57,a="c-,c#,d-,d#,e-,f-,f#,g-,g#,a-,a#,b-".split(","),r=0,e=0;63>o;o++){var c=440*Math.pow(Math.pow(2,1/12),o);t[a[r++]+e]=c,12==r&&(e++,r=0)}return t}()
+var frq1 = Object.keys(frq0);
+console.log(frq1.length)
+for(var freq=[],i=0;i<frq1.length;i++) {
+    freq[i]=[frq0[frq1[i]],frq1[i]];
+}
+
+
+
 function replace(target, replacement) {
     while(target.firstChild) target.removeChild(target.firstChild);
     target.appendChild(replacement);
@@ -154,7 +212,7 @@ function elem(options) {
     return el;
 }
 
-
+var current, previous;
 var inputs = document.querySelectorAll("input");
 
 
@@ -175,20 +233,33 @@ function buildEditTable() {
     var bars = Number(document.getElementById('bars').value);
     var bpm   = Number(document.getElementById('bpm').value);
 
+    var patData = [];
     var out = elem([]);
 
-    for(var i = 0; i < bars; i++) {
+    for(var i0=0,i = 0; i < bars; i++) {
+
+        
         var tr = elem(["tr"]);
         var total = steps*beats;
         for(var j1=0,j0=0,j = 0; j < total; j++) {
             var td = elem(["td"]);
             td.style.background = j1 ? '#DDD':'#EEE';
             if(++j0 === steps && j < total-1) {j1^=1;j0=0;td.style.borderRight="2px solid #888"}
-            td.innerHTML = "C-5";
+            td.innerHTML = "";
+            td.patIdx = i0++;
+            td.onclick = function() {
+                if(current) prev = current, prev.style.outline="";
+                current = this;
+                current.style.outline="2px solid #0070AF";
+                //console.dir(this)
+                //this.innerHTML = this.patIdx;
+            }
             tr.appendChild(td);
         }
         out.appendChild(tr);
     }
+    patData = new Array(i0-1);
+    console.log(patData)
     replace(document.querySelector("table.edit"), out);
 }
 
