@@ -21,11 +21,11 @@ But the fact of the matter is, they are all hash functions. Hashing just means m
 
 ### Example 1: Typical hash functions
 
-The cryptographically strong SHA256 produces this for a string of "bryc":
-`741177fae5da4421a95f77802034a396581c169811c62951022db53082140abd`
-The faster, non-cryptographic MurmurHash3_x86_128 produces this for "bryc":
-`e87e2554db409442db409442db409442`
-Again using non-cryptographic FNV1a_256 for "bryc":
+The cryptographically strong SHA256 produces this for a string of "bryc":<br>
+`741177fae5da4421a95f77802034a396581c169811c62951022db53082140abd`<br>
+The faster, non-cryptographic MurmurHash3_x86_128 produces this for "bryc":<br>
+`e87e2554db409442db409442db409442`<br>
+Again using non-cryptographic FNV1a_256 for "bryc":<br>
 `e46ddd4ed460b2208b81e2459f2a8e9d123f79d831721584cc463c351cc02a85`
 
 Here is a comparison of hash outputs for a single ASCII character "0":
