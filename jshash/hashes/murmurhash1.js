@@ -1,3 +1,9 @@
+/*
+    MurmurHash1
+    ---------------
+    32-bit MurmurHash1 implemented by bryc (github.com/bryc)
+*/
+
 function MurmurHash(key, seed = 0) {
     var m = 3332679571, r = 16;
     var h = seed ^ Math.imul(key.length, m);
