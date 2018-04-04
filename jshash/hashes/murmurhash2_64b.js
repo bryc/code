@@ -35,7 +35,7 @@ function MurmurHash2_64B(key, seed1 = 0, seed2 = 0) {
         h2 = Math.imul(h2, m) ^ k2;
     }
   
-    if(key.length - chunk >= 4) {
+    if((key.length - chunk) >= 4) {
         k1 = key[i+3] << 24 | key[i+2] << 16 | key[i+1] << 8 | key[i];
         k1 = Math.imul(k1, m); k1 ^= k1 >>> r; k1 = Math.imul(k1, m);
         h1 = Math.imul(h1, m) ^ k1;
