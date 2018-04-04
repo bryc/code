@@ -25,21 +25,26 @@ function MurmurHash2_64B(key, seed1 = 0, seed2 = 0) {
     var h1 = seed1 ^ key.length;
     var h2 = seed2;
 
-    for(var i = 0, k1, k2, chunk = -4 & key.length; i < chunk; i += 4) {
+    for(var i = 0, k1, k2, chunk = -8 & key.length; i < chunk; i += 4) {
         k1 = key[i+3] << 24 | key[i+2] << 16 | key[i+1] << 8 | key[i];
         k1 = Math.imul(k1, m); k1 ^= k1 >>> r; k1 = Math.imul(k1, m);
         h1 = Math.imul(h1, m) ^ k1;
-
-        if(i++ < chunk) {
-            k2 = key[i+3] << 24 | key[i+2] << 16 | key[i+1] << 8 | key[i];
-            k2 = Math.imul(k2, m); k2 ^= k2 >>> r; k2 = Math.imul(k2, m);
-            h2 = Math.imul(h2, m) ^ k2;
-        }
+        i += 4;
+        k2 = key[i+3] << 24 | key[i+2] << 16 | key[i+1] << 8 | key[i];
+        k2 = Math.imul(k2, m); k2 ^= k2 >>> r; k2 = Math.imul(k2, m);
+        h2 = Math.imul(h2, m) ^ k2;
+    }
+  
+    if(key.length - chunk >= 4) {
+        k1 = key[i+3] << 24 | key[i+2] << 16 | key[i+1] << 8 | key[i];
+        k1 = Math.imul(k1, m); k1 ^= k1 >>> r; k1 = Math.imul(k1, m);
+        h1 = Math.imul(h1, m) ^ k1;
+        i += 4;
     }
 
     switch (3 & key.length) {
-        case 3: h2 ^= key[i + 2] << 16;
-        case 2: h2 ^= key[i + 1] << 8;
+        case 3: h2 ^= key[i+2] << 16;
+        case 2: h2 ^= key[i+1] << 8;
         case 1: h2 ^= key[i];
                 h2 = Math.imul(h2, m);
     }
