@@ -72,5 +72,5 @@ function MurmurHash2_160(key, seed = 0) {
     hash32[3] = (h4 ^ h1) >>> 0;
     hash32[4] = (h5 ^ h1) >>> 0;
 
-    return h1 >>> 0;
+    return hash32;
 }
