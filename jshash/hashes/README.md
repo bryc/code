@@ -79,7 +79,6 @@ function MurmurHash2(key, seed = 0) {
 
 I implemented: [MurmurHash2_64B](murmurhash2_64b.js), [MurmurHash2_160](murmurhash2_160.js). 
 
-
 1. <s>MurmurHash64B: 64-bit hash, 32-bit arithmetic</s>
 2. <s>MurmurHash2_160: A [custom modification](https://simonhf.wordpress.com/2010/09/25/murmurhash160/) of MurmurHash2 with a 160-bit output.</s>
 3. [MurmurHash2A](https://github.com/abrandoned/murmur2/blob/master/MurmurHash2.c#L170): Modified original using Merkle-Damgard construction (apparently fixes a flaw?)
@@ -130,9 +129,11 @@ function MurmurHash3(key, seed = 0) {
 
 ### Additional variants
 
-1. MurmurHash3_x86_32: 32-bit output, 32-bit arithmetic. _The above algorithm_.
-2. MurmurHash3_x86_128: 128-bit output, 32-bit arithmetic.
-3. MurmurHash3_x64_128: 128-bit output, 64-bit arithmetic. Different output than #2?
+I implemented: [MurmurHash3_x86_128](murmurhash3_x86_128.js). 
+
+1. <s>MurmurHash3_x86_128: 128-bit output, 32-bit arithmetic.</s>
+2. MurmurHash3_x86_32: 32-bit output, 32-bit arithmetic. _The above algorithm_.
+3. MurmurHash3_x64_128: 128-bit output, 64-bit arithmetic. Different output than #2.
 
 ****
 
