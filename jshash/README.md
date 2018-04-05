@@ -15,7 +15,9 @@ All in all, no one is making good, performant hash functions for JavaScript.
 
 ## What is a hash function
 
-There seems to be a lot of confusion as to what hashing is. A hash function to a cryptographer would be something like MD5 or SHA2; a function characterized by security features designed to thwart attackers. A computer scientist might think of hash functions for use in hash tables, such as FNV, MurmurHash, or SipHash. There are an endless amount of these types of functions, each with wildly variable properties. Finally, a computer engineer might think of hash functions as a parity bit, checksum or cyclic redundancy check.
+_Disclaimer: I am not an expert on hash functions, just interested in them._
+
+Hash functions seem to be split into three schools of thought. A hash function to a cryptographer would be something like MD5 or SHA2; a function characterized by security features designed to thwart attackers. A computer scientist might think of hash functions for use in hash tables, such as FNV, MurmurHash, or SipHash. There are an endless amount of these types of functions, each with wildly variable properties. Finally, a computer engineer might think of hash functions as a parity bit, checksum or cyclic redundancy check.
 
 But the fact of the matter is, they are all hash functions. Hashing just means mapping/condensing data to a fixed size.
 
