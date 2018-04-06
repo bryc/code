@@ -13,7 +13,6 @@
     Oh well, it may be useful.
 */
 
-
 function MurmurHash3_x86_128(key, seed = 0) {
     function rotl32(x,r) {return (x << r) | (x >>> (32 - r));}
 
@@ -31,7 +30,7 @@ function MurmurHash3_x86_128(key, seed = 0) {
     var c3 = 951274213;
     var c4 = 2716044179;
 
-    var h1 = seed ^ c1;
+    var h1 = seed ^ c1; // Remove these XORs for function's original output
     var h2 = seed ^ c2;
     var h3 = seed ^ c3;
     var h4 = seed ^ c4;
