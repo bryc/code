@@ -8,7 +8,7 @@ function MurmurHash3(key, seed = 0) {
     function rotl32(x,r) {return (x << r) | (x >>> (32 - r));}
 
     var c1 = 3432918353, c2 = 461845907;
-    var h = seed;
+    var h = seed | 0;
 
     for(var i = 0, k, chunk = -4 & key.length; i < chunk; i += 4) {
         k = key[i+3] << 24 | key[i+2] << 16 | key[i+1] << 8 | key[i];
@@ -17,7 +17,7 @@ function MurmurHash3(key, seed = 0) {
         k = Math.imul(k, c2);
         h ^= k;
         h = rotl32(h, 13);
-        h = Math.imul(h, 5) + 3864292196;
+        h = Math.imul(h, 5) + 3864292196 | 0;
     }
 
     k = 0;
