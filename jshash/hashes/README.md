@@ -19,8 +19,8 @@ Also see: [CRC functions](CRC.md)
 | [xxHash_x86_32](xxhash_32.js) | 32-bit  |                 |                                                                                 |
 | xxHash_x86_128       | 128-bit |                 | Experimental                                                                    |
 | xxHash_x64_64        | 64-bit  |                 | Requires slow 64-bit arithmetic                                                 |
-| [Lookup3_x86](lookup3.js) | 32/64-bit  |                 | "hashlittle2" - can output 32, 64 or 96 (maybe?) bit hash |
-| Lookup2_x86 | 32-bit  |                 |                                                                                 |
+| [Lookup3_x86](lookup3.js) | 32/64-bit  |                 | Can output 32/64 (officially) or 96 (unofficially) bit hash |
+| [Lookup2_x86](lookup2.js) | 32-bit  |                 | Can also output 32 and 64/96 (unofficially) bit hash  |
 | FNV0_x86_32          | 32-bit  |                 |                                                                                 |
 | FNV1_x86_32          | 32-bit  |                 |                                                                                 |
 | FNV1a_x86_32         | 32-bit  |                 |                                                                                 |
