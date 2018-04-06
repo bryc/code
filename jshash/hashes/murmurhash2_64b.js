@@ -1,5 +1,5 @@
 /*
-    MurmurHash2_64B
+    MurmurHash2_64B 
     ---------------
     64-bit MurmurHash2 implemented by bryc (github.com/bryc)
 
@@ -11,13 +11,12 @@
     In this JS implementation the original 64-bit
     seed is split into two 32-bit seeds: seed1 and seed2. 
 
-    Because this is a 64-bit hash digest the output is an
-    array of two 32-bit integers. A 52-bit JS integer can
-    be constructed instead like so:
-    return (h2 & 2097151) * 4294967296 + h1;
-
-    Alternatively just use (example): pad(x[i].toString(16))
-    for 64-bit hex string. It hits performance a bit though.
+    The original function is actually not a true 64-bit hash
+    and had the collision resistance of a 32-bit hash.
+    This function attempts to fix that so the 64-bit output
+    is properly distributed (hopefully). To undo my changes,
+    remove the four occurances of "h1 ^= h2" and "h2 ^= h1"
+    before the finalization step.
 */
 
 function MurmurHash2_64B(key, seed1 = 0, seed2 = 0) {
@@ -28,17 +27,17 @@ function MurmurHash2_64B(key, seed1 = 0, seed2 = 0) {
     for(var i = 0, k1, k2, chunk = -8 & key.length; i < chunk; i += 4) {
         k1 = key[i+3] << 24 | key[i+2] << 16 | key[i+1] << 8 | key[i];
         k1 = Math.imul(k1, m); k1 ^= k1 >>> r; k1 = Math.imul(k1, m);
-        h1 = Math.imul(h1, m) ^ k1;
+        h1 = Math.imul(h1, m) ^ k1; h1 ^= h2;
         i += 4;
         k2 = key[i+3] << 24 | key[i+2] << 16 | key[i+1] << 8 | key[i];
         k2 = Math.imul(k2, m); k2 ^= k2 >>> r; k2 = Math.imul(k2, m);
-        h2 = Math.imul(h2, m) ^ k2;
+        h2 = Math.imul(h2, m) ^ k2; h2 ^= h1;
     }
   
     if((key.length - chunk) >= 4) {
         k1 = key[i+3] << 24 | key[i+2] << 16 | key[i+1] << 8 | key[i];
         k1 = Math.imul(k1, m); k1 ^= k1 >>> r; k1 = Math.imul(k1, m);
-        h1 = Math.imul(h1, m) ^ k1;
+        h1 = Math.imul(h1, m) ^ k1; h1 ^= h2;
         i += 4;
     }
 
@@ -46,7 +45,7 @@ function MurmurHash2_64B(key, seed1 = 0, seed2 = 0) {
         case 3: h2 ^= key[i+2] << 16;
         case 2: h2 ^= key[i+1] << 8;
         case 1: h2 ^= key[i];
-                h2 = Math.imul(h2, m);
+                h2 = Math.imul(h2, m); h2 ^= h1;
     }
 
     h1 ^= h2 >>> 18; h1 = Math.imul(h1, m);
@@ -54,5 +53,5 @@ function MurmurHash2_64B(key, seed1 = 0, seed2 = 0) {
     h1 ^= h2 >>> 17; h1 = Math.imul(h1, m);
     h2 ^= h1 >>> 19; h2 = Math.imul(h2, m);
 
-    return [h1 >>> 0, h2 >>> 0];
+    return [h1 >>> 0, h2 >>> 0]; // 52-bit output: (h1 & 2097151) * 4294967296 + h2;
 }
