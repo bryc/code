@@ -1,15 +1,20 @@
 /*
-    Jenkins lookup3
+    Jenkins lookup3 (hashlittle2)
     ---------------
-    32-bit Jenkins lookup3 implemented by bryc (github.com/bryc)
+    Jenkins lookup3 hash implemented by bryc (github.com/bryc)
+    Can also output 64-bit hash. Possibly even 96-bit hash.
+    
+    Note from Bob:
+    *pc is better mixed than *pb, so use *pc first.  If you want
+    * a 64-bit value do something like "*pc + (((uint64_t)*pb)<<32)".
 */
 
-function lookup3(k, init = 0) {
+function lookup3(k, init = 0, init2 = 0) {
     function rot(x,r) {return ((x<<r) | (x >>> (32 - r)));}
 
     var len = k.length, a, b, c, o = 0;
     a = b = c = (0xdeadbeef + len + init) >>> 0;
-
+    c += init2;
     while (len > 12) {
         a += k[o]   | k[o+1]<<8 | k[o+2] <<16 | k[o+3] <<24;
         b += k[o+4] | k[o+5]<<8 | k[o+6] <<16 | k[o+7] <<24;
@@ -76,7 +81,7 @@ function lookup3(k, init = 0) {
         a += k[o];
         break;
     case 0:
-        return c;
+        return [b >>> 0, c >>> 0];
     }
 
     c ^= b; c -= rot(b, 14);
@@ -87,5 +92,5 @@ function lookup3(k, init = 0) {
     b ^= a; b -= rot(a, 14);
     c ^= b; c -= rot(b, 24);
 
-    return c >>> 0;
+    return [b >>> 0, c >>> 0];
 }
