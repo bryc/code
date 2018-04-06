@@ -4,6 +4,30 @@ I've ported a bunch of hash functions to JS. This is a showcase of some of the b
 
 Also see: [CRC functions](CRC.md)
 
+
+|       Algorithm      |   Bit_width |      Speed      |                                      Notes                                      |
+|----------------------|---------|-----------------|---------------------------------------------------------------------------------|
+| [MurmurHash1](murmurhash1.js) | 32-bit  | 999,999 ops/sec |                                                                                 |
+| [MurmurHash2_x86_32](murmurhash2.js) | 32-bit  |                 |                                                                                 |
+| MurmurHash2_x86_32_A | 32-bit  |                 | Merkle-Damgard construction                                                     |
+| [MurmurHash2_x86_64](murmurhash2_64b.js) | 64-bit  |                 | Produces two correlated 32-bit hashes. Contains a flaw - see alternate version. |
+| MurmurHash2_x64_64 | 64-bit  |                 | Requires slow 64-bit arithmetic                                                 |
+| [MurmurHash2_160](murmurhash2_160.js) | 160-bit |                 | Unofficial modification using five hash states                                  |
+| [MurmurHash3_x86_32](murmurhash3_x86_32.js) | 32-bit  |                 |                                                                                 |
+| [MurmurHash3_x86_128](murmurhash3_x86_128.js) | 128-bit |                 | Contains a possible flaw - see alternate version.                               |
+| MurmurHash3_x64_128  | 128-bit |                 | Requires slow 64-bit arithmetic                                                 |
+| [xxHash_x86_32](xxhash_32.js) | 32-bit  |                 |                                                                                 |
+| xxHash_x86_128       | 128-bit |                 | Experimental                                                                    |
+| xxHash_x64_64        | 64-bit  |                 | Requires slow 64-bit arithmetic                                                 |
+| [Lookup3_x86_32](lookup3.js) | 32-bit  |                 | "hashlittle"                                                                    |
+| Lookup3_x86_64       | 64-bit  |                 | "hashlittle2"                                                                   |
+| Lookup2_x86_32       | 32-bit  |                 |                                                                                 |
+| Lookup2_x86_96       | 96-bit  |                 | Experimental                                                                    |
+| FNV0_x86_32          | 32-bit  |                 |                                                                                 |
+| FNV1_x86_32          | 32-bit  |                 |                                                                                 |
+| FNV1a_x86_32         | 32-bit  |                 |                                                                                 |
+| FNV1a_Mulvey_x86_32  | 32-bit  |                 |                                                                                 |
+
 ## MurmurHash 1.0
 
 It's pretty fast but might have some flaws (but unless you know what you're doing, you probably can't make a better one from scratch).
