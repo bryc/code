@@ -2,6 +2,11 @@
     MurmurHash2
     ---------------
     32-bit MurmurHash2 implemented by bryc (github.com/bryc)
+
+    There is a (relatively minor) flaw inherent in this function:
+    https://simonhf.wordpress.com/2008/11/01/murmur-hash-very-fast-and-collision-resistant/
+    MurmurHash2A aims to patch this, I believe.
+    More info: https://github.com/aappleby/smhasher/wiki/MurmurHash2Flaw
 */
 
 function MurmurHash2(key, seed = 0) {
