@@ -10,17 +10,17 @@ Also see: [CRC functions](CRC.md)
 | [MurmurHash1](murmurhash1.js) | 32-bit  | 999,999 ops/sec |                                                                                 |
 | [MurmurHash2_x86_32](murmurhash2.js) | 32-bit  |                 |                                                                                 |
 | MurmurHash2_x86_32_A | 32-bit  |                 | Merkle-Damgard construction                                                     |
-| [MurmurHash2_x86_64](murmurhash2_64b.js) | 64-bit  |                 | Produces two correlated 32-bit hashes. Contains a flaw - see alternate version. |
+| [MurmurHash2_x86_64](murmurhash2_64b.js) | 64-bit  |                 | Produces two correlated 32-bit hashes. Contains a flaw - alternate version. |
 | MurmurHash2_x64_64 | 64-bit  |                 | Requires slow 64-bit arithmetic                                                 |
 | [MurmurHash2_160](murmurhash2_160.js) | 160-bit |                 | Unofficial modification using five hash states                                  |
 | [MurmurHash3_x86_32](murmurhash3_x86_32.js) | 32-bit  |                 |                                                                                 |
-| [MurmurHash3_x86_128](murmurhash3_x86_128.js) | 128-bit |                 | Contains a possible flaw - see alternate version.                               |
+| [MurmurHash3_x86_128](murmurhash3_x86_128.js) | 128-bit |                 | Contains a possible flaw - alternate version. |
 | MurmurHash3_x64_128  | 128-bit |                 | Requires slow 64-bit arithmetic                                                 |
 | [xxHash_x86_32](xxhash_32.js) | 32-bit  |                 |                                                                                 |
 | xxHash_x86_128       | 128-bit |                 | Experimental                                                                    |
 | xxHash_x64_64        | 64-bit  |                 | Requires slow 64-bit arithmetic                                                 |
-| [Lookup3_x86](lookup3.js) | 32/64-bit  |                 | Can output 32/64 (officially) or 96 (unofficially) bit hash |
-| [Lookup2_x86](lookup2.js) | 32-bit  |                 | Can also output 32 and 64/96 (unofficially) bit hash  |
+| [Lookup3_x86](lookup3.js) | 32/64-bit  |                 | 32/64-bit. 96 is possible but with worse statistics. |
+| [Lookup2_x86](lookup2.js) | 32-bit  |                 | 32-bit. 64/96 is possible but with worse statistics. |
 | [FNV_x86](FNV.js) | 32-bit  |                 | FNV-0, FNV-1, FNV-1a, FNV-1a_BM |
 
 ## MurmurHash 1.0
