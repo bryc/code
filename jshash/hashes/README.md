@@ -9,7 +9,7 @@ Also see: [CRC functions](CRC.md)
 |----------------------|---------|-----------------|---------------------------------------------------------------------------------|
 | [MurmurHash1](murmurhash1.js) | 32-bit  | 999,999 ops/sec |                                                                                 |
 | [MurmurHash2_x86_32](murmurhash2.js) | 32-bit  |                 |                                                                                 |
-| MurmurHash2_x86_32_A | 32-bit  |                 | Merkle-Damgard construction                                                     |
+| [MurmurHash2_x86_32_A](murmurhash2a.js) | 32-bit  |                 | Fixes a flaw in MurmurHash2. Uses Merkle–Damgård construction. |
 | [MurmurHash2_x86_64](murmurhash2_64b.js) | 64-bit  |                 | Produces two correlated 32-bit hashes. Contains a flaw - alternate version. |
 | MurmurHash2_x64_64 | 64-bit  |                 | Requires slow 64-bit arithmetic                                                 |
 | [MurmurHash2_160](murmurhash2_160.js) | 160-bit |                 | Unofficial modification using five hash states                                  |
