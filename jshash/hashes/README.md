@@ -13,7 +13,7 @@ Also see: [CRC functions](CRC.md)
 | [MurmurHash2_x86_64](murmurhash2_64b.js) | 64-bit  |                 | Produces two correlated 32-bit hashes. Contains a flaw - alternate version. |
 | ~~MurmurHash2_x64_64~~ | 64-bit  |                 | Requires slow 64-bit arithmetic |
 | [MurmurHash2_160](murmurhash2_160.js) | 160-bit |                 | Unofficial modification using five hash states |
-| [MurmurHash3_x86_32](murmurhash3_x86_32.js) | 32-bit  |                 |  |
+| [MurmurHash3_x86_32](murmurhash3.js) | 32-bit  |                 |  |
 | [MurmurHash3_x86_128](murmurhash3_x86_128.js) | 128-bit |                 | Contains a possible flaw - alternate version. |
 | ~~MurmurHash3_x64_128~~  | 128-bit |                 | Requires slow 64-bit arithmetic |
 | [xxHash_x86_32](xxhash_32.js) | 32-bit  |                 |   |

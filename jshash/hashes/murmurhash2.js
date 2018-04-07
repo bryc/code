@@ -5,9 +5,9 @@
 */
 
 function MurmurHash2(key, seed = 0) {
-    var m = 1540483477, h = key.length ^ seed;
+    var k, m = 1540483477, h = key.length ^ seed;
 
-    for(var i = 0, k, b = key.length & -4; i < b; i += 4) {
+    for(var i = 0, b = key.length & -4; i < b; i += 4) {
         k = key[i+3] << 24 | key[i+2] << 16 | key[i+1] << 8 | key[i];
         k = Math.imul(k, m); k ^= k >>> 24;
         h = Math.imul(h, m) ^ Math.imul(k, m);
