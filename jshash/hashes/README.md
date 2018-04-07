@@ -20,7 +20,7 @@ Also see: [CRC functions](CRC.md)
 | xxHash_x86_128       | 128-bit |                 | Experimental                                                                    |
 | xxHash_x64_64        | 64-bit  |                 | Requires slow 64-bit arithmetic                                                 |
 | [Lookup3_x86](lookup3.js) | 32/64-bit  |                 | 32/64-bit. 96 is possible but with worse statistics. |
-| [Lookup2_x86](lookup2.js) | 32-bit  |                 | 32-bit. 64/96 is possible but with worse statistics. |
+| [Lookup2_x86](lookup2.js) | 32-bit  |                 | (_Obsolete_) 32-bit. 64/96 is possible but with worse statistics. |
 | [FNV_x86](FNV.js) | 32-bit  |                 | FNV-0, FNV-1, FNV-1a, FNV-1a_BM |
 
 ## MurmurHash 1.0
