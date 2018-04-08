@@ -23,7 +23,9 @@ function MurmurHash3(key, seed = 0) {
                 h ^= Math.imul(k, p2);
     }
 
-    h ^= key.length; h ^= h >>> 16;
+    h ^= key.length;
+
+    h ^= h >>> 16;
     h = Math.imul(h, 2246822507); h ^= h >>> 13;
     h = Math.imul(h, 3266489909); h ^= h >>> 16;
 
