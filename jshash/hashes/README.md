@@ -9,11 +9,11 @@ Also see: [CRC functions](CRC.md)
 | [MurmurHash1](murmurhash1.js) | 32-bit  | 999,999 ops/sec |  |
 | [MurmurHash2_x86_32](murmurhash2.js) | 32-bit  |                 |  |
 | [MurmurHash2_x86_32_A](murmurhash2a.js) | 32-bit  |                 | Fixes a flaw in MurmurHash2. Uses Merkle–Damgård construction. |
-| [MurmurHash2_x86_64](murmurhash2_64b.js) | 64-bit  |                 | Produces two correlated 32-bit hashes. Contains a flaw - alternate version. |
+| [MurmurHash2_x86_64](murmurhash2_64b.js) | 64-bit  |                 | Produces two correlated 32-bit hashes. Contains a flaw - modified version. |
 | ~~MurmurHash2_x64_64~~ | 64-bit  |                 | Requires slow 64-bit arithmetic |
 | [MurmurHash2_160](murmurhash2_160.js) | 160-bit |                 | Unofficial modification that outputs five 32-bit hash states |
 | [MurmurHash3_x86_32](murmurhash3.js) | 32-bit  |                 |  |
-| [MurmurHash3_x86_128](murmurhash3_x86_128.js) | 128-bit |                 | Contains a possible flaw - alternate version. |
+| [MurmurHash3_x86_128](murmurhash3_128.js) | 128-bit |                 | Contains a possible flaw - modified version. |
 | ~~MurmurHash3_x64_128~~  | 128-bit |                 | Requires slow 64-bit arithmetic |
 | [xxHash_x86_32](xxhash_32.js) | 32-bit  |                 |   |
 | ~~xxHash_x64_64~~ | 64-bit  |                 | Requires slow 64-bit arithmetic |
