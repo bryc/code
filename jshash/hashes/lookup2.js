@@ -2,16 +2,16 @@
     Jenkins lookup2
     ---------------
     Jenkins lookup2 hash implemented by bryc (github.com/bryc)
-    Like lookup3, it is useful for 64-bit and 96-bit hash.
+    Like lookup3, a,b,c can combine to produce 64 or 96-bit hash.
+    However only c as a 32-bit hash is recommended, indicating
+    possible quality (mixed less) issues in the others.
 
     Source: Chapter 4.1 Getting the most from Jenkins
     citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.4.6765
 */
 
 function lookup2(k, init = 0) {
-    var a, b, c, len = k.length, o = 0;
-    a = b = 0x9e3779b9;
-    c = init | 0;
+    var a = 2654435769, b = 2654435769, c = init | 0, len = k.length, o = 0;
 
     while (len >= 12) {
         a += k[o] | k[o+1] << 8 | k[o+2] << 16 | k[o+3] << 24;
