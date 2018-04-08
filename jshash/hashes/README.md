@@ -27,27 +27,27 @@ Also see: [CRC functions](CRC.md)
 ## Emulated 64-bit hash functions
 
 _I will put ports of 64-bit arithmetic hash functions here, but expect them to be extremely slow._
+_If WebAssembly becomes viable that can be useful for 64-bit hash functions._
 
 ****
 
 # Notes/TODO
-1. [CRC32C](http://www.evanjones.ca/crc32c.html) - [faster](https://stackoverflow.com/questions/17645167/implementing-sse-4-2s-crc32c-in-software/17646775) CRC32? 8 bytes at a time
-1. [lookup2.c](http://burtleburtle.net/bob/c/lookup2.c) - I have a JS version but it's slow, would be nice to see if it can be fixed.
-2. [t1ha](https://github.com/leo-yuriev/t1ha) - supposedly super fast, and has 32-bit modes, but seems a bit weird to port.
-3. SpookyHash - 128bit hash. low priority, but already have some JS code to study. Spooky32?
-4. SipHash - 64bit hash, supposedly fast (doesn't seem that way). low priority. Have code to study it. There is a halfsiphash version (32-bit?) - its a MAC algorithm.
-5. SlashHash - 64bit, supposedly fast. low priority, but have code.
-6. [BeagleHash](https://github.com/demerphq/BeagleHash) - 64-bit but has some 32-bit stuff, might have potential.
-7. Johannes Baagøe's Mash function - see what the big deal is.
-8. CityHash32, part of CityHash might be worth seeing. What about FarmHash32? HighwayHash?
-9. SuperFastHash - never messed with it.
-10. [SeaHash](https://github.com/jroivas/seahash) - forgot about this one, got buried.
-11. [FNVPlus](https://github.com/tjwebb/fnv-plus) - enhanced JS version worth looking into. 
+* SuperFastHash - never messed with it.
+* Employ ideas from BulatZZH to improve XXH32.
+* Johannes Baagøe's Mash function - see what the big deal is.
+* [FNVPlus](https://github.com/tjwebb/fnv-plus) - enhanced JS version worth looking into. 
+* [CRC32C](http://www.evanjones.ca/crc32c.html) - [faster](https://stackoverflow.com/questions/17645167/implementing-sse-4-2s-crc32c-in-software/17646775) CRC32? 8 bytes at a time
+* **U64** [t1ha](https://github.com/leo-yuriev/t1ha) - supposedly super fast, but seems most is for 64-bit arch.
+* **U64** [BeagleHash](https://github.com/demerphq/BeagleHash) - 64-bit but has some 32-bit stuff, might have potential.
+* **U64** CityHash, FarmHash, HighwayHash - Google's functions. CityHash32 might be the only viable option.
+* **U64** SipHash - security-focused 64-bit MAC hash. Some say its fast, some say its slow. Only _[halfsiphash.c](https://github.com/veorq/SipHash/blob/master/halfsiphash.c)_ is viable in JS.
+*  **U64** [SeaHash](https://github.com/jroivas/seahash) - forgot about this one - 64-bit arch only.
+* **U64** SlashHash - 64bit, supposedly fast but only 64-bit arch.
+* **U64** SpookyHash - 128bit hash, fast but 64-bit arch only.
 
-# Benchmarks
-
-1. https://jsbench.me/fyjfja4xih/1 - MurmurHash3 benchmarks
-2. https://jsbench.me/2hjfj9oscd/1 - xxHash benchmarks
-3. https://jsbench.me/isjfj2rpkx/1 - comparison of available implementations
-4. https://jsbench.me/tgjfegz4er/1 - the guds
-5. https://jsbench.me/zrjfehfwgu/1 - the not-so-guds
+# Misc benchmarks
+*  https://jsbench.me/fyjfja4xih/1 - MurmurHash3 benchmarks
+*  https://jsbench.me/2hjfj9oscd/1 - xxHash benchmarks
+*  https://jsbench.me/isjfj2rpkx/1 - comparison of available implementations
+*  https://jsbench.me/tgjfegz4er/1 - the guds
+*  https://jsbench.me/zrjfehfwgu/1 - the not-so-guds
