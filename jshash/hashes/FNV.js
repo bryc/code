@@ -7,6 +7,8 @@
     FNV1 - FNV-1, first version
     FNV1a - FNV-1a, revised FNV-1
     FNV1a_BM - FNV-1a, "forced avalanche" modification (Mulvey)
+
+    Note: ' | 0' is a optimization for firefox mostly, doubles performance.
 */
 
 function FNV0(key) {
