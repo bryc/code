@@ -7,22 +7,33 @@ Also see: [CRC functions](CRC.md)
 ## 32-bit
 | Algorithm | Hash size | Speed | Notes |
 | --------- | --------- | ----- | ----- |
-| [FNV](FNV.js) | 32-bit  | | variants: FNV-0, FNV-1, FNV-1a, FNV-1a_BM |
-| [MurmurHash1](murmurhash1.js) | 32-bit | | Original version. |
-| [MurmurHash2](murmurhash2.js) | 32-bit | | aka `MurmurHash2_x86_32` |
-| [MurmurHash2A](murmurhash2a.js) | 32-bit | | Fixes a flaw in MurmurHash2. Uses Merkle–Damgård construction. |
-| [MurmurHash3](murmurhash3.js) | 32-bit | | aka `MurmurHash3_x86_32` |
-| [xxHash](xxhash_32.js) | 32-bit | | |
+| [FNV](FNV.js) | 32-bit  | 3041 | variants: FNV-0, FNV-1, FNV-1a, FNV-1a_BM |
+| [MurmurHash1](murmurhash1.js) | 32-bit | **3331** | Original version. |
+| [MurmurHash2](murmurhash2.js) | 32-bit | 3027 | aka `MurmurHash2_x86_32` |
+| [MurmurHash2A](murmurhash2a.js) | 32-bit | 3053 | Fixes a flaw in MurmurHash2. Uses Merkle–Damgård construction. |
+| [MurmurHash3](murmurhash3.js) | 32-bit | 3090 | aka `MurmurHash3_x86_32` |
+| [xxHash](xxhash_32.js) | 32-bit | 2968 | |
 
 ## 64-bit or higher
 
 | Algorithm | Hash size | Speed | Notes |
 | --------- | --------- | ----- | ----- |
-| [Lookup2_x86](lookup2.js) | 32-bit | | (_Obsolete_) 32-bit. 64/96-bit is _possible_ but with worse statistics. |
-| [Lookup3_x86](lookup3.js) | 32/64-bit | | 32/64-bit. 96 is _possible_ but with worse statistics. |
-| [MurmurHash2_x86_64](murmurhash2_64b.js) | 64-bit | | Produces two _correlated_ 32-bit hashes (has a flaw), see comments. |
-| [MurmurHash3_x86_128](murmurhash3_128.js) | 128-bit | | Modified version. Contains a possible flaw, see comments. |
-| [MurmurHash2_160](murmurhash2_160.js) | 160-bit | | Unofficial modification that outputs five 32-bit hash states. |
+| [Lookup2_x86](lookup2.js) | 32-bit | 2412 | (_Obsolete_) 32-bit. 64/96-bit is _possible_ but with worse statistics. |
+| [Lookup3_x86](lookup3.js) | 32/64-bit | **2553** | 32/64-bit. 96 is _possible_ but with worse statistics. |
+| [MurmurHash2_x86_64](murmurhash2_64b.js) | 64-bit | 2759 | Produces two _correlated_ 32-bit hashes (has a flaw), see comments. |
+| [MurmurHash3_x86_128](murmurhash3_128.js) | 128-bit | **2498** | Modified version. Contains a possible flaw, see comments. |
+| [MurmurHash2_160](murmurhash2_160.js) | 160-bit | 1968 | Unofficial modification that outputs five 32-bit hash states. |
+| CybBeta2 | 64-bit | 2853 | Experimental 64-bit |
+
+## Performance notes
+
+* `MurmurHash3_x86_128` seems really fast considering it outputs 4 hashes, possibly one of the best choices for >32-bit.
+* `MurmurHash1` is fastest 32-bit hash in JS. `MurmurHash3` and `xxHash` are also very good for high quality hash.
+* If `xxHash` can be modified to properly mix v0-v4, this might be an efficient hash >32-bit. 
+* `lookup2` produced 3 hahses but its quality is questionable. `lookup3` is faster and has proper 64-bit hash mode.
+* I cannot recommend `MurmurHash2_x86_64` because of its flaw, and my modification needs to be benchmarked.
+* `MurmurHash2_160` is only one more 32-bit hash larger than `MurmurHash3_x86_128` but is slow. Cannot downscale without possibly hurting quality.
+* `CybBeta2` is my custom 64-bit hash. Not much faster than `MurmurHash2_x86_64` and has untested hash quality.
 
 ## Emulated 64-bit hash functions
 
