@@ -26,8 +26,8 @@ function MurmurHash2(key, seed = 0) {
     l = Math.imul(key.length, m); l ^= l >>> 24;
     h = Math.imul(h, m) ^ Math.imul(l, m);
 
-    h ^= h >>> 13;
-    h = Math.imul(h, m); h ^= h >>> 15;
+    h ^= h >>> 13; h = Math.imul(h, m);
+    h ^= h >>> 15;
 
     return h >>> 0;
 }

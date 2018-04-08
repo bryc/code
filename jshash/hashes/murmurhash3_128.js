@@ -15,9 +15,9 @@
 
 function MurmurHash3_x86_128(key, seed = 0) {
     function fmix32(h) {
+        h ^= h >>> 16; h = Math.imul(h, 2246822507);
+        h ^= h >>> 13; h = Math.imul(h, 3266489909);
         h ^= h >>> 16;
-        h = Math.imul(h, 2246822507); h ^= h >>> 13;
-        h = Math.imul(h, 3266489909); h ^= h >>> 16;
         return h;
     }
     
