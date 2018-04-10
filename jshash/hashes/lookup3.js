@@ -10,24 +10,22 @@
 */
 
 function lookup3(k, init = 0, init2 = 0) {
-    init |= 0; init2 |= 0; // 32-bitify input
     var len = k.length, o = 0,
-        a = 0xdeadbeef + len + init,
-        b = 0xdeadbeef + len + init,
-        c = 0xdeadbeef + len + init + init2;
+        a = 0xdeadbeef + len + init | 0,
+        b = 0xdeadbeef + len + init | 0,
+        c = 0xdeadbeef + len + init + init2 | 0;
   
     while (len > 12) {
-        a += k[o] | k[o+1] << 8 | k[o+2] << 16 | k[o+3] << 24;
-        b += k[o+4] | k[o+5] << 8 | k[o+6] << 16 | k[o+7] << 24;
+        a += k[o]   | k[o+1] << 8 | k[o+2]  << 16 | k[o+3]  << 24;
+        b += k[o+4] | k[o+5] << 8 | k[o+6]  << 16 | k[o+7]  << 24;
         c += k[o+8] | k[o+9] << 8 | k[o+10] << 16 | k[o+11] << 24;
         
-        a -= c; a ^= c<<4 | c>>>28; c += b;
-        b -= a; b ^= a<<6 | a>>>26; a += c;
-        c -= b; c ^= b<<8 | b>>>24; b += a;
-        a -= c; a ^= c<<16 | c>>>16; c += b;
-        b -= a; b ^= a<<19 | a>>>13; a += c;
-        c -= b; c ^= b<<4 | b>>>28; b += a;
-        a |= 0; b |= 0; c |= 0; // |0 = prevent float
+        a -= c; a ^= c<<4  | c>>>28; c = c+b | 0;
+        b -= a; b ^= a<<6  | a>>>26; a = a+c | 0;
+        c -= b; c ^= b<<8  | b>>>24; b = b+a | 0;
+        a -= c; a ^= c<<16 | c>>>16; c = c+b | 0;
+        b -= a; b ^= a<<19 | a>>>13; a = a+c | 0;
+        c -= b; c ^= b<<4  | b>>>28; b = b+a | 0;
 
         len -= 12, o += 12;
     }
@@ -52,7 +50,7 @@ function lookup3(k, init = 0, init2 = 0) {
         a ^= c; a -= c<<11 | c>>>21;
         b ^= a; b -= a<<25 | a>>>7;
         c ^= b; c -= b<<16 | b>>>16;
-        a ^= c; a -= c<<4 | c>>>28;
+        a ^= c; a -= c<<4  | c>>>28;
         b ^= a; b -= a<<14 | a>>>18;
         c ^= b; c -= b<<24 | b>>>8;
     }
