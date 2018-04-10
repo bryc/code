@@ -2,11 +2,10 @@
     Jenkins lookup3 (hashlittle2)
     ---------------
     Jenkins lookup3 hash implemented by bryc (github.com/bryc)
-    Can also output 64-bit hash. Possibly even 96-bit hash.
+    Can also output good quality 64-bit hash using b.
     
-    Note from Bob about using two hash values:
-    *pc is better mixed than *pb, so use *pc first.  If you want
-    * a 64-bit value do something like "*pc + (((uint64_t)*pb)<<32)".
+    c is better mixed than b, which is better mixed than a.
+    thus a+b+c is not a high quality 96-bit hash.
 */
 
 function lookup3(k, init = 0, init2 = 0) {
