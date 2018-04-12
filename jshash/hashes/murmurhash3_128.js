@@ -5,12 +5,10 @@
 
     This function is equivalent to MurmurHash3_x86_128,
     which outputs a 128-bit hash (four 32-bit hashes).
-    However, it seems that the original has a serious flaw.
-    So this version attempts to fix it by ensuring the initial
-    value of h1-h4 is unique by XORing c1-c4 to them.
-    Not sure what went wrong - maybe this was a failed attempt
-    to port MurmurHash3_x64_128 to 32-bit architectures...
-    Oh well, it may be useful.
+    However, it seems that the original C code has a minor issue.
+    This version works around this by ensuring the initial
+    value of h1-h4 are unique by XORing c1-c4 to them.
+    If you need compatibility with the original, remove the XOR masks.
 */
 
 function MurmurHash3_x86_128(key, seed = 0) {
@@ -23,7 +21,7 @@ function MurmurHash3_x86_128(key, seed = 0) {
     
     var k, p1 = 597399067, p2 = 2869860233, p3 = 951274213, p4 = 2716044179;
 
-    var h1 = seed ^ p1, // Remove these XORs for function's original output
+    var h1 = seed ^ p1,
         h2 = seed ^ p2,
         h3 = seed ^ p3,
         h4 = seed ^ p4;
