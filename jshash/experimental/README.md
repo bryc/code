@@ -113,16 +113,16 @@ function cyb_beta1(key, seed = 0) {
     for (var k, i = 0, chunk = -4 & key.length; i < chunk; i += 4) {
         k = key[i+3] <<24 | key[i+2] <<16 | key[i+1] <<8 | key[i];
         k ^= k >>> 24;
-        h1 = Math.imul(h1, m1) ^ k, h2 = Math.imul(h2, m3) ^ k;
+        h1 = h2 ^ Math.imul(h1, m1) ^ k, h2 = h1 ^ Math.imul(h2, m3) ^ k;
     }
     switch (3 & key.length) {
         case 3: h1 ^= key[i+2] << 16, h2 ^= key[i+2] << 16;
         case 2: h1 ^= key[i+1] << 8, h2 ^= key[i+1] << 8;
         case 1: h1 ^= key[i], h2 ^= key[i];
-                h1 = Math.imul(h1, m2), h2 = Math.imul(h2, m4);
+                h1 = h2 ^ Math.imul(h1, m2), h2 = h1 ^ Math.imul(h2, m4);
     }
-    h1 ^= h1>>>13, h1 = Math.imul(h1, m2), h1 ^= h1>>>15; h1>>>=0;
-    h2 ^= h2>>>13, h2 = Math.imul(h2, m3), h2 ^= h2>>>15; h2>>>=0;
+    h1 ^= h1 >>> 18, h1 = Math.imul(h1, m2), h1 ^= h1 >>> 22; h1 >>>= 0;
+    h2 ^= h2 >>> 15, h2 = Math.imul(h2, m3), h2 ^= h2 >>> 13; h2 >>>= 0;
     return [h1, h2]; // (h2 & 2097151) * 4294967296 + h1 // for 52-bit Number output
 }
 ```
@@ -136,6 +136,38 @@ This essentially means that `h2` and `h1` are independent and do not share colli
 <code><u>0c905c</u>|<b>15152ff2</b> <u>0c9ca6</u>|<b>15152ff2</b></code>
 <code><u>11990c</u>|<b>2864e779</b> <u>13af97</u>|<b>2864e779</b></code>
 
+# Cyb Beta-2 (WIP)
+
+Using ideas from MurmurHash_x86_128, this reads 8 bytes at a time, computing two hashes based on separate data streams.
+It however mixes them well enough that either hash is affected by any differences in the alternate stream.
+It is quite fast but not much faster than MurmurHash_x86_128, and considering it hasn't been tested using SMHasher, it's quality may not be great.
+
+```js
+function cyb_beta2(key, seed = 0) {
+    var p1 = 597399067, p2 = 374761393, h1 = 0xcafebabe ^ seed, h2 = 0xdeadbeef ^ seed;
+    for(var i = 0, b = key.length & -8; i < b;) {
+        h1 ^= key[i+3]<<24 | key[i+2]<<16 | key[i+1]<<8 | key[i]; i += 4;
+        h2 ^= key[i+3]<<24 | key[i+2]<<16 | key[i+1]<<8 | key[i]; i += 4;
+        h1 = Math.imul(h1, p1) ^ h2; h1 ^= h1 >>> 24;
+        h2 = Math.imul(h2, p2) ^ h1; h2 ^= h2 >>> 24;
+    }
+    switch(key.length & 7) {
+        case 7: h2 ^= key[i+6] << 16;
+        case 6: h2 ^= key[i+5] << 8;
+        case 5: h2 ^= key[i+4];
+        h2 = Math.imul(h2, p2) ^ h1; h2 ^= h2 >>> 24;
+        case 4: h1 ^= key[i+3] << 24;
+        case 3: h1 ^= key[i+2] << 16;
+        case 2: h1 ^= key[i+1] << 8;
+        case 1: h1 ^= key[i];
+        h1 = Math.imul(h1, p1) ^ h2; h1 ^= h1 >>> 24;
+    }
+    h1 ^= key.length; h2 ^= key.length;
+    h1 = Math.imul(h1, p1) ^ h2; h1 ^= h1 >>> 18; h1 >>>= 0;
+    h2 = Math.imul(h2, p2) ^ h1; h2 ^= h2 >>> 22; h2 >>>= 0;
+    return [h1, h2]; // 52bit: (h1 & 2097151) * 4294967296 + h2
+}
+```
 ****
 
 # Cyb Kappa (Deprecated)
