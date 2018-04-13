@@ -14,6 +14,7 @@ Also see: [CRC functions](CRC.md)
 | [MurmurHash3](murmurhash3.js) | 32-bit | 3090/2515 | aka `MurmurHash3_x86_32` |
 | [xxHash](xxhash_32.js) | 32-bit | 2968/2492 | |
 | CRC-32 | 32-bit | 147/575 | For speed reference |
+| SuperFastHash | 32-bit | -/- | |
 
 ## 64-bit or higher
 
@@ -51,8 +52,6 @@ _If WebAssembly becomes viable that can be useful for 64-bit hash functions._
 ****
 
 # Notes/TODO
-* SuperFastHash - never messed with it.
-* Employ ideas from BulatZZH to improve XXH32.
 * Johannes Baagøe's Mash function - see what the big deal is.
 * [FNVPlus](https://github.com/tjwebb/fnv-plus) - enhanced JS version worth looking into. 
 * [CRC32C](http://www.evanjones.ca/crc32c.html) - [faster](https://stackoverflow.com/questions/17645167/implementing-sse-4-2s-crc32c-in-software/17646775) CRC32? 8 bytes at a time
