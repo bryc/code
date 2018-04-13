@@ -130,10 +130,10 @@ function cyb_beta1(key, seed = 0) {
 A quick experiment of finding collisions in 32-bit output shows that a full 52-bit digest would be unaffected:
 This essentially means that `h2` and `h1` are independent and do not share collision occurrences.
 
-<code><u>19acdb</u>|<b>e5b96b93</b> <u>165e02</u>|<b>e5b96b93</b></code>
-<code><u>02d422</u>|<b>ae1750fa</b> <u>1d5bf3</u>|<b>ae1750fa</b></code>
-<code><u>163886</u>|<b>150b0b42</b> <u>003ea3</u>|<b>150b0b42</b></code>
-<code><u>0c905c</u>|<b>15152ff2</b> <u>0c9ca6</u>|<b>15152ff2</b></code>
+<code><u>19acdb</u>|<b>e5b96b93</b> <u>165e02</u>|<b>e5b96b93</b></code><br>
+<code><u>02d422</u>|<b>ae1750fa</b> <u>1d5bf3</u>|<b>ae1750fa</b></code><br>
+<code><u>163886</u>|<b>150b0b42</b> <u>003ea3</u>|<b>150b0b42</b></code><br>
+<code><u>0c905c</u>|<b>15152ff2</b> <u>0c9ca6</u>|<b>15152ff2</b></code><br>
 <code><u>11990c</u>|<b>2864e779</b> <u>13af97</u>|<b>2864e779</b></code>
 
 # Cyb Beta-2 (WIP)
