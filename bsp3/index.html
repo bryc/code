@@ -1,0 +1,184 @@
+<div class=slider>
+    <span class=lab>BPM</span>
+    <input id=bpm type=number min=10 max=700 value=112>
+</div>
+<div class=slider>
+    <span class=lab>Steps/beat</span>
+    <input id=steps type=range min=2 max=8 value=4><span class=val>4</span>
+</div>
+<div class=slider>
+    <span class=lab>Beats/bar</span>
+    <input id=beats type=range min=2 max=8 value=4><span class=val>4</span>
+</div>
+<div class=slider>
+    <span class=lab>Bars</span>
+    <input id=bars type=range min=1 max=32 value=4><span class=val>4</span>
+</div>
+<br>
+<div class=slider>
+    <span class=lab>Channel</span>
+    <input id=chan type=number min=0 max=200 value=0>
+</div>
+<div class=slider>
+    <span class=lab>Octave</span>
+    <input id=octave type=range min=1 max=8 value=5><span class=val>5</span>
+</div>
+<br>
+<div class=slider>
+    <span class=lab>Pattern</span>
+    <input id=pat type=number min=0 max=200 value=0>
+</div>
+<div class=slider>
+    <span class=lab>Sequence</span>
+    <button>-</button><button>+</button>
+    <table style='display:inline'><tr><td>0</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr></table> 
+</div>
+<div class=flox>
+    <div class=panel>(channel/cell/pattern options here)</div>
+    <div class=sequence><table class=edit></table></div>
+</div>
+
+<script>
+var keymap = {
+     90: 48, // C-4
+     83: 49, // C#-4
+     88: 50, // D-4
+     68: 51, // D#-4
+     67: 52, // E-4
+     86: 53, // F-4
+     71: 54, // F#-4
+     66: 55, // G-4
+     72: 56, // G#-4
+     78: 57, // A-4
+     74: 58, // A#-4
+     77: 59, // B-4
+    188: 60, // ---- C-5 dupe
+    190: 62, // ---- D-5 dupe
+    191: 64, // ---- E-5 dupe
+     81: 60, // C-5
+     50: 61, // C#-5
+     87: 62, // D-5
+     51: 63, // D#-5
+     69: 64, // E-5
+     82: 65, // F-5
+     53: 66, // F#-5
+     84: 67, // G-5
+     54: 68, // G#-5
+     89: 69, // A-5
+     55: 70, // A#-5
+     85: 71, // B-5
+     73: 72, // C-6
+     57: 73, // C#-6
+     79: 74, // D-6
+     48: 75, // D#-6
+     80: 76, // E-6
+    219: 77, // F-6
+    221: 79, // F#6 or G-6????
+};
+
+window.onkeydown = function(e) {
+    if(current && keymap[e.keyCode]) {
+        var note = current.patIdx;
+        patData[note] = []
+        if(patData[note]) patData[note][0] = keymap[e.keyCode];
+        else patData[note] = [keymap[e.keyCode]];
+        current.innerHTML = freq[keymap[e.keyCode]][1].toUpperCase();
+    }
+
+};
+
+var frq0 = function(){for(var t={},o=-57,a="c-,c#,d-,d#,e-,f-,f#,g-,g#,a-,a#,b-".split(","),r=0,e=0;63>o;o++){var c=440*Math.pow(Math.pow(2,1/12),o);t[a[r++]+e]=c,12==r&&(e++,r=0)}return t}()
+var frq1 = Object.keys(frq0);
+//console.log(frq1.length);
+for(var freq=[],i=0;i<frq1.length;i++) {
+    freq[i]=[frq0[frq1[i]],frq1[i]];
+}
+
+
+
+function replace(target, replacement) {
+    while(target.firstChild) target.removeChild(target.firstChild);
+    target.appendChild(replacement);
+}
+
+function elem(options) {
+    var el = document.createDocumentFragment();
+    var tag = options[0];
+    var prop = options[1];
+
+    if(typeof tag === "string") {
+        el = document.createElement(tag);
+    }
+
+    if(typeof prop === "object") {
+        for (var item in prop) {
+            el[item] = prop[item];
+        }
+    } else if(prop) {
+        el.innerHTML = prop;
+    }
+
+    for(var i = 1; i < arguments.length; i++) {
+        if(arguments[i].nodeType > 0) {
+            el.appendChild(arguments[i]);
+        }
+    }
+
+    return el;
+}
+
+
+var song = {};
+var current, previous;
+var inputs = document.querySelectorAll("input");
+   var patData = [];
+
+for(var i = 0; i < inputs.length; i++) {
+    var el = inputs[i];
+    el.oninput = function() {
+        if(this.type==="range") {
+            this.parentNode.querySelector(".val").innerHTML = this.value;
+        }
+        buildEditTable();
+    }
+}
+
+
+function buildEditTable() {
+    var steps = Number(document.getElementById('steps').value);
+    var beats = Number(document.getElementById('beats').value);
+    var bars = Number(document.getElementById('bars').value);
+    var bpm   = Number(document.getElementById('bpm').value);
+
+ 
+    var out = elem([]);
+
+    for(var i0=0,i = 0; i < bars; i++) {
+
+        
+        var tr = elem(["tr"]);
+        var total = steps*beats;
+        for(var j1=0,j0=0,j = 0; j < total; j++) {
+            var td = elem(["td"]);
+            td.style.background = j1 ? '#DDD':'#EEE';
+            if(++j0 === steps && j < total-1) {j1^=1;j0=0;td.style.borderRight="2px solid #888"}
+            td.innerHTML = "";
+            td.patIdx = i0++;
+            td.onclick = function() {
+                if(current) prev = current, prev.style.outline="";
+                current = this;
+                current.style.outline="2px solid #0070AF";
+                //console.dir(this)
+                //this.innerHTML = this.patIdx;
+            }
+            tr.appendChild(td);
+        }
+        out.appendChild(tr);
+    }
+    patData = new Array(i0-1);
+    console.log(patData)
+    replace(document.querySelector("table.edit"), out);
+}
+
+buildEditTable();
+</script>
