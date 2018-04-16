@@ -14,7 +14,7 @@ Also see: [CRC functions](CRC.md)
 | [MurmurHash3](murmurhash3.js) | 32-bit | 3090/2515 | aka `MurmurHash3_x86_32` |
 | [xxHash](xxhash_32.js) | 32-bit | 2968/2492 | |
 | CRC-32 | 32-bit | 147/575 | For speed reference |
-| SuperFastHash | 32-bit | -/- | |
+| [SuperFastHash](superfasthash.js) | 32-bit | -/- | Higher collision rates in some cases: 90 of 131072<br> (vs. Murmur3=0, Lookup2=2, Lookup3=3, xxHash=4) |
 
 ## 64-bit or higher
 
