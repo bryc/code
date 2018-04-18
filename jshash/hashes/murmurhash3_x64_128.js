@@ -3,6 +3,7 @@
     ---------------
     128-bit MurmurHash3 (64-bit version) implemented by bryc (github.com/bryc)
 
+    WIP. This is very slow due to the 64-bit operations involved.
 */
 
 function MurmurHash3_x64_128(key, seed = 0) {
