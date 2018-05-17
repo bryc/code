@@ -107,7 +107,7 @@ int main() {
 
 ### A clever optimization for verifying checksums.
 
-Someone smart engineers figured out that calculating a checksum, then comparing for equality was a bit inefficient and they could do better. Instead of comparing two values, they figured out a way to force a the result to zero if it is valid, and anything non-zero would be invalid.
+Some smart engineers figured out that calculating a checksum, then comparing for equality was a bit inefficient and they could do better. Instead of comparing two values, they figured out a way to force a the result to zero if it is valid, and anything non-zero would be invalid.
 
     Step 1. Calculate 8-bit sum: 72 + 101 + 108 + 108 + 111 + 32 + 87 + 111 + 114 + 108 + 100 + 33 = 0x3D
     Step 2. XOR it with 0xFF (flip every bit) = 0xC2
