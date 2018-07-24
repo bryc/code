@@ -37,7 +37,17 @@ function pixicon(t, yy, r) {
     c.clearRect(0, 0, t.width, t.height);
     // Set fill color for pixels.
     var color1 = i(rng(), rng(), rng(), rng()>=.9 ? 1:0);
-    var color2 = i(rng(), rng(), rng(), rng()>=.8 ? 2:0);
+    var color3 = i(rng(), rng(), rng(), rng()>=.8 ? 2:0);
+
+    function modHSL(str){
+    var arr = str.replace(/[^\d,.%]/g, '').split(',').map(x => Number.parseFloat(x, 10));
+    return `hsl(${arr[0]-25},${arr[1]-10}%,${arr[2]-7}%)`;
+    }
+
+    var color2 = modHSL(color1);
+    var color4 = modHSL(color3);
+
+
     c.fillStyle = color1;
 
     // Rotate canvas 90 degrees at random.
@@ -47,7 +57,7 @@ function pixicon(t, yy, r) {
     var r = rng(), u = 0|(2*r*l+8*r+l)*.125;
     // Populate array with an amount of pixels (within threshold).
     for(var s = 0; s < u; s++)
-        a[s] = 1 + rng()*5|0;
+        a[s] = 1 + rng()*10|0;
 
     // Shuffle pixel array (Fisher–Yates).
     // !!! NOTE: |0 is required to prevent an infinite loop in odd sizes. !!!
@@ -84,7 +94,7 @@ function pixicon(t, yy, r) {
         //console.log(d)
         // Change color at halfway point.
         // NOTE: |0 is required for odd size multiples.
-        (s === (0|l/2)) && ( c.fillStyle = color2,boop=true,Q+=q/2,y=-1),
+        (s === (0|l/2)) && ( boop=true,Q+=q/2,y=-1),
         // Increment y axis.
         (s && !d) && y++;
         // Fill a square (pixel) on the canvas (x, y, width, height).
@@ -93,27 +103,52 @@ function pixicon(t, yy, r) {
             c.beginPath();
             switch(a[s]) {
                 case 1:
+                    c.fillStyle = color1;
                     c.fillRect(Q+o*d, o*y, o, o)
                     break;
                 case 2:
+                    c.fillStyle = color2;
                     c.moveTo(Q+o*d, o*y);
                     c.lineTo(Q+o*d+o, o*y);
                     c.lineTo(Q+o*d+o, o*y+o);
                     break;
                 case 3:
+                    c.fillStyle = color2;
                     c.moveTo(Q+o*d, o*y);
                     c.lineTo(Q+o*d, o*y+o);
                     c.lineTo(Q+o*d+o, o*y+o);
                     break;
                 case 4:
+                    c.fillStyle = color2;
                     c.moveTo(Q+o*d+o, o*y);
                     c.lineTo(Q+o*d, o*y+o);
                     c.lineTo(Q+o*d+o, o*y+o);
                     break;
                 case 5:
+                    c.fillStyle = color2;
                     c.moveTo(Q+o*d+o, o*y);
                     c.lineTo(Q+o*d, o*y);
                     c.lineTo(Q+o*d, o*y+o);
+                    break;
+                case 6:
+                    c.fillStyle = color1;
+                    c.fillRect(Q+o*d, o*y, o, o)
+                    break;
+                case 7:
+                    c.fillStyle = color1;
+                    c.fillRect(Q+o*d, o*y, o, o)
+                    break;
+                case 8:
+                    c.fillStyle = color1;
+                    c.fillRect(Q+o*d, o*y, o, o)
+                    break;
+                case 9:
+                    c.fillStyle = color1;
+                    c.fillRect(Q+o*d, o*y, o, o)
+                    break;
+                case 10:
+                    c.fillStyle = color1;
+                    c.fillRect(Q+o*d, o*y, o, o)
                     break;
             }
             //rng() > .5 ?  : c.arc(o*d+(o/2), o*y+(o/2), o/2, o/2, 5*o*Math.PI);
@@ -123,54 +158,104 @@ function pixicon(t, yy, r) {
             if(rotmode) {
                 switch(a[s]) {
                     case 1:
+                        c.fillStyle = color3;
                         c.fillRect(Q+o*d, o*y, o, o)
                         break;
                     case 5: //3
+                        c.fillStyle = color4;
                         c.moveTo(Q+o*d, o*y);
                         c.lineTo(Q+o*d+o, o*y);
                         c.lineTo(Q+o*d+o, o*y+o);
                         break;
                     case 4: // 2
+                        c.fillStyle = color4;
                         c.moveTo(Q+o*d, o*y);
                         c.lineTo(Q+o*d, o*y+o);
                         c.lineTo(Q+o*d+o, o*y+o);
                         break;
                     case 3:
+                        c.fillStyle = color4;
                         c.moveTo(Q+o*d+o, o*y);
                         c.lineTo(Q+o*d, o*y+o);
                         c.lineTo(Q+o*d+o, o*y+o);
                         break;
                     case 2:
+                        c.fillStyle = color4;
                         c.moveTo(Q+o*d+o, o*y);
                         c.lineTo(Q+o*d, o*y);
                         c.lineTo(Q+o*d, o*y+o);
                         break;
+                case 6:
+                    c.fillStyle = color3;
+                    c.fillRect(Q+o*d, o*y, o, o)
+                    break;
+                case 7:
+                    c.fillStyle = color3;
+                    c.fillRect(Q+o*d, o*y, o, o)
+                    break;
+                case 8:
+                    c.fillStyle = color3;
+                    c.fillRect(Q+o*d, o*y, o, o)
+                    break;
+                case 9:
+                    c.fillStyle = color3;
+                    c.fillRect(Q+o*d, o*y, o, o)
+                    break;
+                case 10:
+                    c.fillStyle = color3;
+                    c.fillRect(Q+o*d, o*y, o, o)
+                    break;
                 }
             } else {
                 switch(a[s]) {
                     case 1:
+                        c.fillStyle = color3;
                         c.fillRect(Q+o*d, o*y, o, o)
                         break;
                     case 3: //3
+                        c.fillStyle = color4;
                         c.moveTo(Q+o*d, o*y);
                         c.lineTo(Q+o*d+o, o*y);
                         c.lineTo(Q+o*d+o, o*y+o);
                         break;
                     case 2: // 2
+                        c.fillStyle = color4;
                         c.moveTo(Q+o*d, o*y);
                         c.lineTo(Q+o*d, o*y+o);
                         c.lineTo(Q+o*d+o, o*y+o);
                         break;
                     case 5:
+                        c.fillStyle = color4;
                         c.moveTo(Q+o*d+o, o*y);
                         c.lineTo(Q+o*d, o*y+o);
                         c.lineTo(Q+o*d+o, o*y+o);
                         break;
                     case 4:
+                        c.fillStyle = color4;
                         c.moveTo(Q+o*d+o, o*y);
                         c.lineTo(Q+o*d, o*y);
                         c.lineTo(Q+o*d, o*y+o);
                         break;
+                case 6:
+                    c.fillStyle = color3;
+                    c.fillRect(Q+o*d, o*y, o, o)
+                    break;
+                case 7:
+                    c.fillStyle = color3;
+                    c.fillRect(Q+o*d, o*y, o, o)
+                    break;
+                case 8:
+                    c.fillStyle = color3;
+                    c.fillRect(Q+o*d, o*y, o, o)
+                    break;
+                case 9:
+                    c.fillStyle = color3;
+                    c.fillRect(Q+o*d, o*y, o, o)
+                    break;
+                case 10:
+                    c.fillStyle = color3;
+                    c.fillRect(Q+o*d, o*y, o, o)
+                    break;
                 }
             }
 
