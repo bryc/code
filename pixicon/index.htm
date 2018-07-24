@@ -63,15 +63,15 @@ var cyrb32 = function(data) {
 };
 
 function more() {
-    for(var i=0;i<cnt;i++) {pixicon(cnv[i]);}
+    for(var i=0;i<cnt;i++) {pixicon(cnv[i],5);}
 }
 
-pixicon(document.querySelector("canvas#q"));
+pixicon(document.querySelector("canvas#q"),32);
 document.querySelector("input").oninput = function() {
-    pixicon(document.querySelector("canvas#q"), cyrb32(arst(this.value)));
+    pixicon(document.querySelector("canvas#q"), 32, cyrb32(arst(this.value)));
 };
 
-for(var cnt = 72, cnv = [], i = 0; i < cnt; i++) {
+for(var cnt = 60, cnv = [], i = 0; i < cnt; i++) {
     var c = document.createElement("canvas");
     cnv.push(c);
     document.querySelector("div#o").appendChild(c);

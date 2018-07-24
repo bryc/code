@@ -1,4 +1,4 @@
-function pixicon(t, r) {
+function pixicon(t, yy, r) {
     // HSL color generator.
     function i(t, r, e, i=0) {
         var set = [
@@ -15,8 +15,8 @@ function pixicon(t, r) {
         return function() {return (seed = lcg(seed)) / 2147483648}
     }
 
-    var n   = 16,
-        q   = n*2,
+    var n   = 8,
+        q   = n*yy,
         l   = n*n,
         a   = [],
         rng = LCG(r),
@@ -47,7 +47,7 @@ function pixicon(t, r) {
     var r = rng(), u = 0|(2*r*l+8*r+l)*.125;
     // Populate array with an amount of pixels (within threshold).
     for(var s = 0; s < u; s++)
-        a[s] = 1;
+        a[s] = 1 + rng()*5|0;
 
     // Shuffle pixel array (Fisher–Yates).
     // !!! NOTE: |0 is required to prevent an infinite loop in odd sizes. !!!
@@ -55,15 +55,130 @@ function pixicon(t, r) {
         v = 0|rng() * s--,
         [a[s], a[v]] = [a[v], a[s]];
 
-    // Copy pixel array, then reverse & append (for symmetry).
-    a = a.concat(a.slice().reverse());
+    // Determine pixel roation mode
+    var rotmode = rng() > .5;
 
-    for(var o = t.width/n, d=y=s= 0; s < l; s++, d = s%n)
+    // Copy pixel array, then reverse & append (for symmetry).
+    if(rotmode) {
+        var data = a.slice();
+    for(var i = 0; i < data.length; i += 4) {
+        data[ i + 0 ] = data[ i + 0 ] ^  data[ i + 3 ]
+        data[ i + 3 ] = data[ i + 0 ] ^  data[ i + 3 ]
+        data[ i + 0 ] = data[ i + 0 ] ^  data[ i + 3 ]
+
+        data[ i + 1 ] = data[ i + 1 ] ^  data[ i + 2 ]
+        data[ i + 2 ] = data[ i + 1 ] ^  data[ i + 2 ]
+        data[ i + 1 ] = data[ i + 1 ] ^  data[ i + 2 ]
+    }
+
+        a = a.concat(data); 
+    } else {
+        a = a.concat(a.slice().reverse());
+    }
+
+
+
+
+    var boop = false, Q=0;
+    for(var o = t.width/n, d=y=s= 0; s < l; s++, d = (s%(n/2))) {
+        //console.log(d)
         // Change color at halfway point.
         // NOTE: |0 is required for odd size multiples.
-        (s === (0|l/2)) && ( c.fillStyle = color2),
+        (s === (0|l/2)) && ( c.fillStyle = color2,boop=true,Q+=q/2,y=-1),
         // Increment y axis.
-        (s && !d) && y++,
+        (s && !d) && y++;
         // Fill a square (pixel) on the canvas (x, y, width, height).
-        (a[s]) && c.fillRect(o*d, o*y, o, o)
+        if(a[s]) {
+            if(boop) {
+            c.beginPath();
+            switch(a[s]) {
+                case 1:
+                    c.fillRect(Q+o*d, o*y, o, o)
+                    break;
+                case 2:
+                    c.moveTo(Q+o*d, o*y);
+                    c.lineTo(Q+o*d+o, o*y);
+                    c.lineTo(Q+o*d+o, o*y+o);
+                    break;
+                case 3:
+                    c.moveTo(Q+o*d, o*y);
+                    c.lineTo(Q+o*d, o*y+o);
+                    c.lineTo(Q+o*d+o, o*y+o);
+                    break;
+                case 4:
+                    c.moveTo(Q+o*d+o, o*y);
+                    c.lineTo(Q+o*d, o*y+o);
+                    c.lineTo(Q+o*d+o, o*y+o);
+                    break;
+                case 5:
+                    c.moveTo(Q+o*d+o, o*y);
+                    c.lineTo(Q+o*d, o*y);
+                    c.lineTo(Q+o*d, o*y+o);
+                    break;
+            }
+            //rng() > .5 ?  : c.arc(o*d+(o/2), o*y+(o/2), o/2, o/2, 5*o*Math.PI);
+            c.fill();
+        } else {
+            c.beginPath();
+            if(rotmode) {
+                switch(a[s]) {
+                    case 1:
+                        c.fillRect(Q+o*d, o*y, o, o)
+                        break;
+                    case 5: //3
+                        c.moveTo(Q+o*d, o*y);
+                        c.lineTo(Q+o*d+o, o*y);
+                        c.lineTo(Q+o*d+o, o*y+o);
+                        break;
+                    case 4: // 2
+                        c.moveTo(Q+o*d, o*y);
+                        c.lineTo(Q+o*d, o*y+o);
+                        c.lineTo(Q+o*d+o, o*y+o);
+                        break;
+                    case 3:
+                        c.moveTo(Q+o*d+o, o*y);
+                        c.lineTo(Q+o*d, o*y+o);
+                        c.lineTo(Q+o*d+o, o*y+o);
+                        break;
+                    case 2:
+                        c.moveTo(Q+o*d+o, o*y);
+                        c.lineTo(Q+o*d, o*y);
+                        c.lineTo(Q+o*d, o*y+o);
+                        break;
+                }
+            } else {
+                switch(a[s]) {
+                    case 1:
+                        c.fillRect(Q+o*d, o*y, o, o)
+                        break;
+                    case 3: //3
+                        c.moveTo(Q+o*d, o*y);
+                        c.lineTo(Q+o*d+o, o*y);
+                        c.lineTo(Q+o*d+o, o*y+o);
+                        break;
+                    case 2: // 2
+                        c.moveTo(Q+o*d, o*y);
+                        c.lineTo(Q+o*d, o*y+o);
+                        c.lineTo(Q+o*d+o, o*y+o);
+                        break;
+                    case 5:
+                        c.moveTo(Q+o*d+o, o*y);
+                        c.lineTo(Q+o*d, o*y+o);
+                        c.lineTo(Q+o*d+o, o*y+o);
+                        break;
+                    case 4:
+                        c.moveTo(Q+o*d+o, o*y);
+                        c.lineTo(Q+o*d, o*y);
+                        c.lineTo(Q+o*d, o*y+o);
+                        break;
+                }
+            }
+
+            //rng() > .5 ?  : c.arc(o*d+(o/2), o*y+(o/2), o/2, o/2, 5*o*Math.PI);
+            c.fill();
+        }
+
+
+        }
+    }
 }
