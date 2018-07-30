@@ -1,27 +1,30 @@
-<script src=bsp.js></script>
-<script src=song.js></script>
-<script>
-    BSP.worker = (function() {
-        var body = function() {
-            function tic(n,t){function i(){n(),u||setTimeout(i,t)}var u=0;return i(),function(){u=1}}
-            self.onmessage = function(e) {tic(function(){self.postMessage(0)}, 5);};
-    };
-        var blob = new Blob([body.toString().replace(/(^.*?\{|\}$)/g,"")],{type:"text/javascript"});
-        return new Worker(URL.createObjectURL(blob));
-    }());
+<link href="style.css" rel="stylesheet">
 
-    BSP.worker.onmessage = function(e) {
-        // if running out of time, schedule the next loop of the song
-        if(BSP.ctx.currentTime >= BSP.timer-(BSP.speed*BSP.sub)) {
-            BSP.play();  
-        }
-    };
+<fieldset><legend>Global</legend>
+    <button>Export Song</button> Title: <input placeholder=N/A size=19> Artist: <input placeholder=N/A size=15>
+    <hr>
+    BPM: <input id=BPM type=number min=10 max=700 value=112 style='width:3.1em'>
+    Steps/beat: <input id=SpB type=number min=2 max=8 value=4 style='width:2.1em'>
+    Beats/bar: <input id=BpB type=number min=2 max=8 value=4 style='width:2.1em'>
+    Bars/pattern: <input id=BpP type=number min=1 max=32 value=4 style='width:3.1em'><hr>
+    <div seq>
+        Oct: <input id=Oct type=number min=-4 max=4 value=0 style='width:2.4em'>
 
-    window.addEventListener("load", function() {
-        BSP.speed   = 60 / BSP.SONG.bpm / (BSP.SONG.divide || 4);
-        BSP.sub     = BSP.SONG.seq[0].length;
-        BSP.timer   = 0;
-        BSP.play();
-        BSP.worker.postMessage(0);
-    });
-</script>
+
+        Sequence: <input id=Seq type=number min=0 max=999 value=0 style='width:3.1em'>
+
+        <button id=SetSeq>S</button> <span id=seqDisp>-</span>
+    </div>
+</fieldset>
+
+<fieldset><legend>Patch: <input id=Pat type=number min=0 max=999 value=0 style='width:3.1em'></legend>
+[Insert Synth editor here]
+</fieldset>
+
+
+<fieldset><legend>Pattern: <input id=Pat type=number min=0 max=999 value=0 style='width:3.1em'></legend>
+<table class=edit></table>
+</fieldset>
+
+
+<script src=app.js></script>
