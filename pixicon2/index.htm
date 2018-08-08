@@ -1,0 +1,124 @@
+<script src=pixicon.js></script>
+<style>
+* {font: 14px Segoe UI,Trebuchet MS,Tahoma,sans-serif}
+body {background:#36393E;text-align:center;padding-top:64px}
+div#p {width: 552px;margin-right:3px}
+div#p2 {width: 277px}
+div#u, div#uu {
+    margin:0px;
+    box-shadow: 2px 2px 20px #232427;
+    border-radius: 4px;
+    padding: 8px;
+    display: inline-flex;
+    background: #5B616A;
+}
+div#u2{
+    margin:0px;
+    box-shadow: 2px 2px 20px #232427;
+    border-radius: 0 0 4px 4px;
+    padding: 16px;
+    background: #FBF5F5;
+    width: 552px;
+    margin:auto;
+}
+input,button {
+    text-shadow: 0.6px 0.6px 0px #FFF;
+    border-radius: 2px;
+    margin: 3px;
+    padding: 2px;
+    outline: none;
+    width: 547px;
+    color: #555;
+    text-align: center;
+    border: none;
+    background: #F2EDED;
+    margin-top: 4px;
+    height: 32px;
+    box-shadow: 1px 1px 3px #232427;
+}
+
+input {width:273px}
+input:hover,button:hover {background:#D0D2D7}
+button:active,input:focus{background:#C7C9CF;}
+button:active{cursor:pointer;}
+canvas {
+    border-radius: 2px;box-shadow: 1px 1px 3px #232427;
+    background: #FBF5F5;
+    margin: 3px;
+    padding: 3px;
+    border: 1px solid #EAEAEA;
+    transition: opacity .25s ease-in-out;
+
+}
+
+* {transition: opacity .25s ease-in-out;}
+canvas#q{padding:32.2px 39px;width:192px; height:192px;} /* multiples of 8 only! */
+.info b{font:bold 32px consolas;margin-bottom:4px;}
+.info {text-align:left;}
+</style>
+<div>
+<div id=u>
+    <div id=p><div id=o></div><button>Generate more</button></div>
+    <div id=p2><canvas id=q width=256 height=256></canvas><input type=text placeholder='Type something here'></div>
+</div>
+</div>
+<div>
+<div class=info id=u2><b>pixicon</b> by <a style='color:crimson' target="_blank" href="http://github.com/bryc">@bryc</a><br>A tiny JS hash icon generator that uses symmetrical squares to produce tons of unique, memorable icons. Still a WIP.
+    <ul><li>Two modes:  horizontal symmetry (2<sup>32</sup> or 4 billion possible patterns) and four-fold symmetry (2<sup>16</sup> or 65,536 possible patterns)</li>
+<li>96×81×27 possible HSL colors (two of these)</li>
+</ul>
+
+That's about 6.6 nonillion possible icons, or 350 billion times the capacity of a 64-bit (2<sup>64</sup>) number. 
+In contrast, GitHub's identicons only allow for 18 million possibilities, which is much less in comparison.
+</div>
+</div>
+
+
+<script>
+    function arst(a){return a.trim?Array.apply(0,Array(a.length)).map(function(x,i){return a[i].charCodeAt()}):String.fromCharCode.apply(0,a)}
+
+var cyrb32 = function(data) {
+    var i, tmp, sum = 0x9CB85729, len = data.length;
+    for(i = 0; i < len; i++) {
+        sum = sum + data[i];
+        sum = sum + (sum << ((sum & 7)+1));
+    } 
+    for(tmp = sum >>> 0; tmp > 0; tmp >>>= 1) {
+        if(tmp & 1) sum = sum + (sum << ((sum & 7)+1)) + tmp;
+    }
+    return sum >>> 0;
+};
+
+function more() {
+    for(var i=0;i<cnt;i++) {pixicon(cnv[i],3);}
+}
+
+pixicon(document.querySelector("canvas#q"),32,cyrb32(arst("a")));
+document.querySelector("input").oninput = function() {
+    pixicon(document.querySelector("canvas#q"), 32, cyrb32(arst(this.value)));
+};
+document.querySelector("input").onfocus = function() {
+    clearInterval(wat);
+};
+document.querySelector("canvas#q").onclick = function() {
+    clearInterval(wat);
+};
+var wat;
+
+function startThing() {
+    wat = setInterval(function(){
+        var str = Math.random().toString(36).substr(2,7)+Math.random().toString(36).substr(2,7)
+        console.log(str)
+        pixicon(document.querySelector("canvas#q"), 32, cyrb32(arst(str)));
+        document.querySelector("input").value = str;
+    },500)
+}
+
+startThing();
+for(var cnt = 72, cnv = [], i = 0; i < cnt; i++) {
+    var c = document.createElement("canvas");
+    cnv.push(c);
+    document.querySelector("div#o").appendChild(c);
+    if(i===cnt-1) more(), document.querySelector("button").onclick=more;
+}
+</script>
