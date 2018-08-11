@@ -63,13 +63,12 @@ canvas#q{padding:32.2px 39px;width:192px; height:192px;} /* multiples of 8 only!
 </div>
 </div>
 <div>
-<div class=info id=u2><b>pixicon</b> by <a style='color:crimson' target="_blank" href="http://github.com/bryc">@bryc</a><br>A tiny JS hash icon generator that uses symmetrical squares to produce tons of unique, memorable icons. Still a WIP.
-    <ul><li>Two modes:  horizontal symmetry (2<sup>32</sup> or 4 billion possible patterns) and four-fold symmetry (2<sup>16</sup> or 65,536 possible patterns)</li>
-<li>96×81×27 possible HSL colors (two of these)</li>
+<div class=info id=u2><b>pixicon</b> by <a style='color:crimson' target="_blank" href="http://github.com/bryc">@bryc</a><br>A hash icon generator in JS that uses symmetry to produce tons of unique, memorable icons. Still a WIP.
+    <ul><li>...</li>
+<li>...</li>
 </ul>
 
-That's about 6.6 nonillion possible icons, or 350 billion times the capacity of a 64-bit (2<sup>64</sup>) number. 
-In contrast, GitHub's identicons only allow for 18 million possibilities, which is much less in comparison.
+...
 </div>
 </div>
 
@@ -90,7 +89,12 @@ var cyrb32 = function(data) {
 };
 
 function more() {
-    for(var i=0;i<cnt;i++) {pixicon(cnv[i],3);}
+    
+    
+    for(var i=0;i<cnt;i++) {
+        var str = Math.random().toString(36).substr(2,7)+Math.random().toString(36).substr(2,7)
+        cnv[i].title=str;pixicon(cnv[i],3, cyrb32(arst(str)) );
+    }
 }
 
 pixicon(document.querySelector("canvas#q"),32,cyrb32(arst("a")));
