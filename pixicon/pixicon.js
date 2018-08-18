@@ -13,10 +13,18 @@ function pixicon(t, scale, seed, pixels) {
         return "hsl("+~~set[i][0]+","+~~set[i][1]+"%,"+~~set[i][2]+"%)";
     }
     // LCG pseudorandom number generator.
-    function LCG(seed) {
-        function lcg(a) {return a * 48271 % 2147483647}
-        seed = seed ? lcg(seed) : lcg(Math.random());
-        return function() {return (seed = lcg(seed)) / 2147483648}
+    function JSF(seed) {
+        function jsf() {
+            var e = s[0] - (s[1]<<27 | s[1]>>5);
+             s[0] = s[1] ^ (s[2]<<17 | s[2]>>15),
+             s[1] = s[2] + s[3],
+             s[2] = s[3] + e, s[3] = s[0] + e;
+            return (s[3] >>> 0) / 4294967296;
+        }
+        seed >>>= 0;
+        var s = [0xf1ea5eed, seed, seed, seed];
+        for(var i=0;i<20;i++) jsf();
+        return jsf;
     }
     // transform a base HSL color into an alternate color
     function modHSL(str,mode = 0){
@@ -123,7 +131,7 @@ function pixicon(t, scale, seed, pixels) {
         c   = t.getContext("2d"),
         n   = 11,
         pix = pixels ? 1 : 5,
-        rng = LCG(seed),
+        rng = JSF(seed),
         symMode = rng()*2|0,
         diagMode = rng()*2|0; // use diagonal symmetry inner patterns.
 
