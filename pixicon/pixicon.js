@@ -12,19 +12,19 @@ function pixicon(t, scale, seed, pixels) {
         ];
         return "hsl("+~~set[i][0]+","+~~set[i][1]+"%,"+~~set[i][2]+"%)";
     }
-    // LCG pseudorandom number generator.
-    function JSF(seed) {
-        function jsf() {
-            var e = s[0] - (s[1]<<27 | s[1]>>5);
-             s[0] = s[1] ^ (s[2]<<17 | s[2]>>15),
-             s[1] = s[2] + s[3],
-             s[2] = s[3] + e, s[3] = s[0] + e;
-            return (s[3] >>> 0) / 4294967296;
+    // Pseudorandom number generator.
+    function xoshiro128ss(seed) {
+        function xo() {
+            var m = Math.imul(s[0], 5), e = Math.imul(m<<7 | m>>>25, 9),
+            t = s[1] << 9;
+            s[2] ^= s[0], s[3] ^= s[1];
+            s[1] ^= s[2], s[0] ^= s[3];
+            s[2] ^= t;
+            s[3] ^= s[3]<<11 | s[3]>>>21;
+            return (e >>> 0) / 4294967296; // return float
         }
-        seed >>>= 0;
-        var s = [0xf1ea5eed, seed, seed, seed];
-        for(var i=0;i<20;i++) jsf();
-        return jsf;
+        var s = seed; // array of four 32-bit integers
+        return xo;
     }
     // transform a base HSL color into an alternate color
     function modHSL(str,mode = 0){
@@ -126,13 +126,12 @@ function pixicon(t, scale, seed, pixels) {
             }
         }
     }
-
     var 
         c   = t.getContext("2d"),
         n   = 11,
-        pix = pixels ? 1 : 5,
-        rng = JSF(seed),
+        rng = xoshiro128ss(seed),
         symMode = rng()*2|0,
+        pix = pixels ? 1 : 5,
         diagMode = rng()*2|0; // use diagonal symmetry inner patterns.
 
     // Erase anything previously on the canvas context.
