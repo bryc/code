@@ -13,18 +13,15 @@ function pixicon(t, scale, seed, pixels) {
         return "hsl("+~~set[i][0]+","+~~set[i][1]+"%,"+~~set[i][2]+"%)";
     }
     // Pseudorandom number generator.
-    function xoshiro128ss(seed) {
-        function xo() {
-            var m = Math.imul(s[0], 5), e = Math.imul(m<<7 | m>>>25, 9),
-            t = s[1] << 9;
-            s[2] ^= s[0], s[3] ^= s[1];
-            s[1] ^= s[2], s[0] ^= s[3];
-            s[2] ^= t;
-            s[3] ^= s[3]<<11 | s[3]>>>21;
-            return (e >>> 0) / 4294967296; // return float
+    function xoshiro128ss(s) {
+        return function() {
+            var m = s[0] * 5, r = (m<<7 | m>>>25) * 9,
+                t = s[1] << 9;
+            s[2] ^= s[0], s[3] ^= s[1],
+            s[1] ^= s[2], s[0] ^= s[3],
+            s[2] ^= t, s[3] = s[3]<<11 | s[3]>>>21;
+            return (r >>> 0) / 4294967296;
         }
-        var s = seed; // array of four 32-bit integers
-        return xo;
     }
     // transform a base HSL color into an alternate color
     function modHSL(str,mode = 0){
