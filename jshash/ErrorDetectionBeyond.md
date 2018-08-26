@@ -1,3 +1,5 @@
+(article is wip)
+
 # Error Detection and Beyond
 
 Arguably the most important instruction used in computer programs are conditional jumps. They are what powers the `if` keyword in almost all programming languages. When writing code, a programmer uses logical comparisons to determine which situations should be allowed and which should not. This is possible because there are definite rules to follow. When you know the expected input or output, you can enforce it.
