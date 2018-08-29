@@ -1,11 +1,16 @@
 # Pseudorandom number generators
 
-[PRNGs](https://gist.github.com/bryc/38a86416e8fa940e009adb15821f36d7) appear to have a lot in common with non-cryptographic hashes. They both try to achieve _random-looking output_. And in some cases employ similar concepts and borrow from each other. And some people have made both PRNGs and hash functions.
+PRNGs appear to have a lot in common with non-cryptographic hashes. They both try to achieve _random-looking output_, and in some cases employ similar concepts and borrow from each other. Some people who designed hash functions also made PRNGs.
 
-Like hashes, PRNGs often predominantly utilize 64-bit arithmetic, thus making it hard to find good JavaScript PRNGs. So this article documents my own implementations of PRNGs.
+Like hashes, PRNGs often predominantly utilize 64-bit arithmetic, making it hard to find good JavaScript random number generators. So this article documents my own implementations of PRNGs. All of the PRNGs here are optimized for speed and are quite short (only a few lines each). The quality of most of them should also be quite acceptable, despite being limited to 32-bit operations.
 
-_Note that PRNGs typically need a separate algorithm to generate a random seed. This is best achieved by a hashing algorithm_.
+_Note that PRNGs typically need a separate algorithm to generate a seed with sufficient entropy. This is best achieved by a hashing algorithm._
 
+## Table of PRNGs
+
+Out of the table, the best JS PRNGS seem to be: `sfc32`, and `mulberry32` for speed and statistic quality. Runners-up `jsf32b` and `gjrand32` should also be good but seems to lag behind in performance. `xoshiro128**` is fast and "decent" but has poor randomness in the low bits. It fails linear-complexity and binary-rank tests (`sfc32`, `jsf32`, `gjrand32` passes these). All the xorshift variants suffer from this issue, so be aware of the the low bits when using this generator.
+
+Alea is not in the table yet, since the current version seems super slow in comparison to these new fast 32-bit PRNGs. I plan to add some other PRNGs from [here](https://github.com/nquinlan/better-random-numbers-for-javascript-mirror) and seedrandom.
 
 | Algorithm | State size | Speed | Notes |
 | --------- | ---------- | ----- | ----- |
@@ -23,14 +28,11 @@ _Note that PRNGs typically need a separate algorithm to generate a random seed. 
 | xorshift32a | 32-bit | 5,702,701 |  |
 | xorshift32b | 32-bit | 5,667,568 |  |
 | lcg | 31-bit | 2,525,211 | park-miller lcg. super slow and only 31 bits. |
-| mulberry32 | 32-bit | 7,988,488 | best 2^32 state JS PRNG. passes gjrand.  |
-
-Out of the table, the best JS PRNGS seem to be: `sfc32`, and `mulberry32`. runnerups `jsf32b` and `gjrand32` should be good but seems to lag behind. `xoshiro128**` is good if you don't mind that it fails some statistical tests. 
-
+| mulberry32 | 32-bit | 7,988,488 | best 2^32 state JS PRNG. passes gjrand. |
 
 ## Alea
 
-Alea is based on MWC (Multiply-with-Carry). It includes its own string hash function: Mash. It's speed is pretty good, but I cannot accurately measure its seed/state size (yet). 
+Alea is based on MWC (Multiply-with-Carry). It includes its own string hash function: Mash. <!--It's speed is pretty good, but I cannot accurately measure its seed/state size (yet). --> 
 
 ```js
 function Alea(seed) {
