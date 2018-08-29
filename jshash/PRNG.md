@@ -294,6 +294,36 @@ Here are various functions that can be used to efficiently generate seeds for PR
 
 Note: Certain generators have their own seed procedure, such as jsf32, sfc32 and potentially gjrand32. I'm assuming that you can seed these generators with any hashing algorithm such as MurmurHash3, which is what I use.
 
+`xfnv1a` is a good example of generating seeds. It is based on Bret Mulvey's modified FNV1a.
+
+```js
+function xfnv1a(k) {
+    for(var i = 0, h = 2166136261 >>> 0; i < k.length; i++)
+        h = Math.imul(h ^ k.charCodeAt(i), 16777619);
+    return function() {
+        h += h << 13; h ^= h >>> 7;
+        h += h << 3;  h ^= h >>> 17;
+        return (h += h << 5) >>> 0;
+    }
+}
+```
+
+How it would be used:
+
+```js
+// Create a xfnv1a state:
+var seed = xfnv1a("apples");
+// Output four 32-bit hashes to produce the seed for sfc32.
+var rand = sfc32(seed(), seed(), seed(), seed());
+
+// Or: output one 32-bit hash to produce the seed for mulberry32.
+var rand = mulberry32(seed());
+
+// Obtain sequential random numbers like so:
+rand();
+rand();
+```
+
 `initseed` is an experimental 128-bit seed generator. It takes an array of 4 32-bit numbers and mixes them using the mixing function from Murmur3/xxHash.
 
 ```js
