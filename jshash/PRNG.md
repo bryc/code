@@ -6,6 +6,28 @@ Like hashes, PRNGs often predominantly utilize 64-bit arithmetic, thus making it
 
 _Note that PRNGs typically need a separate algorithm to generate a random seed. This is best achieved by a hashing algorithm_.
 
+
+| Algorithm | State size | Speed | Notes |
+| --------- | ---------- | ----- | ----- |
+| xoroshiro64+ | 64-bit | 8,026,741 | lfsr issues. |
+| xoroshiro64* | 64-bit | 7,985,287 | lfsr issues. |
+| xoroshiro64** | 64-bit | 7,982,769 | preferred version. lfsr issues, but fast. |
+| xoshiro128+ | 128-bit | 6,927,766 | lfsr issues. |
+| xoshiro128** | 128-bit | 6,914,233 | preferred version. has lfsr issues, but better than xorshift. |
+| sfc32 | 128-bit | 7,178,353 | chaotic. best 2^128 state JS PRNG. passes practrand. |
+| gjrand32 | 128-bit | 5,878,910 | chaotic.  |
+| jsf32 | 128-bit | 4,838,098 | chaotic. sadly quite slow in JS. |
+| jsf32b | 128-bit | 4,819,955 | jsf32 with another rotate. better randomness, no perf cost in JS. |
+| xorshift128 | 128-bit | 6,068,160 |  |
+| xorshift32 | 32-bit | 5,745,952 | no idea why it's slow. |
+| xorshift32a | 32-bit | 5,702,701 |  |
+| xorshift32b | 32-bit | 5,667,568 |  |
+| lcg | 31-bit | 2,525,211 | park-miller lcg. super slow and only 31 bits. |
+| mulberry32 | 32-bit | 7,988,488 | best 2^32 state JS PRNG. passes gjrand.  |
+
+Out of the table, the best JS PRNGS seem to be: `sfc32`, and `mulberry32`. runnerups `jsf32b` and `gjrand32` should be good but seems to lag behind. `xoshiro128**` is good if you don't mind that it fails some statistical tests. 
+
+
 ## Alea
 
 Alea is based on MWC (Multiply-with-Carry). It includes its own string hash function: Mash. It's speed is pretty good, but I cannot accurately measure its seed/state size (yet). 
@@ -34,15 +56,16 @@ function Alea(seed) {
 }
 ```
 
-## Lehmer MCG
+## LCG (Lehmer MCG)
 
-Has a state/period of 2^31-1. Is not that ideal, but it works.
+Has a state/period of 2^31-1. Is not that ideal, but it works. It's a bit slower than others due to the modulo operator. 
 
 ```js
-function MCG(seed) {
-    function mcg(seed) {return 48271 * seed % 2147483647}
-     seed = mcg(seed || Math.random());
-     return function() {return (seed = mcg(seed)) / 2147483646 } // 2^31-2
+function lcg(a) {
+    return function() {
+      a = Math.imul(48271, a) % 2147483647;
+      return (a >>> 0) / 2147483647;
+    }
 }
 ```
 
@@ -51,39 +74,43 @@ function MCG(seed) {
 The original vanilla xorshift introduced in 2003. Comes in 128 and 32-bit flavors. All of the xo* PRNGs have some LFSR characteristics, which may have issues in linearity/binary rank tests. But they're fast and cute.
 
 ```js
-function xorshift128(s) {
+function xorshift128(a, b, c, d) {
     return function() {
-        var z, t = s[3];
-        t ^= t << 11; t ^= t >>> 8;
-        s[3] = s[2]; s[2] = s[1];
-        z = s[1] = s[0];
-        t ^= z; t ^= z >>> 19;  
-        s[0] = t;
-        return (t >>> 0) / 4294967295;
+        var t = d ^ d << 11; t ^= t >>> 8;
+        t ^= a; t ^= a >>> 19; 
+        d = c | 0; c = b | 0; b = a | 0;
+        a = t;
+        return (t >>> 0) / 4294967296;
     }
 }
 
-function xorshift32(s) {
+function xorshift32(a) {
     return function() {
-        s ^= s << 13, s ^= s >>> 17, s ^= s << 5;
-        return (s >>> 0) / 4294967295;
+        a ^= a << 13;
+        a ^= a >>> 17;
+        a ^= a << 5;
+        return (a >>> 0) / 4294967296;
     }
 }
 
 // potentially better variants of xorshift32:
-function xorshift32a(s) {
+function xorshift32a(a) {
     return function() {
-        s ^= s << 13, s ^= s >>> 17, s ^= s << 5;
-        return (Math.imul(s,1597334677) >>> 0) / 4294967295;
+        a ^= a << 25;
+        a ^= a >>> 7;
+        a ^= a << 2;
+        return (Math.imul(a, 1597334677) >>> 0) / 4294967296;
     }
 }
 
-function xorshift32a(s) {
+function xorshift32b(a) {
     return function() {
-        var s2 = Math.imul(s,1597334677);
-        s2 = (s2>>>24|s2>>>8&65280|s2<<8&16711680|s2<<24)>>>0;
-        s ^= s << 13, s ^= s >>> 17, s ^= s << 5;
-        return ((s + s2) >>> 0) / 4294967295;
+        var t = Math.imul(a, 1597334677);
+        t = t>>>24 | t>>>8&65280 | t<<8&16711680 | t<<24;
+        a ^= a << 25;
+        a ^= a >>> 7;
+        a ^= a << 2;
+        return ((a + t) >>> 0) / 4294967296;
     }
 }
 
@@ -94,34 +121,33 @@ function xorshift32a(s) {
 The xoroshiro family included two 32-bit compatible entries, `xoroshiro64**` and `xoroshiro64*`. It has a state size of 64-bit. I've included an unoffical implementation of `xoroshiro64+`. 
 
 ```js
-function xoroshiro64ss(s) {
+function xoroshiro64ss(a, b) {
     return function() {
-        var m = Math.imul(s[0], 0x9E3779BB), r = (m<<5 | m>>>27) * 5;
-        s[1] ^= s[0];
-        s[0] = (s[0] << 26 | s[0] >>> 6) ^ s[1] ^ s[1] << 9;
-        s[1] = s[1] << 13 | s[1] >>> 19;
+        var r = Math.imul(a, 0x9E3779BB); r = (r<<5 | r>>>27) * 5;
+        b ^= a;
+        a = (a << 26 | a >>> 6) ^ b ^ b << 9;
+        b = b << 13 | b >>> 19;
         return (r >>> 0) / 4294967296;
     }
 }
 
-function xoroshiro64s(s) {
+function xoroshiro64s(a, b) {
     return function() {
-        var r = Math.imul(s0, 0x9E3779BB);
-        s[1] ^= s[0];
-        s[0] = (s[0] << 26 | s[0] >>> 6) ^ s[1] ^ s[1] << 9;
-        s[1] = s[1] << 13 | s[1] >>> 19;
+        var r = Math.imul(a, 0x9E3779BB);
+        b ^= a;
+        a = (a << 26 | a >>> 6) ^ b ^ b << 9;
+        b = b << 13 | b >>> 19;
         return (r >>> 0) / 4294967296;
     }
 }
 
 // unofficial xoroshiro64+ for completeness
-
-function xoroshiro64p(s) {
+function xoroshiro64p(a, b) {
     return function() {
-        var r = s[0] + s[1];
-        s[1] ^= s[0];
-        s[0] = (s[0] << 26 | s[0] >>> 6) ^ s[1] ^ s[1] << 9;
-        s[1] = s[1] << 13 | s[1] >>> 19;
+        var r = a + b;
+        b ^= a;
+        a = (a << 26 | a >>> 6) ^ b ^ b << 9;
+        b = b << 13 | b >>> 19;
         return (r >>> 0) / 4294967296;
     }
 }
@@ -133,22 +159,22 @@ function xoroshiro64p(s) {
 The latest (as of May 2018) in the Xorshift-derivative series, xoshiro family now offers 128-bit state generators in 32-bit just like the original xorshift. Comes in two variants: `xoshiro128**` and `xoshiro128+`
 
 ```js
-function xoshiro128ss(s) {
+function xoshiro128ss(a, b, c, d) {
     return function() {
-        var m = s[0] * 5, r = (m << 7 | m >>> 25) * 9, t = s[1] << 9;
-        s[2] ^= s[0]; s[3] ^= s[1];
-        s[1] ^= s[2]; s[0] ^= s[3]; s[2] ^= t; 
-        s[3] = s[3] << 11 | s[3] >>> 21;
+        var t = b << 9, r = a * 5; r = (r << 7 | r >>> 25) * 9;
+        c ^= a; d ^= b;
+        b ^= c; a ^= d; c ^= t;
+        d = d << 11 | d >>> 21;
         return (r >>> 0) / 4294967296;
     }
 }
 
-function xoshiro128p(s) {
+function xoshiro128p(a, b, c, d) {
     return function() {
-        var r = s[0] + s[3], t = s[1] << 9;
-        s[2] ^= s[0]; s[3] ^= s[1];
-        s[1] ^= s[2]; s[0] ^= s[3]; s[2] ^= t;
-        s[3] = s[3] << 11 | s[3] >>> 21;
+        var t = b << 9, r = a + d;
+        c ^= a; d ^= b;
+        b ^= c; a ^= d; c ^= t;
+        d = d << 11 | d >>> 21;
         return (r >>> 0) / 4294967296;
     }
 }
@@ -159,34 +185,30 @@ function xoshiro128p(s) {
 Bob Jenkin's PRNG from 2007. Unfortunately only has a 32-bit seed despite having a 128-bit state. But perhaps the entire state can be seeded using a different algorithm. Seems pretty decent. Bob Jenkins also made some nice hash functions. It is described as a "chaotic PRNG".
 
 ```js
-function JSF(seed) {
-    function jsf() {
-        var e = s[0] - (s[1]<<27 | s[1]>>5);
-         s[0] = s[1] ^ (s[2]<<17 | s[2]>>15),
-         s[1] = s[2] + s[3],
-         s[2] = s[3] + e, s[3] = s[0] + e;
-        return (s[3] >>> 0) / 4294967295; // 2^32-1
+function jsf32(a, b, c, d) {
+    return function() {
+        a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
+        var t = a - (b << 27 | b >> 5) | 0;
+        a = b ^ (c << 17 | c >> 15) | 0;
+        b = c + d | 0;
+        c = d + t | 0;
+        d = a + t | 0;
+        return (d >>> 0) / 4294967296;
     }
-    seed >>>= 0;
-    var s = [0xf1ea5eed, seed, seed, seed];
-    for(var i=0;i<20;i++) jsf();
-    return jsf;
 }
 
-// 3 rotate version, probably redundant.
-function JSFa(seed) {
-    function jsf() {
-        var e = s[0] - (s[1]<<23 | s[1]>>9);
-         s[0] = s[1] ^ (s[2]<<16 | s[2]>>17),
-         s[1] = s[2] + (s[3]<<11 | s[3]>>21),
-         s[1] = s[2] + s[3],
-         s[2] = s[3] + e, s[3] = s[0] + e;
-        return (s[3] >>> 0) / 4294967295; // 2^32-1
+// 3-rotate version, improves randomness.
+function jsf32b(a, b, c, d) {
+    return function() {
+        a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
+        var t = a - (b << 23 | b >> 9) | 0;
+        a = b ^ (c << 16 | c >> 16) | 0;
+        b = c + (d << 11 | d >> 21) | 0;
+        b = c + d | 0;
+        c = d + t | 0;
+        d = a + t | 0;
+        return (d >>> 0) / 4294967296;
     }
-    seed >>>= 0;
-    var s = [0xf1ea5eed, seed, seed, seed];
-    for(var i=0;i<20;i++) jsf();
-    return jsf;
 }
 
 // https://gist.github.com/imneme/85cff47d4bad8de6bdeb671f9c76c814
@@ -197,20 +219,22 @@ function JSFa(seed) {
 Another "chaotic PRNG" designed by David Blackman. It is from the GJrand suite of random number tests. The original version is 64-bit and well-tested, this one hasn't been extensively tested but seems to be good.
 
 ```js
-function gjrand32() {
-    a =  a << 16 | a >>> 16;
-    b += c;
-    a += b;
-    c ^= b;
-    c =  c << 11 | c >>> 21;
-    b ^= a;
-    a += c;
-    b =  c << 19 | c >>> 13;
-    c += a;
-    d += 0x96a5;
-    b += d;
-    //a >>>= 0, b >>>= 0, c >>>= 0, d >>>= 0;
-    return (a >>> 0) / 2**32;
+function gjrand32(a, b, c, d) {
+    return function() {
+      a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
+      a = a << 16 | a >>> 16;
+      b = b + c | 0;
+      a = a + b | 0;
+      c ^= b;
+      c = c << 11 | c >>> 21;
+      b ^= a;
+      a = a + c | 0;
+      b =  c << 19 | c >>> 13;
+      c = c + a | 0;
+      d = d + 0x96a5 | 0;
+      b = b + d | 0;
+      return (a >>> 0) / 4294967296;
+    }
 }
 ```
 
@@ -219,37 +243,43 @@ function gjrand32() {
 Yet another chaotic PRNG, the sfc stands for "Small Fast Counter".
 
 ```js
-function sfc32() {
-    var t = a + b + (d = (d + 1) >>> 0);
-    a = b ^ (b >>> 9);
-    b = c + (c <<  3);
-    c = (c<<21 | c>>>11) + t;
-    return (t >>> 0) / 2**32;
+function sfc32(a, b, c, d) {
+    return function() {
+      a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0; 
+      var t = (a + b) | 0;
+      a = b ^ b >>> 9;
+      b = c + (c << 3) | 0;
+      c = (c << 21 | c >>> 11);
+      d = d + 1 | 0;
+      t = t + d | 0;
+      c = c + t | 0;
+      return (t >>> 0) / 4294967296;
+    }
 }
 ```
 
-## SplitMix32 and Mulberry32
+## Mulberry32 and SplitMix32
 
-These are PRNGs that only use a 32-bit state, similar to xorshift32. Quite useful for embedded systems. And potentially better than the Lehmer MCG. But due to the small state size, they take a big quality hit. C code only for now.
+These PRNGs use a 32-bit state, similar to xorshift32. Quite useful for embedded systems. And potentially better than the Lehmer MCG. But due to the small state size, they aren't as good as the 128-bit state PRNGs.
 
 
 ```c
-uint32_t state;
-
-int32_t mulberry32(void) {
-    uint32_t z = state += 0x6D2B79F5;
-    z = (z ^ z >> 15) * (1 | z);
-    z ^= z + (z ^ z >> 7) * (61 | z);
-    return z ^ z >> 14;
+function mulberry32(a) {
+    return function() {
+      var t = a += 0x6D2B79F5;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
 }
 
-uint32_t splitmix32(void) {
-    uint32_t z = state += 0x9e3779b9;
-    z ^= z >> 15; // 16 for murmur3
-    z *= 0x85ebca6b;
-    z ^= z >> 13;
-    z *= 0xc2b2ae3d; // 0xc2b2ae35 for murmur3
-    return z ^= z >> 16;
+function splitmix32(a) {
+    return function() {
+      var t = a += 0x9e3779b9;
+      t ^= t >>> 15; t = Math.imul(t, 0x85ebca6b);
+      t ^= t >>> 13; t = Math.imul(t, 0xc2b2ae3d);
+      return ((t ^= t >>> 16) >>> 0) / 4294967296;
+    }
 }
 ```
 
@@ -259,6 +289,8 @@ uint32_t splitmix32(void) {
 # Seed generating functions
 
 Here are various functions that can be used to efficiently generate seeds for PRNGs. I'll include integer and string hashing functions as well here.
+
+Note: Certain generators have their own seed procedure, such as jsf32, sfc32 and potentially gjrand32. I'm assuming that you can seed these generators with any hashing algorithm such as MurmurHash3, which is what I use.
 
 `initseed` is an experimental 128-bit seed generator. It takes an array of 4 32-bit numbers and mixes them using the mixing function from Murmur3/xxHash.
 
