@@ -6,21 +6,24 @@ function pixicon(t, scale, seed, pixels) {
     // HSL color generator.
     function HSL(t, r, e, i=0) {
         var set = [
-            [999*t%360, 24+80*r%40, 26+70*e%40],
-            [999*t%360, 9*r%10, 15+36*e%50],
-            [999*t%360, 14*r%40, 33+36*e%40],
+            [(999*t)%360, 24+80*r%40, 26+70*e%40],
+            [(999*t)%360, 9*r%10, 15+36*e%50],
+            [(999*t)%360, 14*r%40, 33+36*e%40],
         ];
         return "hsl("+~~set[i][0]+","+~~set[i][1]+"%,"+~~set[i][2]+"%)";
     }
     // Pseudorandom number generator.
-    function xoshiro128ss(s) {
+    function sfc32(a, b, c, d) {
         return function() {
-            var m = s[0] * 5, r = (m<<7 | m>>>25) * 9,
-                t = s[1] << 9;
-            s[2] ^= s[0], s[3] ^= s[1],
-            s[1] ^= s[2], s[0] ^= s[3],
-            s[2] ^= t, s[3] = s[3]<<11 | s[3]>>>21;
-            return (r >>> 0) / 4294967296;
+          a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0; 
+          var t = (a + b) | 0;
+          a = b ^ b >>> 9;
+          b = c + (c << 3) | 0;
+          c = (c << 21 | c >>> 11);
+          d = d + 1 | 0;
+          t = t + d | 0;
+          c = c + t | 0;
+          return (t >>> 0) / 4294967296;
         }
     }
     // transform a base HSL color into an alternate color
@@ -126,7 +129,7 @@ function pixicon(t, scale, seed, pixels) {
     var 
         c   = t.getContext("2d"),
         n   = 11,
-        rng = xoshiro128ss(seed),
+        rng = sfc32(seed[0], seed[1], seed[2], seed[3]),
         symMode = rng()*2|0,
         pix = pixels ? 1 : 5,
         diagMode = rng()*2|0; // use diagonal symmetry inner patterns.
@@ -138,6 +141,7 @@ function pixicon(t, scale, seed, pixels) {
     if(t.width !== n*scale) t.width = t.height = n*scale;
 
     // Multiple passes (only two)
+
     var num = 0; while(num < 2) {
     // Set fill color for pixels. TODO: make sure no two colors are similar
     var color1 = HSL(rng(), rng(), rng(), rng()*1|0);
@@ -147,7 +151,7 @@ function pixicon(t, scale, seed, pixels) {
 
     // - PATTERN ONE -
     // Generate the number of pixels to occupy (threshold: within 25%-75%).
-    var divisor = 2.2;
+    var divisor = 2.5;
     var r = rng(), u = 0|((2*r*100+8*r+100)*.125) / divisor;
     // Populate array with an amount of pixels (within threshold).
     for(var pt1=[], s = 0; s < u; s++)
