@@ -315,6 +315,41 @@ function splitmix32(a) {
 }
 ```
 
+## v3b
+
+Very weird PRNG. This one is (currently) _extremely_ slow and definitely implemented entirely wrong. It's supposed to be fast, but might not be practical in JS unfortunately. [C code here](https://pastebin.com/JBAUPKjw).
+
+```js
+function v3rand(v) {
+	function rol32(n,r){return n<<r|n>>>32-r}
+    var pos = 0, ctr = v.slice();
+    return function() {
+        if(pos === 0) {
+            v[0] = rol32(v[0] + v[3], 21);
+            v[1] = rol32(v[1], 12) + v[2];
+            v[2] = v[2] ^ v[0];
+            v[3] = v[3] ^ v[1];
+            v[0] = rol32(v[0] + v[3], 19);
+            v[1] = rol32(v[1], 24) + v[2];
+            v[2] = v[2] ^ v[0];
+            v[3] = v[3] ^ v[1];
+            v[0] = rol32(v[0] + v[3],  7);
+            v[1] = rol32(v[1], 12) + v[2];
+            v[2] = v[2] ^ v[0];
+            v[3] = v[3] ^ v[1];
+            v[0] = rol32(v[0] + v[3], 27);
+            v[1] = rol32(v[1], 17) + v[2];
+            v[2] = v[2] ^ v[0];
+            v[3] = v[3] ^ v[1];
+            pos = 4;
+
+            for(var i=0; i<4; i++) v[i] += ctr[i];
+            for(var i=0; i<4; i++) if(++ctr[i]) break;
+        }
+        return v[--pos] / 4294967296;
+    }
+}
+```
 
 ****
 
