@@ -244,7 +244,7 @@ function gjrand32(a, b, c, d) {
 
 ## sfc32
 
-Yet another chaotic PRNG, the sfc stands for "Small Fast Counter".
+Yet another chaotic PRNG, the sfc stands for "Small Fast Counter". It passes PractRand, as well as Crush/BigCrush (TestU01). Also one of the fastest.
 
 ```js
 function sfc32(a, b, c, d) {
