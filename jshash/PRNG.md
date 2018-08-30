@@ -23,6 +23,8 @@ Alea is not in the table yet, since the current version seems super slow in comp
 | gjrand32 | 128-bit | 5,878,910 | chaotic.  |
 | jsf32 | 128-bit | 4,838,098 | chaotic. sadly quite slow in JS. |
 | jsf32b | 128-bit | 4,819,955 | jsf32 with another rotate. better randomness, no perf cost in JS. |
+| tyche | 128-bit | 2,823,240 | sloww |
+| tychei | 128-bit | 4,425,038 | still kinda slow. but tyche/i passes BigCrush. |
 | xorshift128 | 128-bit | 6,068,160 |  |
 | xorshift32 | 32-bit | 5,745,952 | no idea why it's slow. |
 | xorshift32a | 32-bit | 5,702,701 |  |
@@ -256,6 +258,34 @@ function sfc32(a, b, c, d) {
       t = t + d | 0;
       c = c + t | 0;
       return (t >>> 0) / 4294967296;
+    }
+}
+```
+
+## tyche
+
+Tyche is based on ChaCha's quarter-round. It's a bit slow but should be good quality. `tychei`, the inverted version, is 20% faster.
+
+```js
+function tychei(a, b, c, d) {
+    return function() {
+		a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
+        b = (b << 25 | b >>> 7)  ^ c; c = c - d | 0;
+        d = (d << 24 | d >>> 8)  ^ a; a = a - b | 0;
+        b = (b << 20 | b >>> 12) ^ c; c = c - d | 0;
+        d = (d << 16 | d >>> 16) ^ a; a = a - b | 0;
+        return (a >>> 0) / 4294967296;
+    }
+}
+
+function tyche(a, b, c, d) {
+    return function() {
+		a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
+        a = a + b | 0; d ^= a; d = d << 16 | d >>> 16;
+        c = c + d | 0; b ^= c; b = b << 12 | b >>> 20;
+        a = a + b | 0; d ^= a; d = d << 8  | d >>> 24;
+        c = c + d | 0; b ^= c; b = b << 7  | b >>> 25;
+        return (a >>> 0) / 4294967296;
     }
 }
 ```
