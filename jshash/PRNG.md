@@ -29,7 +29,7 @@ Alea is not in the table yet, since the current version seems super slow in comp
 | xorshift32 | 32-bit | 5,902,315 | no idea why it's slow. |
 | xorshift32a | 32-bit | 5,895,329 |  |
 | xorshift32b | 32-bit | 5,858,901 |  |
-| lcg | 31-bit | 10,613,765 | park-miller lcg. super slow and only 31 bits. |
+| lcg | 31-bit | 10,613,765 | park-miller lcg. fast but only 31 bits and fails tests. |
 | mulberry32 | 32-bit | 10,440,286 | FAST. best 2^32 state JS PRNG. passes gjrand. |
 | splitmix32 | 32-bit | 10,477,915 | based on xxhash/murmurhash3, untested. |
 
