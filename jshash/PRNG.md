@@ -268,7 +268,7 @@ Tyche is based on ChaCha's quarter-round. It's a bit slow but should be good qua
 ```js
 function tychei(a, b, c, d) {
     return function() {
-        a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
+        a |= 0; b |= 0; c |= 0; d |= 0;
         b = (b << 25 | b >>> 7)  ^ c; c = c - d | 0;
         d = (d << 24 | d >>> 8)  ^ a; a = a - b | 0;
         b = (b << 20 | b >>> 12) ^ c; c = c - d | 0;
@@ -279,12 +279,12 @@ function tychei(a, b, c, d) {
 
 function tyche(a, b, c, d) {
     return function() {
-        a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
-        a = a + b | 0; d ^= a; d = d << 16 | d >>> 16;
-        c = c + d | 0; b ^= c; b = b << 12 | b >>> 20;
-        a = a + b | 0; d ^= a; d = d << 8  | d >>> 24;
-        c = c + d | 0; b ^= c; b = b << 7  | b >>> 25;
-        return (a >>> 0) / 4294967296;
+        a |= 0; b |= 0; c |= 0; d |= 0;
+        a = a + b | 0; d = d ^ a; d = d << 16 | d >>> 16;
+        c = c + d | 0; b = b ^ c; b = b << 12 | b >>> 20;
+        a = a + b | 0; d = d ^ a; d = d << 8  | d >>> 24;
+        c = c + d | 0; b = b ^ c; b = b << 7  | b >>> 25;
+        return (b >>> 0) / 4294967296;
     }
 }
 ```
