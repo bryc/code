@@ -62,13 +62,13 @@ function Alea(seed) {
 
 ## LCG (Lehmer MCG)
 
-Has a state/period of 2^31-1. Is not that ideal, but it works. It's a bit slower than others due to the modulo operator. 
+Has a state/period of 2^31-1. Is not that ideal, but it works. Apparently it's blazing fast.
 
 ```js
 function lcg(a) {
     return function() {
-      a = Math.imul(48271, a) % 2147483647;
-      return (a >>> 0) / 2147483647;
+      a = Math.imul(48271, a) | 0 % 2147483647;
+      return (a & 2147483647) / 2147483648;
     }
 }
 ```
@@ -80,19 +80,17 @@ The original vanilla xorshift introduced in 2003. Comes in 128 and 32-bit flavor
 ```js
 function xorshift128(a, b, c, d) {
     return function() {
-        var t = d ^ d << 11; t ^= t >>> 8;
-        t ^= a; t ^= a >>> 19; 
-        d = c | 0; c = b | 0; b = a | 0;
-        a = t;
+        a |= 0; b |= 0; c |= 0;
+        var t = d ^ d << 11; t = t ^ t >>> 8;
+        t = t ^ a; t = t ^ a >>> 19; 
+        d = c; c = b; b = a; a = t;
         return (t >>> 0) / 4294967296;
     }
 }
 
 function xorshift32(a) {
     return function() {
-        a ^= a << 13;
-        a ^= a >>> 17;
-        a ^= a << 5;
+        a ^= a << 25; a ^= a >>> 7; a ^= a << 2;
         return (a >>> 0) / 4294967296;
     }
 }
@@ -100,9 +98,7 @@ function xorshift32(a) {
 // potentially better variants of xorshift32:
 function xorshift32a(a) {
     return function() {
-        a ^= a << 25;
-        a ^= a >>> 7;
-        a ^= a << 2;
+        a ^= a << 25; a ^= a >>> 7; a ^= a << 2;
         return (Math.imul(a, 1597334677) >>> 0) / 4294967296;
     }
 }
@@ -111,10 +107,8 @@ function xorshift32b(a) {
     return function() {
         var t = Math.imul(a, 1597334677);
         t = t>>>24 | t>>>8&65280 | t<<8&16711680 | t<<24;
-        a ^= a << 25;
-        a ^= a >>> 7;
-        a ^= a << 2;
-        return ((a + t) >>> 0) / 4294967296;
+        a ^= a << 25; a ^= a >>> 7; a ^= a << 2;
+        return (a + t >>> 0) / 4294967296;
     }
 }
 
@@ -127,9 +121,8 @@ The xoroshiro family included two 32-bit compatible entries, `xoroshiro64**` and
 ```js
 function xoroshiro64ss(a, b) {
     return function() {
-        var r = Math.imul(a, 0x9E3779BB); r = (r<<5 | r>>>27) * 5;
-        b ^= a;
-        a = (a << 26 | a >>> 6) ^ b ^ b << 9;
+        var r = Math.imul(a, 0x9E3779BB); r = (r << 5 | r >>> 27) * 5;
+        b = b ^ a; a = b ^ (a << 26 | a >>> 6) ^ b << 9;
         b = b << 13 | b >>> 19;
         return (r >>> 0) / 4294967296;
     }
@@ -138,8 +131,7 @@ function xoroshiro64ss(a, b) {
 function xoroshiro64s(a, b) {
     return function() {
         var r = Math.imul(a, 0x9E3779BB);
-        b ^= a;
-        a = (a << 26 | a >>> 6) ^ b ^ b << 9;
+        b = b ^ a; a = b ^ (a << 26 | a >>> 6) ^ b << 9;
         b = b << 13 | b >>> 19;
         return (r >>> 0) / 4294967296;
     }
@@ -149,13 +141,11 @@ function xoroshiro64s(a, b) {
 function xoroshiro64p(a, b) {
     return function() {
         var r = a + b;
-        b ^= a;
-        a = (a << 26 | a >>> 6) ^ b ^ b << 9;
+        b = b ^ a; a = b ^ (a << 26 | a >>> 6) ^ b << 9;
         b = b << 13 | b >>> 19;
         return (r >>> 0) / 4294967296;
     }
 }
-
 ```
 
 ## Xoshiro
@@ -166,8 +156,7 @@ The latest (as of May 2018) in the Xorshift-derivative series, xoshiro family no
 function xoshiro128ss(a, b, c, d) {
     return function() {
         var t = b << 9, r = a * 5; r = (r << 7 | r >>> 25) * 9;
-        c ^= a; d ^= b;
-        b ^= c; a ^= d; c ^= t;
+        c = c ^ a; d = d ^ b; b = b ^ c; a = a ^ d; c = c ^ t;
         d = d << 11 | d >>> 21;
         return (r >>> 0) / 4294967296;
     }
@@ -176,8 +165,7 @@ function xoshiro128ss(a, b, c, d) {
 function xoshiro128p(a, b, c, d) {
     return function() {
         var t = b << 9, r = a + d;
-        c ^= a; d ^= b;
-        b ^= c; a ^= d; c ^= t;
+        c = c ^ a; d = d ^ b; b = b ^ c; a = a ^ d; c = c ^ t;
         d = d << 11 | d >>> 21;
         return (r >>> 0) / 4294967296;
     }
