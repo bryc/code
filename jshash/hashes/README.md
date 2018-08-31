@@ -48,20 +48,22 @@ These numbers don't really mean much, just a quick comparison. They're all prett
 
 _I will put ports of 64-bit arithmetic hash functions here, but expect them to be extremely slow._
 _If WebAssembly becomes viable that can be useful for 64-bit hash functions._
+_BigInt does not currently seem to be a performant option._
 
 ****
 
 # Notes/TODO
+* **U32** [Marvin32](https://github.com/floodyberry/Marvin32/blob/master/Marvin32.c) - seems interesting and is 32-bit.
+* **U32** [Zaphod32/Phat4](https://github.com/demerphq/BeagleHash) - two 32-bit hashes, but seem overly complex.
+* **U32/U64** [CityHash32](https://github.com/google/cityhash/blob/master/src/city.cc#L189), FarmHash, HighwayHash - Google's functions. CityHash32 might be the only viable option.
+* **U32/U64** SipHash - security-focused 64-bit MAC hash. Some say its fast, some say its slow. Only _[halfsiphash.c](https://github.com/veorq/SipHash/blob/master/halfsiphash.c)_ is viable in JS.
 * Johannes Baagøe's Mash function - see what the big deal is.
 * [FNVPlus](https://github.com/tjwebb/fnv-plus) - enhanced JS version worth looking into. 
 * [CRC32C](http://www.evanjones.ca/crc32c.html) - [faster](https://stackoverflow.com/questions/17645167/implementing-sse-4-2s-crc32c-in-software/17646775) CRC32? 8 bytes at a time
-* **U64** [t1ha](https://github.com/leo-yuriev/t1ha) - supposedly super fast, but seems most is for 64-bit arch.
-* **U64** [BeagleHash](https://github.com/demerphq/BeagleHash) - 64-bit but has some 32-bit stuff, might have potential.
-* **U64** CityHash, FarmHash, HighwayHash - Google's functions. CityHash32 might be the only viable option.
-* **U64** SipHash - security-focused 64-bit MAC hash. Some say its fast, some say its slow. Only _[halfsiphash.c](https://github.com/veorq/SipHash/blob/master/halfsiphash.c)_ is viable in JS.
-*  **U64** [SeaHash](https://github.com/jroivas/seahash) - forgot about this one - 64-bit arch only.
-* **U64** SlashHash - 64bit, supposedly fast but only 64-bit arch.
-* **U64** SpookyHash - 128bit hash, fast but 64-bit arch only.
+* **U64** [t1ha](https://github.com/leo-yuriev/t1ha) - supposedly super fast, but requires 64-bit arithmetic.
+* **U64** SlashHash - 64bit, supposedly fast but only 64-bit arch. Possibly viable in WebAssembly.
+* **U64** SpookyHash - 128bit hash, fast but 64-bit arch only. WebAssembly port?
+* **U64** [SeaHash](https://github.com/jroivas/seahash) - forgot about this one - 64-bit arch only.
 
 # Misc benchmarks
 *  https://jsbench.me/fyjfja4xih/1 - MurmurHash3 benchmarks
