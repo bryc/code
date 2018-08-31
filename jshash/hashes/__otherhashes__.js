@@ -170,18 +170,14 @@ function DEKHash(data) {
     return hash;
 }
 
-// Java HashCode - dunno if this is "official", seems users implement their own?
+// Java's hashCode() - 31*hash = (hash<<5)-hash
 
 function hashCode(data) {
     var hash = 0;
-    if(data.length === 0) {return hash;}
-
     for(var i = 0; i < data.length; i++) {
-        hash = ((hash << 5) - hash) + data[i];
-        hash = hash & hash;
+        hash = Math.imul(31, hash) + data[i] | 0; 
     }
-
-    return hash;
+    return h;
 }
 
 // DJB2 - not sure which is which, but this was one of the DJB hashes?
