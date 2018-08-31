@@ -21,8 +21,8 @@ Alea is not in the table yet, since the current version seems super slow in comp
 | xoshiro128** | 128-bit | 6,914,233 | preferred version. has lfsr issues, but better than xorshift. |
 | sfc32 | 128-bit | 7,178,353 | chaotic. best 2^128 state JS PRNG. passes practrand. |
 | gjrand32 | 128-bit | 5,878,910 | chaotic.  |
-| jsf32 | 128-bit | 4,838,098 | chaotic. sadly quite slow in JS. |
-| jsf32b | 128-bit | 4,819,955 | jsf32 with another rotate. better randomness, no perf cost in JS. |
+| jsf32 | 128-bit | 4,838,098 | chaotic. |
+| jsf32b | 128-bit | 4,819,955 | jsf32 with another rotate. better randomness, same speed in JS. |
 | tyche | 128-bit | 2,823,240 | sloww |
 | tychei | 128-bit | 4,425,038 | still kinda slow. but tyche/i passes BigCrush. |
 | xorshift128 | 128-bit | 6,068,160 |  |
@@ -191,9 +191,9 @@ Bob Jenkin's PRNG from 2007. Unfortunately only has a 32-bit seed despite having
 ```js
 function jsf32(a, b, c, d) {
     return function() {
-        a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
-        var t = a - (b << 27 | b >> 5) | 0;
-        a = b ^ (c << 17 | c >> 15) | 0;
+        a |= 0; b |= 0; c |= 0; d |= 0;
+        var t = a - (b << 27 | b >>> 5) | 0;
+        a = b ^ (c << 17 | c >>> 15);
         b = c + d | 0;
         c = d + t | 0;
         d = a + t | 0;
@@ -204,10 +204,10 @@ function jsf32(a, b, c, d) {
 // 3-rotate version, improves randomness.
 function jsf32b(a, b, c, d) {
     return function() {
-        a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
-        var t = a - (b << 23 | b >> 9) | 0;
-        a = b ^ (c << 16 | c >> 16) | 0;
-        b = c + (d << 11 | d >> 21) | 0;
+        a |= 0; b |= 0; c |= 0; d |= 0;
+        var t = a - (b << 23 | b >>> 9) | 0;
+        a = b ^ (c << 16 | c >>> 16) | 0;
+        b = c + (d << 11 | d >>> 21) | 0;
         b = c + d | 0;
         c = d + t | 0;
         d = a + t | 0;
