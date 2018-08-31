@@ -285,19 +285,19 @@ These PRNGs use a 32-bit state, similar to xorshift32. Quite useful for embedded
 ```c
 function mulberry32(a) {
     return function() {
-      var t = a += 0x6D2B79F5;
-      t = Math.imul(t ^ t >>> 15, t | 1);
-      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
       return ((t ^ t >>> 14) >>> 0) / 4294967296;
     }
 }
 
 function splitmix32(a) {
     return function() {
-      var t = a += 0x9e3779b9;
-      t ^= t >>> 15; t = Math.imul(t, 0x85ebca6b);
-      t ^= t >>> 13; t = Math.imul(t, 0xc2b2ae3d);
-      return ((t ^= t >>> 16) >>> 0) / 4294967296;
+      a |= 0; a = a + 0x9e3779b9 | 0;
+      var t = a ^ a >>> 15; t = Math.imul(t, 0x85ebca6b);
+      t = t ^ t >>> 13; t = Math.imul(t, 0xc2b2ae3d);
+      return ((t = t ^ t >>> 16) >>> 0) / 4294967296;
     }
 }
 ```
