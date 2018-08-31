@@ -225,7 +225,7 @@ Another "chaotic PRNG" designed by David Blackman. It is from the GJrand suite o
 ```js
 function gjrand32(a, b, c, d) {
     return function() {
-      a >>>= 0; b >>>= 0; c >>>= 0; d >>>= 0;
+      a |= 0; b |= 0; c |= 0; d |= 0;
       a = a << 16 | a >>> 16;
       b = b + c | 0;
       a = a + b | 0;
