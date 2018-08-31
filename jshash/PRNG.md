@@ -14,23 +14,24 @@ Alea is not in the table yet, since the current version seems super slow in comp
 
 | Algorithm | State size | Speed | Notes |
 | --------- | ---------- | ----- | ----- |
-| xoroshiro64+ | 64-bit | 8,026,741 | lfsr issues. |
-| xoroshiro64* | 64-bit | 7,985,287 | lfsr issues. |
-| xoroshiro64** | 64-bit | 7,982,769 | preferred version. lfsr issues, but fast. |
-| xoshiro128+ | 128-bit | 6,927,766 | lfsr issues. |
-| xoshiro128** | 128-bit | 6,914,233 | preferred version. has lfsr issues, but better than xorshift. |
-| sfc32 | 128-bit | 7,178,353 | chaotic. best 2^128 state JS PRNG. passes practrand. |
-| gjrand32 | 128-bit | 5,878,910 | chaotic.  |
-| jsf32 | 128-bit | 4,838,098 | chaotic. |
-| jsf32b | 128-bit | 4,819,955 | jsf32 with another rotate. better randomness, same speed in JS. |
-| tyche | 128-bit | 2,823,240 | sloww |
-| tychei | 128-bit | 4,425,038 | still kinda slow. but tyche/i passes BigCrush. |
-| xorshift128 | 128-bit | 6,068,160 |  |
-| xorshift32 | 32-bit | 5,745,952 | no idea why it's slow. |
-| xorshift32a | 32-bit | 5,702,701 |  |
-| xorshift32b | 32-bit | 5,667,568 |  |
-| lcg | 31-bit | 2,525,211 | park-miller lcg. super slow and only 31 bits. |
-| mulberry32 | 32-bit | 7,988,488 | best 2^32 state JS PRNG. passes gjrand. |
+| xoroshiro64+ | 64-bit | 8,077,296 | lfsr issues. |
+| xoroshiro64* | 64-bit | 8,058,755 | lfsr issues. |
+| xoroshiro64** | 64-bit | 8,037,441 | preferred version. lfsr issues, but fast. |
+| xoshiro128+ | 128-bit | 6,968,875 | lfsr issues. |
+| xoshiro128** | 128-bit | 6,930,900 | preferred version. has lfsr issues, but better than xorshift. |
+| sfc32 | 128-bit | 7,451,860 | pretty fast. chaotic. best 2^128 state JS PRNG. passes practrand. |
+| gjrand32 | 128-bit | 5,948,657 | chaotic.  |
+| jsf32 | 128-bit | 6,183,320 | chaotic. |
+| jsf32b | 128-bit | 6,161,758 | jsf32 with another rotate. better randomness, same speed in JS. |
+| tyche | 128-bit | 2,892,738 | sloww |
+| tychei | 128-bit | 4,592,413 | still kinda slow. but tyche/i passes BigCrush. |
+| xorshift128 | 128-bit | 6,101,622 |  |
+| xorshift32 | 32-bit | 5,902,315 | no idea why it's slow. |
+| xorshift32a | 32-bit | 5,895,329 |  |
+| xorshift32b | 32-bit | 5,858,901 |  |
+| lcg | 31-bit | 10,613,765 | park-miller lcg. super slow and only 31 bits. |
+| mulberry32 | 32-bit | 10,440,286 | FAST. best 2^32 state JS PRNG. passes gjrand. |
+| splitmix32 | 32-bit | 10,477,915 | based on xxhash/murmurhash3, untested. |
 
 ## Alea
 
