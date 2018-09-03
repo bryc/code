@@ -1,9 +1,15 @@
 # Hash functions in JavaScript
 
-## Goals
+## Goals of this project
 
-1. [Implement hash functions of all types in JavaScript](hashes/README.md), measure their performance/quality. 
+1. [Implement hash functions in JavaScript](hashes/README.md), measure their performance/quality. 
 2. [Create my own experimental hash functions](experimental/README.md), trying to beat the performance of existing implementations while retaining comparable quality benchmarks.
+
+### Extended
+
+3. [Implement PRNGs in JavaScript](PRNGs.md), measure their performance/quality.
+4. Study the differences between checksums and hash functions, as well as analyze the different approaches. For example: 
+5. Implement stream ciphers in JavaScript (encryption). I've already done RC4 / RC4a.
 
 ## Why JavaScript
 
