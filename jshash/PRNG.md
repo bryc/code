@@ -305,38 +305,44 @@ function splitmix32(a) {
 
 ## v3b
 
-Very weird PRNG. This one is (currently) _extremely_ slow and definitely implemented entirely wrong. It's supposed to be fast, but might not be practical in JS unfortunately. [C code here](https://pastebin.com/JBAUPKjw).
+Very odd "chaotic" PRNG using a counter with variable output. It's supposed to be fast, but in Google Chrome specifically, it's quite slow. In Firefox it's fine, oddly enough. [C code here](https://pastebin.com/JBAUPKjw).
 
 ```js
-function v3rand(v) {
-	function rol32(n,r){return n<<r|n>>>32-r}
-    var pos = 0, ctr = v.slice();
-    return function() {
-        if(pos === 0) {
-            v[0] = rol32(v[0] + v[3], 21);
-            v[1] = rol32(v[1], 12) + v[2];
-            v[2] = v[2] ^ v[0];
-            v[3] = v[3] ^ v[1];
-            v[0] = rol32(v[0] + v[3], 19);
-            v[1] = rol32(v[1], 24) + v[2];
-            v[2] = v[2] ^ v[0];
-            v[3] = v[3] ^ v[1];
-            v[0] = rol32(v[0] + v[3],  7);
-            v[1] = rol32(v[1], 12) + v[2];
-            v[2] = v[2] ^ v[0];
-            v[3] = v[3] ^ v[1];
-            v[0] = rol32(v[0] + v[3], 27);
-            v[1] = rol32(v[1], 17) + v[2];
-            v[2] = v[2] ^ v[0];
-            v[3] = v[3] ^ v[1];
-            pos = 4;
-
-            for(var i=0; i<4; i++) v[i] += ctr[i];
-            for(var i=0; i<4; i++) if(++ctr[i]) break;
-        }
-        return v[--pos] / 4294967296;
-    }
+function v3b(a, b, c, d) {
+  var out, pos = 0, a0 = 0, b0 = b, c0 = c, d0 = d;
+  return function() {
+      if(pos === 0) {
+          a += d; a = a << 21 | a >>> 11;
+          b = (b << 12 | b >>> 20) + c;
+          c ^= a; d ^= b;
+          a += d; a = a << 19 | a >>> 13;
+          b = (b << 24 | b >>> 8) + c;
+          c ^= a; d ^= b;
+          a += d; a = a << 7 | a >>> 25;
+          b = (b << 12 | b >>> 20) + c;
+          c ^= a; d ^= b;
+          a += d; a = a << 27 | a >>> 5;
+          b = (b << 17 | b >>> 15) + c;
+          c ^= a; d ^= b;
+        
+          a += a0; b += b0; c += c0; d += d0; a0++; pos = 4;
+      }
+      switch(--pos) {
+        case 0: out = a; break;
+        case 1: out = b; break;
+        case 2: out = c; break;
+        case 3: out = d; break;
+      }
+      return out >>> 0;
+  }
 }
+
+// default seeding procedure (32-bit seed):
+
+var seed = 0; // uint32_t
+v = [seed, 2654435769, 1013904242, 3668340011]; // golden ratios
+var next = v3b(v[0], v[1], v[2], v[3]);
+for(var i = 0; i < 16; i++) next();
 ```
 
 ****
