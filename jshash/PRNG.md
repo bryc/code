@@ -400,3 +400,19 @@ function initseed(s) {
     s[0] += e; s[1] ^= e; s[2] += e; s[3] ^= e;
     return s;
 }
+
+// alternatively, this is more similar to xfnv1a, but simpler and possibly faster. it can be subsequently called for more random bits.
+
+function initseed(k) {
+    for(var i = 0, h = 0xdeadbeef | 0; i < k.length; i++)
+        h = Math.imul(h + k.charCodeAt(i), 2654435761), h ^= h >>> 24,
+		h = Math.imul(h<<11 | h>>>21, 2246822519);
+    return function() {
+        h += h << 13; h ^= h >>> 7; h += h << 3;  h ^= h >>> 17;
+		h = h ^ h >>> 15; h = Math.imul(h, 2246822507);
+		h = h ^ h >>> 13; h = Math.imul(h, 3266489917);
+		return ((h = Math.imul(h ^ h >>> 16, 1597334677)) >>> 0);
+    }
+}
+```
+
