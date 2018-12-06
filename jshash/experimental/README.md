@@ -104,6 +104,18 @@ function cyb_alpha3(key) {
     return hash >>> 0;
 }
 
+// 64-bit (53-bit) version. Should be pretty good.
+function cyb_alpha3(key) {
+    var h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for (var i = 0; i < key.length; i++) {
+        h1 = Math.imul(h1 + data[i], 2654435761);
+        h2 = Math.imul(h2 + data[i], 1597334677);
+    }
+    h1 = Math.imul(h1 ^ h1 >>> 16, 1597334677);
+    h2 = Math.imul(h2 ^ h2 >>> 15, 2654435761);
+    return (h2 & 2097151) * 4294967296 + h1;
+}
+
 // MurmurHash3 style:
 function cyb_alpha3(key, seed = 0) {
     var hash = 0xdeadbeef ^ seed;
@@ -113,19 +125,6 @@ function cyb_alpha3(key, seed = 0) {
     hash ^= key.length; // optional
     hash = Math.imul(hash ^ hash >>> 16, 2246822507);
     return hash >>> 0;
-}
-
-// 64-bit (53-bit) version of murmur3 style.
-function cyb_alpha3(key, seed = 0) {
-    var h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
-    for (var i = 0; i < key.length; i++) {
-        h1 = Math.imul(h1 + data[i], 2654435761);
-        h2 = Math.imul(h2 + data[i], 1597334677);
-    }
-    h1 ^= key.length; h2 ^= key.length; // optional
-    h1 = Math.imul(h1 ^ h1 >>> 16, 1597334677);
-    h2 = Math.imul(h2 ^ h2 >>> 15, 2654435761);
-    return (h2 & 2097151) * 4294967296 + h1;
 }
 
 ```
