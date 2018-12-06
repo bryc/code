@@ -37,6 +37,8 @@ function cyb_alpha1(key) {
 
 Compared to Alpha-0, it has poor collision-resistance. Changing `hash << 1` to `hash << 4` can improve this slightly, however. This issue and more is addressed in **Cyb Alpha-2**. It also has seriously **horrible** distribution/randomness.
 
+So how does it work? It's actually multiplication. `a<<1` === `Math.imul(a, 2)` or `(0|a*2)`. It seems the best shift value is **9** (4 previously looked good too), which is equivalent to multiplying by 512. However, it would seem that larger 32-bit multipliers are more effective. I suppose on systems that can't do fast multiplication have to deal with shifts.
+
 **Note to self:** When able to discern a difference through testing, determine if and how adding `key[i]` to the hash first is effective. My basic tests lean on yes, but I need to be sure.
 
 # Cyb Alpha-2 (New)
