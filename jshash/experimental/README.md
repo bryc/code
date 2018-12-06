@@ -1,9 +1,7 @@
 
 # Cyb
 
-Cyb (previously CYRB32) is a hash function experiment designed for quickly identifying binary data. It comes in many variants and its quality remains not well understood (which should change when I am able to tame SMHasher).  
-
-Regardless, it demonstrates potential and serves as a test bed for an eventual finalized algorithm. In this article, I will document each iteration of the code.
+Cyb (previously CYRB32) is an academic hash function experiment. In this article, I will document the many approaches I have found to be effective for hashing. The intended purpose of the finalized algorithm is to quickly identify binary data and/or provide binary data fingerprinting in JavaScript using modern features. It should also be suitable for strings. They remain untested in SMHasher for now, but I have my own basic test bench for identifying issues.
 
 # Cyb Alpha-0
 
@@ -45,7 +43,7 @@ So how does it work? It's actually multiplication. `a<<1` === `Math.imul(a, 2)` 
 
 **Alpha-2** is an attempt to improve Alpha-1 while maintaining as much simplicity as possible. There are currently two candidates, Alpha-2A and Alpha-2B. Both candidates appear superior to even Cyb Alpha.
 
-**Alpha-2A**, originally called miracle, was my first attempt at improving Alpha-1. It's main goal is to achieve good distribution/randomness in very short or sparse keys. Which it mildly succeeds at.
+**Alpha-2A**, originally called miracle, was my first attempt at improving Alpha-1. It's main goal is to achieve good distribution/randomness in very short or sparse keys. Which it mildly succeeds at. The current constants are`[1,5,1,9,15]`. The original constants were `[0x41c6ce57,4,1,11,14]`. I suspect I changed them after some testing, but don't have concrete reasoning. **It actually seems to perform worse than I originally assumed, looking at some newer tests. Lots of collisions.**
 
 ```js
 function cyb_alpha2a(key) {
@@ -61,7 +59,8 @@ function cyb_alpha2a(key) {
 }
 ```
 
-**Alpha-2B** borrows constants from Bob Jenkin's OAAT hash, which seem to have interesting properties. It differs to Jenkins' original by having an initial value of `1`, and reducing mixing to a single line: `hash += hash << 15`. It appears to have distribution problems for small keys which Alpha-2A does not.
+**Alpha-2B** borrows constants from Bob Jenkin's OAAT hash, which seem to have interesting properties. It differs to Jenkins' original by having an initial value of `1`, and reducing mixing to a single line: `hash += hash << 15`. It appears to have distribution problems for small keys which Alpha-2A does not, but requires one less xorshift. However it has less collisions in some ASCII tests... cyb_alpha2b appears to fail my new tests.
+
 
 ```js
 function cyb_alpha2b(key) {
@@ -76,9 +75,64 @@ function cyb_alpha2b(key) {
 }
 ```
 
+**Alpha-2C** is a (hopefully) much improved version, based on Alpha-2B.
+
+```js
+function cyb_alpha2c(key) {
+    var hash = 1;
+    for(var i = 0; i < key.length; i++) {
+        hash += key[i];
+        hash += hash << 14;
+        hash ^= hash >>> 7;
+    }
+    hash += hash << 15;
+    return hash >>> 0;
+}
+```
+
+# Cyb Alpha-3 (New)
+
+**Alpha-3** is a simple multiplicative hash, similar to the **Beta** series, but still only one byte at a time. The philosophy of this version is that a larger multiplier is more effective at scrambling the bits than a simple left-shift. Xor-shift is combined as well in the post-processing phase.
+
+```js
+function cyb_alpha3(key) {
+    var hash = 1;
+    for(var i = 0; i < key.length; i++) {
+        hash = Math.imul(hash + key[i], 2654435761);
+    }
+    hash = Math.imul(hash ^ hash >>> 16, 1597334677);
+    return hash >>> 0;
+}
+
+// MurmurHash3 style:
+function cyb_alpha3(key, seed = 0) {
+    var hash = 0xdeadbeef ^ seed;
+    for(var i = 0; i < key.length; i++) {
+        hash = Math.imul(hash ^ key[i], 3432918353);
+    }
+    hash ^= key.length; // optional
+    hash = Math.imul(hash ^ hash >>> 16, 2246822507);
+    return hash >>> 0;
+}
+
+// 64-bit (53-bit) version of murmur3 style.
+function cyb_alpha3(key, seed = 0) {
+    var h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+    for (var i = 0; i < key.length; i++) {
+        h1 = Math.imul(h1 + data[i], 2654435761);
+        h2 = Math.imul(h2 + data[i], 1597334677);
+    }
+    h1 ^= key.length; h2 ^= key.length; // optional
+    h1 = Math.imul(h1 ^ h1 >>> 16, 1597334677);
+    h2 = Math.imul(h2 ^ h2 >>> 15, 2654435761);
+    return (h2 & 2097151) * 4294967296 + h1;
+}
+
+```
+
 # Cyb Beta-0 (WIP)
 
-Beta is characterized by reading 4 bytes at a time and uses `Math.imul`, similar to MurmurHash. It is a bit faster than my MurmurHash implementations (which are already fast), but might have inferior quality (it is untested). The multiplication constants are arbitrary primes. The algorithm seems to suffer quality if the first prime is the same as the second.
+Beta is characterized by reading 4 bytes at a time and uses `Math.imul`, similar to MurmurHash. It is a bit faster than my MurmurHash implementations (which are already fast), but might have inferior quality (it is untested). The multiplication constants are arbitrary primes. **The algorithm seems to suffer quality issues if the first prime is the same as the second.**
 
 ```js
 function cyb_beta0(key) {
@@ -99,6 +153,28 @@ function cyb_beta0(key) {
     hash = Math.imul(hash, 3432918353);
     hash ^= hash >>> 15;
     
+    return hash >>> 0;
+}
+```
+
+**Cyb Beta-0A** is a further simplification of **Cyb Beta-0**.
+
+```js
+function cyb_beta0a(key) {
+    var hash = 1;
+    for (var i = 0, chunk = -4 & key.length; i < chunk; i += 4) {
+        hash += key[i+3] << 24 | key[i+2] << 16 | key[i+1] << 8 | key[i];
+        hash = Math.imul(hash ^ hash >>> 24, 1540483507);
+    }
+    
+    switch(3 & key.length) {
+        case 3: hash ^= key[i+2] << 16;
+        case 2: hash ^= key[i+1] << 8;
+        case 1: hash ^= key[i], hash = Math.imul(hash, 3432918353); 
+    }
+
+    hash ^= key.length;
+    hash = Math.imul(hash ^ hash >>> 16, 1597334677);
     return hash >>> 0;
 }
 ```
@@ -138,6 +214,7 @@ This essentially means that `h2` and `h1` are independent and do not share colli
 <code><u>0c905c</u>|<b>15152ff2</b> <u>0c9ca6</u>|<b>15152ff2</b></code><br>
 <code><u>11990c</u>|<b>2864e779</b> <u>13af97</u>|<b>2864e779</b></code>
 
+
 # Cyb Beta-2 (WIP)
 
 Using ideas from MurmurHash_x86_128, this reads 8 bytes at a time, computing two hashes based on separate data streams.
@@ -170,11 +247,12 @@ function cyb_beta2(key, seed = 0) {
     return [h1, h2]; // 52bit: (h1 & 2097151) * 4294967296 + h2
 }
 ```
+
 ****
 
 # Cyb Kappa (Deprecated)
 
-**Kappa** is an older series of misguided attempts to improve Cyb Alpha-1. Performance is quite bad in Kappa-1 through 4. The only functions worth investigation are Kappa-1 and Kappa-5, everything else is garbage and only shown here for completeness.
+**Kappa** is an older series of misguided attempts to improve Cyb Alpha-1. Performance is quite bad in Kappa-1 through 4. The only functions worth investigation are Kappa-1 and Kappa-5, **everything else is garbage and only shown here for completeness**.
 
 **Kappa-0** is the original in this series. It fails Test 4 in the same way Cyb Alpha-1 did due to `hash << 1` and this flaw is present throughout the Kappa series. Also appears to have bad distribution. It's quite bad overall.
 
