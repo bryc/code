@@ -116,7 +116,7 @@ function cyb_alpha3(key) {
     return (h2 & 2097151) * 4294967296 + h1;
 }
 
-// MurmurHash3 style:
+// MurmurHash3 style (Murmur3 constants, seed and key length mixing):
 function cyb_alpha3(key, seed = 0) {
     var hash = 0xdeadbeef ^ seed;
     for(var i = 0; i < key.length; i++) {
