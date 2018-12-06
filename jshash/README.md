@@ -8,8 +8,9 @@
 ### Extended
 
 3. [Implement PRNGs in JavaScript](PRNGs.md), measure their performance/quality.
-4. Study the differences between checksums and hash functions, as well as analyze the different approaches. For example: 
-5. Implement stream ciphers in JavaScript (encryption). I've already done RC4 / RC4a.
+4. Study the differences between checksums and hash functions, recognizing their effectiveness and use cases.
+5. Study similarities/differences between PRNGs and hashes, such as shared use of bit scrambling techniques.
+6. Implement stream ciphers in JavaScript (encryption). I've already done RC4 / RC4a.
 
 ## Why JavaScript
 
