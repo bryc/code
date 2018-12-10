@@ -349,16 +349,16 @@ for(var i = 0; i < 16; i++) next();
 
 # Seed generating functions
 
-Here are various functions that can be used to efficiently generate seeds for PRNGs. I'll include integer and string hashing functions as well here.
+Certain generators originally had their own seeding procedure, such as jsf32, sfc32 and gjrand32. Those three in particular run the next() function 10-20 times in advance, assumingly to aid in the initialization process. I believe this process can be skipped by using a suitable hash function such as MurmurHash3 to generate the full initial state of the generator.
 
-Note: Certain generators have their own seed procedure, such as jsf32, sfc32 and potentially gjrand32. I'm assuming that you can seed these generators with any hashing algorithm such as MurmurHash3, which is what I use.
+Here are various utility functions that can be used to generate seeds properly for PRNGs. <!-- I'll include integer and string hashing functions as well here. -->
 
-`xfnv1a` is a good example of generating seeds. It is based on Bret Mulvey's modified FNV1a.
+`xfnv1a` is a good example of generating seed bits from a string. It is based on Bret Mulvey's modified FNV1a.
 
 ```js
-function xfnv1a(k) {
-    for(var i = 0, h = 2166136261 >>> 0; i < k.length; i++)
-        h = Math.imul(h ^ k.charCodeAt(i), 16777619);
+function xfnv1a(str) {
+    for(var i = 0, h = 2166136261 >>> 0; i < str.length; i++)
+        h = Math.imul(h ^ str.charCodeAt(i), 16777619);
     return function() {
         h += h << 13; h ^= h >>> 7;
         h += h << 3;  h ^= h >>> 17;
@@ -383,7 +383,58 @@ rand();
 rand();
 ```
 
-`initseed` is an experimental 128-bit seed generator. It takes an array of 4 32-bit numbers and mixes them using the mixing function from Murmur3/xxHash.
+A possible issue with this function could be whether the xor and shift operations are sufficient to mix the state for each subsequent hash. A potential alternative, using MurmurHash sensibilities, dubbed 'xmur1a':
+
+```js
+function xmur1a(str) {
+    for(var i = 0, h = Math.imul(str.length, 2166136261) >>> 0; i < str.length; i++)
+        h = Math.imul(h + str.charCodeAt(i), 3432918353), h ^= h >>> 24;
+    return function() {
+        h ^= h >>> 15; h = Math.imul(h, 2246822507);
+        h ^= h >>> 13; h = Math.imul(h, 3266489917);
+        return (h ^= h >>> 16) >>> 0;
+    }
+}
+```
+
+This utilizes the famed fmix function seen in MurmurHash3, xxHash and SplitMix, as well as a slight MurmurHash1-style modification to FNV1a's combining step. This means switching xor to add, changing the multiplier, and adding a xorshift step.
+
+On paper, this may be an ideal and efficient function for generating good _hash seeds_. But I haven't tested it. As a final option, a full MurmurHash3 implementation:
+
+```js
+function xmur3a(str) {
+    for(var k, i = 0, h = 2166136261 >>> 0; i < str.length; i++) {
+        k = Math.imul(str.charCodeAt(i), 3432918353); k = k << 15 | k >>> 17;
+        h ^= Math.imul(k, 461845907); h = h << 13 | h >>> 19;
+        h = Math.imul(h, 5) + 3864292196 | 0;
+    }
+    h ^= str.length;
+    return function() {
+        h ^= h >>> 16; h = Math.imul(h, 2246822507);
+        h ^= h >>> 13; h = Math.imul(h, 3266489909);
+        h ^= h >>> 16;
+        return h >>> 0;
+    }
+}
+```
+
+An earlier attempt at improving xfnv1a(), that is a bit more verbose as well:
+
+```js
+function initseed(k) {
+    for(var i = 0, h = 0xdeadbeef | 0; i < k.length; i++)
+        h = Math.imul(h + k.charCodeAt(i), 2654435761), h ^= h >>> 24,
+        h = Math.imul(h<<11 | h>>>21, 2246822519);
+    return function() {
+        h += h << 13; h ^= h >>> 7; h += h << 3;  h ^= h >>> 17;
+        h = h ^ h >>> 15; h = Math.imul(h, 2246822507);
+        h = h ^ h >>> 13; h = Math.imul(h, 3266489917);
+        return ((h = Math.imul(h ^ h >>> 16, 1597334677)) >>> 0);
+    }
+}
+```
+
+`initseed` is an older 128-bit seed generator I tried making. It takes an array of 4 32-bit numbers and mixes them using the mixing function from Murmur3/xxHash. Probably not worth using.
 
 ```js
 function initseed(s) {
@@ -400,19 +451,4 @@ function initseed(s) {
     s[0] += e; s[1] ^= e; s[2] += e; s[3] ^= e;
     return s;
 }
-
-// alternatively, this is more similar to xfnv1a, but simpler and possibly faster. it can be subsequently called for more random bits.
-
-function initseed(k) {
-    for(var i = 0, h = 0xdeadbeef | 0; i < k.length; i++)
-        h = Math.imul(h + k.charCodeAt(i), 2654435761), h ^= h >>> 24,
-		h = Math.imul(h<<11 | h>>>21, 2246822519);
-    return function() {
-        h += h << 13; h ^= h >>> 7; h += h << 3;  h ^= h >>> 17;
-		h = h ^ h >>> 15; h = Math.imul(h, 2246822507);
-		h = h ^ h >>> 13; h = Math.imul(h, 3266489917);
-		return ((h = Math.imul(h ^ h >>> 16, 1597334677)) >>> 0);
-    }
-}
 ```
-
