@@ -79,12 +79,12 @@ function lcg(a) {
 This is Marsaglia's MWC generator (KISS99 version). There are tons of variations that use different constants, but this is probably the definitive one. It actually dates back to 1994 but wasn't well known until it was published as part of KISS. It's not that good; modern generators are better. Xorshift is probably better.
 
 ```js
-function mwc1616(a, b) {
-	return function() {
-		a = 36969 * (a & 65535) + (a >>> 16);
-		b = 18000 * (b & 65535) + (b >>> 16);
-		var result = (a << 16) + (b & 65535) >>> 0;
-		return result / 4294967296;
+function mwc(a, b) {
+    return function() {
+        a = 36969 * (a & 65535) + (a >>> 16);
+        b = 18000 * (b & 65535) + (b >>> 16);
+        var result = (a << 16) + (b & 65535) >>> 0;
+        return result / 4294967296;
     }
 }
 ```
