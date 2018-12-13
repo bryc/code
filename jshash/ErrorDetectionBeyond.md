@@ -195,7 +195,7 @@ int main() {
 As for **two's complement addition**.. well modern CPUs apparently use two's complement addition internally. At first glance, it appears to be an alternative optimization trick to force the result to zero. But there may be more to it. essentially an 8-bit two's complement is `256 - (1 + 2 + 3) & 0xFF`. This appears to be the result of bitwise `NOT` minus one. Or "256 - val" / "0 - val". It could be related to the term "Longitudinal parity check".
 -->
 
-<-- 
+<!--
 
 ### A clever optimization for verifying checksums.
 
