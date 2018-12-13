@@ -29,7 +29,7 @@ The checksum is typically sent along with the data, and the receiving end repeat
 
 ### Overflow
 
-The result of the 8-bit summation, 1085, requires 11 bits. A single byte only has 8 bits (256 possible values). Two bytes (16-bits) can represent up to 65536 possible values. Thus, a 16-bit number can only reliably sum up to 257 8-bit bytes without **overflow**. A 32-bit number can sum up to 16 megabytes of data without overflow. The general rule is, the more bits used in a checksum, the better it is at detecting errors (however not all algorithms are made equal). However sometimes storage space is a concern, and only 8 bits can be reserved for the checksum. In this case, any bits higher than the 7th bit is discarded in a process known as integer overflow.
+The result of the 8-bit summation, 1085, requires 11 bits. A single byte only has 8 bits (256 possible values). Two bytes (16-bits) can represent up to 65536 possible values. Thus, a 16-bit number can only reliably sum up to 257 8-bit bytes without **overflow**. A 32-bit number can sum up to 16 megabytes of data without overflow. The general rule is, the more bits used in a checksum, the better it is at detecting errors. However sometimes storage space is a concern, and only 8 bits can be reserved for the checksum. In this case, any bits higher than the 7th bit is discarded in a process known as integer overflow.
 
     The sum above (1085) in hexadecimal is `0x043D`. If stored as an 8-bit checksum it will be 0x3D.
 
@@ -50,9 +50,93 @@ int main() {
     sum += data[i];
   }
   
-  printf("%04X\n", sum); // result is '003D'
+  printf("%02X\n", sum); // result is '3D'
 }
 ```
+
+### Carry
+
+CPUs have this thing called a carry flag which is typically set when the result of an addition overflows (such as 255+255 on an 8-bit CPU). It is important in what is known as "one's complement" binary arithmetic. One's complement and Two's complement can be highly confusing terms, but ultimately they aim to be a solution to handling negative integer arithmetic in binary. The carry/overflow flag is very low level (not even C can access it), so for the purpose of this article, we are only interested in simulating these concepts. 
+
+<!-- In order to simulate the carrying as seen in one's complement addition, we can no longer store the sum in a single byte during calculation, so `unsigned char` has to become `unsigned short`. The sum we are looking for this time is `0x41`, rather than `0x3D`, as a result of adding the carry bit four times. We can accomplish this a number of ways, one of them being a check during the loop (`if(sum>255) sum -= 255`) and another by finding the remainder of **modulo 255** at the very end, which is probably the best option in this case. -->
+
+### One's complement checksum
+
+The one's complement checksum consists of two changes: 1) sum must be stored in a 16-bit int, and we use modulo end-around carry 2) we invert the bits to form the complement. Thus, the checksum is the complement that which upon repeating the calculation results in a zero. These two changes typically provides the best error detection amongst simple checksums.
+
+```c
+#include <stdio.h>
+
+int main() {
+  unsigned char data[] = {
+    72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33
+  };
+  
+  unsigned short sum = 0;
+  for(int i = 0; i < sizeof(data); i++) {
+    sum += data[i];
+  }
+  
+  sum = ~sum; // one's complement (invert bits)
+  sum %= 255; // end-around carry
+
+  printf("%02X\n", sum); // result is 'BE'
+}
+```
+
+The first change, the end-around carry modulo and `short` type, can be optional. 
+
+Note: A checksum with ONLY the complement (bit inversion) step can still be used to optimize the checksum validation process, however without end-around carry it will not perform error-detection as well.
+
+### Internet checksum
+
+The well-known checksum used in the TCP/UDP protocol is a 16-bit one's complement checksum. It reads two bytes at a time and reads them in big-endian byte order. 
+
+```c
+#include <stdio.h>
+
+int main() {
+  unsigned char data[] = {
+    0x45, 0x00, 0x00, 0x73, 0x00, 0x00, 0x40, 0x00, 0x40,
+    0x11, 0xc0, 0xa8, 0x00, 0x01, 0xc0, 0xa8, 0x00, 0xc7
+  };
+  
+  unsigned long sum = 0; // long must be used here
+  for(int i = 0; i < sizeof(data); i += 2) {
+    sum += (data[i] << 8) + data[i + 1];
+  }
+  
+  sum = ~sum;   // one's complement (invert bits)
+  sum %= 65535; // end-around carry
+  
+
+  printf("%04X\n", sum); // result is 'B861'
+}
+```
+
+### Two's complement checksum
+
+Two's complement is much simpler, because there is no carrying involved. As a final step, the sum is negated by using `-sum` or `~sum + 1`. 
+
+```c
+#include <stdio.h>
+
+int main() {
+  unsigned char data[] = {
+    72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 33
+  };
+  
+  unsigned char sum = 0;
+  for(int i = 0; i < sizeof(data); i++) {
+    sum += data[i];
+  }
+
+  sum = -sum; // can also be: sum = ~sum + 1;
+
+  printf("%02X\n", sum); // result is '00C3'
+}
+
+----
 
 Now, looking at our 16-bit result, 126800 (`0x1EF50`). This requires 17 bits, and has a potential maximum of 19 bits for six 16-bit numbers. Overflow still applies here unless one uses a 32-bit sum. 
 
@@ -78,7 +162,7 @@ int main() {
 
 ### XOR
 
-Checksums can use operations other than addition. Exclusive or (XOR) is often used as a more efficient (but statistically less reliable) alternative. XOR works by comparing two numbers, and setting the bit to 1 in each position if they are different. For example `11110000 XOR 00000111 = 11110111`. In the result, differing bits are 1, common bits are 0. Because of the reversible nature of XOR it is useful in ciphers and checksums.
+Checksums can use operations other than addition. Exclusive or (XOR) is often used as a more efficient (but statistically less reliable) alternative. In fact, the simplest checksum possible, the parity bit, is essentially a 1-bit XOR checksum. XOR works by comparing two numbers, and setting the bit to 1 in each position if they are different. For example `11110000 XOR 00000111 = 11110111`. In the result, differing bits are 1, common bits are 0. Because of the reversible nature of XOR it is useful in ciphers and checksums.
 
     XOR Summation of 12 x 8-bit words:
     72 ^ 101 ^ 108 ^ 108 ^ 111 ^ 32 ^ 87 ^ 111 ^ 114 ^ 108 ^ 100 ^ 33 = 1
@@ -106,6 +190,12 @@ int main() {
   printf("%04X\n", sum); // result is '0001'
 }
 ```
+
+<!--
+As for **two's complement addition**.. well modern CPUs apparently use two's complement addition internally. At first glance, it appears to be an alternative optimization trick to force the result to zero. But there may be more to it. essentially an 8-bit two's complement is `256 - (1 + 2 + 3) & 0xFF`. This appears to be the result of bitwise `NOT` minus one. Or "256 - val" / "0 - val". It could be related to the term "Longitudinal parity check".
+-->
+
+<-- 
 
 ### A clever optimization for verifying checksums.
 
@@ -165,10 +255,8 @@ function IPv4(data) {
 }
 ```
 
-As for **two's complement addition**.. well modern CPUs apparently use two's complement addition internally. At first glance, it appears to be an alternative optimization trick to force the result to zero. But there may be more to it. essentially an 8-bit two's complement is `256 - (1 + 2 + 3) & 0xFF`. This appears to be the result of bitwise `NOT` minus one. Or "256 - val" / "0 - val". It could be related to the term "Longitudinal parity check".
 
 
-<-- 
 In outline, the Internet checksum algorithm is very simple:
 
    (1)  Adjacent octets to be checksummed are paired to form 16-bit
