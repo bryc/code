@@ -135,9 +135,9 @@ int main() {
 
   printf("%02X\n", sum); // result is '00C3'
 }
+```
 
-----
-
+<!--
 Now, looking at our 16-bit result, 126800 (`0x1EF50`). This requires 17 bits, and has a potential maximum of 19 bits for six 16-bit numbers. Overflow still applies here unless one uses a 32-bit sum. 
 
 The following C code calculates a 16-bit checksum. Using `unsigned short` restricts the result to 16-bits.
@@ -159,6 +159,8 @@ int main() {
   printf("%04X\n", sum); // result is 'EF50'
 }
 ```
+
+-->
 
 ### XOR
 
