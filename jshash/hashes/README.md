@@ -8,13 +8,14 @@ Also see: [CRC functions](CRC.md)
 | Algorithm | Hash size | Speed | Notes |
 | --------- | --------- | ----- | ----- |
 | [FNV](FNV.js) | 32-bit  | 3041/2649  | variants: FNV-0, FNV-1, FNV-1a, FNV-1a_BM |
-| [MurmurHash1](murmurhash1.js) | 32-bit | **3296**/2822 | Original version. |
+| [MurmurHash1](murmurhash1.js) | 32-bit | **3296**/2822 | Original version. Super fast. |
 | [MurmurHash2](murmurhash2.js) | 32-bit | 3027/2518 | aka `MurmurHash2_x86_32` |
 | [MurmurHash2A](murmurhash2a.js) | 32-bit | 3053/2484 | Fixes a flaw in MurmurHash2. Uses Merkle–Damgård construction. |
 | [MurmurHash3](murmurhash3.js) | 32-bit | 3090/2515 | aka `MurmurHash3_x86_32` |
-| [xxHash](xxhash_32.js) | 32-bit | 2968/2492 | |
-| CRC-32 | 32-bit | 147/575 | For speed reference |
+| [xxHash](xxhash_32.js) | 32-bit | 2968/2492 | not as fast as you'd think, but still good |
+| CRC-32 | 32-bit | 147/575 | For speed reference (it's pretty slow) |
 | [SuperFastHash](superfasthash.js) | 32-bit | -/- | Higher collision rates in some cases: 90 of 131072<br> (vs. Murmur3=0, Lookup2=2, Lookup3=3, xxHash=4) |
+| [Marvin32](marvin32.js) | 32-bit | -/- | Obscure function, but seems decent. Almost as fast as MurmurHash3. |
 
 ## 64-bit or higher
 
@@ -30,7 +31,7 @@ Also see: [CRC functions](CRC.md)
 
 ## Performance notes
 
-Legend: 256 / 31488 (InputLength)
+Legend (for *Speed*): 256 / 31488 (InputLength)
 
 These numbers don't really mean much, just a quick comparison. They're all pretty fast. My fastest table CRC-32 is still ~75% slower than `MurmurHash2_160`, which is the slowest in the table above.
 
@@ -53,7 +54,7 @@ _BigInt does not currently seem to be a performant option._
 ****
 
 # Notes/TODO
-* **U32** [Marvin32](https://github.com/floodyberry/Marvin32/blob/master/Marvin32.c) - seems interesting and is 32-bit.
+* **U32** [various string hashes](https://github.com/dgryski/dgohash/blob/master/stringhashes.go) - specifically SQLite3 or ELF32.
 * **U32** [Zaphod32/Phat4](https://github.com/demerphq/BeagleHash) - two 32-bit hashes, but seem overly complex.
 * **U32/U64** [CityHash32](https://github.com/google/cityhash/blob/master/src/city.cc#L189), FarmHash, HighwayHash - Google's functions. CityHash32 might be the only viable option.
 * **U32/U64** SipHash - security-focused 64-bit MAC hash. Some say its fast, some say its slow. Only _[halfsiphash.c](https://github.com/veorq/SipHash/blob/master/halfsiphash.c)_ is viable in JS.

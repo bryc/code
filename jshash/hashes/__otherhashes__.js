@@ -17,10 +17,10 @@
     Also, its speed doesn't seem that good in JS, but I could test that further.
     ----
     These passed 3 of 4 my simple collision tests, worth investigating:
-    DJB2, SDBM, JSHash, RSHash, DEKHash, BKDRHash, GPHash, hashCode
+    DJB2, SDBM, *JSHash, RSHash, *DEKHash, BKDRHash, *GPHash, hashCode
 
     These passed 3 of 4 of my simple distribution tests, worth investigating:
-    JSHash, DEKHash, GPHash
+    *JSHash, *DEKHash, *GPHash
 
     These performed horribly in general and should be avoided:
     Adler-32, Fletcher-32, BPHash, APHash, ELFHash, PJWHash
@@ -151,6 +151,7 @@ function GPHash(key) {
 }
 
 // JSHash -  Justin Sobel's bitwise hash
+// >> or >>>?
 
 function JSHash(data) {
     var hash = 0x4e67c6a7;
@@ -161,6 +162,7 @@ function JSHash(data) {
 }
 
 // DEKHash - from 1973. Donald E. Knuth's book The Art Of Computer Programming Volume 3
+// >> or >>>?
 
 function DEKHash(data) {
     var hash = data.length;
@@ -178,6 +180,44 @@ function hashCode(data) {
         hash = Math.imul(31, hash) + data[i] | 0; 
     }
     return h;
+}
+
+// Google Analytics URL domain name hash. Not that good. Still gotta clean it up though.
+// >> or >>>?
+
+function GAHash(key) {
+        var b = 1;
+        for (var c, char, b = 0, i = key.length - 1; 0 <= i; i--) {
+            char = key[i];
+            b = (b << 6 & 268435455) + char + (char << 14);
+            c = b & 266338304; b = c != 0 ? b ^ c >> 21 : b;
+        }
+    return b;
+}
+
+// .NET GetHashCode() - original UTF-16 construction. Seems to rip off constants from DJB2 and MT19937.
+// Note: This hash specifically uses signed numbers, so leave shifts as is.
+
+function GetHashCode(key) {
+    var hash1 = (5381 << 16) + 5381, hash2 = hash1;
+    for(var i = 0; i < key.length; i += 4) {
+        hash1 = (hash1 << 5) + hash1 + (hash1 >> 27) ^ (key[i+1] << 16 | key[i]);
+        if(i > key.length-3) break;
+        hash2 = (hash2 << 5) + hash2 + (hash2 >> 27) ^ (key[i+3] << 16 | key[i+2]);
+    }
+    return hash1 + Math.imul(hash2, 1566083941) | 0;
+}
+
+// .NET GetHashCode() - A more sane version reading two bytes at a time.
+
+function GetHashCodeB(key) {
+    var hash1 = (5381 << 16) + 5381, hash2 = hash1;
+    for(var i = 0; i < key.length; i += 2) {
+        hash1 = (hash1 << 5) + hash1 + (hash1 >> 27) ^ key[i];
+        if(i === key.length-1) break;
+        hash2 = (hash2 << 5) + hash2 + (hash2 >> 27) ^ key[i+1];
+    }
+    return hash1 + Math.imul(hash2, 1566083941) | 0;
 }
 
 // DJB2 - not sure which is which, but this was one of the DJB hashes?
@@ -206,7 +246,7 @@ function DJB2a(data) {
 function BKDRHash(data) {
     var hash = 0, seed = 131; // 31, 131, 1313 etc.
     for(var i = 0; i < data.length; i++) {
-        hash = Math.imul(hash,seed) + data[i];
+        hash = Math.imul(hash, seed) + data[i];
     }
     return hash;
 }
@@ -253,6 +293,7 @@ function PJWHash(data) {
 }
 
 // ELF Hash (linux) - somehow related to PJW Hash
+// Is this ELF-32?
 
 function ELF(data) {
     var hash = 0, x = 0;
@@ -265,7 +306,6 @@ function ELF(data) {
     }
     return hash;
 }
-
 
 // APHash - Arash Partow hash
 
@@ -367,7 +407,7 @@ function BSD16(data) {
     return c;
 }
 
-// IPv4 checksum - simple checksum described in Internet Protocol document.
+// IPv4 checksum - simple checksum using one's complement addition, described in Internet Protocol document.
 
 function IPv4(data) {
     for(var sum = 0, i = 0; i < data.length; i += 2)
@@ -378,22 +418,12 @@ function IPv4(data) {
     return (~sum) >>> 0;
 }
 
-// Sum - simple additve checksum
+// Sum - simple additve checksum - only here for comparative purposes. In-depth checksum codes are best studied in C.
 
 function Sum(data) {
     var sum = 0;
     for(var i = 0; i < data.length; i++) {
-        sum += data[i];
-    }
-    return sum;
-}
-
-// Xor - simple XOR checksum, only one byte, pretty bad tbh
-
-function Xor(data) {
-    var sum = 0;
-    for(var i = 0; i < data.length; i++) {
-        sum ^= data[i];
+        sum += data[i]; // for xor: sum ^= data[i];
     }
     return sum;
 }
