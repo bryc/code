@@ -22,8 +22,8 @@ Also see: [CRC functions](CRC.md)
 | Algorithm | Hash size | Speed | Notes |
 | --------- | --------- | ----- | ----- |
 | [Lookup2_x86](lookup2.js) | 32-bit | 2412/1985 | (_Obsolete_) 32-bit. 64/96-bit is _possible_ but with worse statistics. |
-| [Lookup3_x86](lookup3.js) | 32/64-bit | **2553**/1038 | 32/64-bit. 96 is _possible_ but with worse statistics. |
-| [MurmurHash2_x86_64](murmurhash2_64b.js) | 64-bit | 2759/2406 | Produces two _correlated_ 32-bit hashes (has a flaw), see comments. |
+| [Lookup3_x86](lookup3.js) | 32/64-bit | **2553**/1038 | 32 or 64-bit. 96 is _possible_ but with weaker statistics. |
+| [MurmurHash2_x86_64](murmurhash2_64b.js) | 64-bit | 2759/2406 | Slightly modified to avoid a flaw in the original, see comments. |
 | [MurmurHash3_x86_128](murmurhash3_128.js) | 128-bit | **2498**/2162 | Modified version. Contains a possible flaw, see comments. |
 | [MurmurHash2_160](murmurhash2_160.js) | 160-bit | 1968/1590 | Unofficial modification that outputs five 32-bit hash states. |
 | CybBeta2 | 64-bit | 2853/2546 | Experimental 64-bit |
