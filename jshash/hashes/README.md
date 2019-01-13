@@ -55,21 +55,14 @@ _BigInt does not currently seem to be a performant option._
 ****
 
 # Notes/TODO
-* **U32** [CityHash32](https://github.com/google/cityhash/blob/master/src/city.cc#L189) - Try to implement this one.
 * **U32** [SipHash13/HalfSipHash](https://raw.githubusercontent.com/jedisct1/siphash-js/master/lib/siphash13.js) - security-focused 64-bit MAC hash. Some say its fast, some say its slow. Only _[halfsiphash.c](https://github.com/veorq/SipHash/blob/master/halfsiphash.c)_ is viable in JS.
 * **U32** [FunnyHash](https://github.com/funny-falcon/funny_hash/blob/master/funny_hash.h) - Try to implement this one.
 * **U32** [Zaphod32](https://github.com/demerphq/BeagleHash/blob/master/zaphod32_hash.h) - Try to implement this one.
 * **U32** [PhatHash](https://github.com/demerphq/BeagleHash/blob/master/phat_hash.h) - Try to implement this one.
 * **U32** [various string hashes](https://github.com/dgryski/dgohash/blob/master/stringhashes.go) - specifically SQLite3 or ELF32.
-<<<<<<< HEAD
-* **U32** [Zaphod32/Phat4](https://github.com/demerphq/BeagleHash) - two 32-bit hashes, but seem overly complex.
-* **U32/U64** SipHash - security-focused 64-bit MAC hash. Some say its fast, some say its slow. Only _[halfsiphash.c](https://github.com/veorq/SipHash/blob/master/halfsiphash.c)_ is viable in JS.
-=======
->>>>>>> f92326602d4f1196d54d68e522eef69c896638e3
 * Johannes Baagøe's Mash function - see what the big deal is.
 * [FNVPlus](https://github.com/tjwebb/fnv-plus) - enhanced JS version worth looking into. 
-* [CRC32C](http://www.evanjones.ca/crc32c.html) - [faster](https://stackoverflow.com/questions/17645167/implementing-sse-4-2s-crc32c-in-software/17646775) CRC32? 8 bytes at a time
-* **U64?** FarmHash, HighwayHash - Google's functions. CityHash32 might be the only viable option.
+* [CRC32C](http://www.evanjones.ca/crc32c.html) - [faster](https://stackoverflow.com/questions/17645167/implementing-sse-4-2s-crc32c-in-software/17646775) CRC32? 8 bytes at a time. Might be HW/SSE4.2 only though.
 * **U64** [t1ha](https://github.com/leo-yuriev/t1ha) - supposedly super fast, but requires 64-bit arithmetic.
 * **U64** SlashHash - 64bit, supposedly fast but only 64-bit arch. Possibly viable in WebAssembly.
 * **U64** SpookyHash - 128bit hash, fast but 64-bit arch only. WebAssembly port?
