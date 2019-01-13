@@ -16,6 +16,7 @@ Also see: [CRC functions](CRC.md)
 | CRC-32 | 32-bit | 147/575 | For speed reference (it's pretty slow) |
 | [SuperFastHash](superfasthash.js) | 32-bit | -/- | Higher collision rates in some cases: 90 of 131072<br> (vs. Murmur3=0, Lookup2=2, Lookup3=3, xxHash=4) |
 | [Marvin32](marvin32.js) | 32-bit | -/- | Obscure function, but seems decent. Almost as fast as MurmurHash3. |
+| [CityHash32](cityhash32.js) | 32-bit | -/- | The only 32-bit variant in Google's City/Farm families. Not recommended, it's just a slower Murmur3 clone. |
 
 ## 64-bit or higher
 
@@ -56,7 +57,6 @@ _BigInt does not currently seem to be a performant option._
 # Notes/TODO
 * **U32** [various string hashes](https://github.com/dgryski/dgohash/blob/master/stringhashes.go) - specifically SQLite3 or ELF32.
 * **U32** [Zaphod32/Phat4](https://github.com/demerphq/BeagleHash) - two 32-bit hashes, but seem overly complex.
-* **U32/U64** [CityHash32](https://github.com/google/cityhash/blob/master/src/city.cc#L189), FarmHash, HighwayHash - Google's functions. CityHash32 might be the only viable option.
 * **U32/U64** SipHash - security-focused 64-bit MAC hash. Some say its fast, some say its slow. Only _[halfsiphash.c](https://github.com/veorq/SipHash/blob/master/halfsiphash.c)_ is viable in JS.
 * Johannes Baagøe's Mash function - see what the big deal is.
 * [FNVPlus](https://github.com/tjwebb/fnv-plus) - enhanced JS version worth looking into. 
