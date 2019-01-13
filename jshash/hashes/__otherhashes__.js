@@ -272,6 +272,16 @@ function SDBM(data) {
     return hash;
 }
 
+// SQLite3 Hash (is this even part of SQLite3?)
+
+function SQLite3(data) {
+    var hash = 0;
+    for(var i = 0; i < data.length; i++) {
+        hash = (hash << 3) ^ hash ^ data[i];
+    }
+    return hash;
+}
+
 // PJW Hash - Peter J. Weinberger hash.
 
 function PJWHash(data) {
