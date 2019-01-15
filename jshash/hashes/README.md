@@ -26,7 +26,8 @@ Also see: [CRC functions](CRC.md)
 | [Lookup3_x86](lookup3.js) | 32/64-bit | **2553**/1038 | 32 or 64-bit. 96 is _possible_ but with weaker statistics. |
 | [MurmurHash2_x86_64](murmurhash2_64b.js) | 64-bit | 2759/2406 | Slightly modified to avoid a flaw in the original, see comments. |
 | [MurmurHash3_x86_128](murmurhash3_128.js) | 128-bit | **2498**/2162 | Modified version. Contains a possible flaw, see comments. |
-| [MurmurHash2_160](murmurhash2_160.js) | 160-bit | 1968/1590 | Unofficial modification that outputs five 32-bit hash states. |
+| [MurmurHash2_160](murmurhash2_160.js) | 160-bit | 1968/1590 | Unofficial mod that outputs five 32-bit hash states. |
+| [HalfSipHash](halfsiphash.js) | 32/64-bit | 1968/1590 | 32-bit version of SipHash. Can output a 64-bit hash. Kind of slow. |
 | CybBeta2 | 64-bit | 2853/2546 | Experimental 64-bit |
 | CybBeta0 | 32-bit | **3311**/2891 | Experimental 32-bit |
 
@@ -55,7 +56,6 @@ _BigInt does not currently seem to be a performant option._
 ****
 
 # Notes/TODO
-* **U32** [SipHash13/HalfSipHash](https://raw.githubusercontent.com/jedisct1/siphash-js/master/lib/siphash13.js) - security-focused 64-bit MAC hash. Some say its fast, some say its slow. Only _[halfsiphash.c](https://github.com/veorq/SipHash/blob/master/halfsiphash.c)_ is viable in JS.
 * **U32** [FunnyHash](https://github.com/funny-falcon/funny_hash/blob/master/funny_hash.h) - Try to implement this one.
 * **U32** [Zaphod32](https://github.com/demerphq/BeagleHash/blob/master/zaphod32_hash.h) - Try to implement this one.
 * **U32** [PhatHash](https://github.com/demerphq/BeagleHash/blob/master/phat_hash.h) - Try to implement this one.
