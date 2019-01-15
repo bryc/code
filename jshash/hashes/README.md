@@ -27,7 +27,7 @@ Also see: [CRC functions](CRC.md)
 | [MurmurHash2_x86_64](murmurhash2_64b.js) | 64-bit | 2759/2406 | Slightly modified to avoid a flaw in the original, see comments. |
 | [MurmurHash3_x86_128](murmurhash3_128.js) | 128-bit | **2498**/2162 | Modified version. Contains a possible flaw, see comments. |
 | [MurmurHash2_160](murmurhash2_160.js) | 160-bit | 1968/1590 | Unofficial mod that outputs five 32-bit hash states. |
-| [HalfSipHash](halfsiphash.js) | 32/64-bit | 1968/1590 | 32-bit version of SipHash. Can output a 64-bit hash. Kind of slow. |
+| [HalfSipHash](halfsiphash.js) | 32/64-bit | -/- | 32-bit version of SipHash. Can output a 64-bit hash. Kind of slow. |
 | CybBeta2 | 64-bit | 2853/2546 | Experimental 64-bit |
 | CybBeta0 | 32-bit | **3311**/2891 | Experimental 32-bit |
 
