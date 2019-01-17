@@ -1,20 +1,20 @@
 
 # Cyb
 
-Cyb (previously CYRB32) is an academic hash function experiment. In this article, I will document the many approaches I have found to be effective for hashing. The intended purpose of the finalized algorithm is to quickly identify binary data and/or provide binary data fingerprinting in JavaScript using modern features. It should also be suitable for strings. They remain untested in SMHasher for now, but I have my own basic test bench for identifying issues.
+Cyb (previously CYRB32) is a hash function experiment to gain a bit of insight into hashing. In this article I document various approaches found to be effective in a general hash function. They remain untested in SMHasher for now, but I have my own basic test bench for identifying issues. **I do not recommend using any of them for any serious purpose. A lot of this is admittedly formed from conjecture.**
 
 # Cyb Alpha-0
 
-**Alpha-0** is the earliest version of Cyb I could find saved anywhere.  It makes an attempt to force avalanche using two XOR operations, but it is ineffective.
+**Alpha-0** is the earliest version of Cyb I could find saved anywhere. It makes an attempt to force avalanche using two XOR operations, but it is ineffective.
 
 ```js
 function cyb_alpha0(key) {
     var hash = 1;
     for(var i = 0; i < key.length; i++) {
-        hash += (hash << 1) + key[i]; // (hash << 4) is probably better
+        hash += (hash << 1) + key[i]; // (hash << 4) is possibly better
         hash ^= hash << 6;
     }
-    hash ^= hash << 20;
+    hash ^= hash << 20; // (hash >>> 20) is possibly better
     return hash >>> 0;
 }
 ```
@@ -27,39 +27,39 @@ function cyb_alpha0(key) {
 function cyb_alpha1(key) {
     var hash = 1;
     for(var i = 0; i < key.length; i++) {
-        hash += (hash << 1) + key[i]; // (hash << 4) is better!
+        hash += (hash << 1) + key[i];
     }
     return hash >>> 0;
 }
 ```
 
-Compared to Alpha-0, it has poor collision-resistance. Changing `hash << 1` to `hash << 4` can improve this slightly, however. This issue and more is addressed in **Cyb Alpha-2**. It also has seriously **horrible** distribution/randomness.
+Compared to Alpha-0, it has poor collision-resistance. Changing `hash << 1` to `hash << 7` seems to improve on this, however (in fact it seems 4-7 may be better than 1). Improving collision-resistance is addressed more in **Cyb Alpha-2**. It also has pretty bad distribution/randomness.
 
-So how does it work? It's actually multiplication. `a<<1` === `Math.imul(a, 2)` or `(0|a*2)`. It seems the best shift value is **9** (4 previously looked good too), which is equivalent to multiplying by 512. However, it would seem that even larger 32-bit multipliers are more effective. I suppose on systems that can't do fast multiplication have to deal with shifts.
+How does it work? It's actually multiplication. `a<<1` === `Math.imul(a, 2)` or `(0|a*2)`. It seems the best shift value is **7**, which is equivalent to multiplying by 128. However, it would seem that even larger 32-bit multipliers are more effective. I suppose on systems that can't do fast multiplication have to deal with shifts.
 
 **Note to self:** When able to discern a difference through testing, determine if and how adding `key[i]` to the hash first is effective. My basic tests lean on yes, but I need to be sure.
 
 # Cyb Alpha-2 (New)
 
-**Alpha-2** is an attempt to improve Alpha-1 while maintaining as much simplicity as possible. There are currently two candidates, Alpha-2A and Alpha-2B. Both candidates appear superior to even Cyb Alpha.
+**Alpha-2** is an attempt to improve Alpha-1 while maintaining as much simplicity as possible. There are currently two candidates, Alpha-2A and Alpha-2B. Both candidates appear superior to even Cyb Alpha-0.
 
-**Alpha-2A**, originally called miracle, was my first attempt at improving Alpha-1. It's main goal is to achieve good distribution/randomness in very short or sparse keys. Which it mildly succeeds at. The current constants are`[1,5,1,9,15]`. The original constants were `[0x41c6ce57,4,1,11,14]`. I suspect I changed them after some testing, but don't have concrete reasoning. **It actually seems to perform worse than I originally assumed, looking at some newer tests. Lots of collisions.**
+**Alpha-2A** is currently in its third incarnation. It's main goal is to achieve good distribution/randomness in very short or sparse keys. It changed slightly from previous versions--the original constants were `[0x41c6ce57,4,1,11,14]` and `[1,5,1,9,15]`. I had to change them after noticing serious issues in the those versions.
 
 ```js
 function cyb_alpha2a(key) {
     var hash = 1;
     for(var i = 0; i < key.length; i++) {
         hash += key[i];
-        hash += hash << 5; // hash << 4
+        hash += hash << 8;
         hash ^= hash >>> 1;
     }
-    hash ^= hash << 9; // hash << 11
-    hash += hash << 15; // hash << 14
+    hash ^= hash << 18;
+    hash ^= hash >>> 12;
     return hash >>> 0;
 }
 ```
 
-**Alpha-2B** borrows constants from Bob Jenkin's OAAT hash, which seem to have interesting properties. It differs to Jenkins' original by having an initial value of `1`, and reducing mixing to a single line: `hash += hash << 15`. It appears to have distribution problems for small keys which Alpha-2A does not, but requires one less xorshift. However it has less collisions in some ASCII tests... cyb_alpha2b appears to fail my new tests.
+**Alpha-2B** borrows constants from Bob Jenkin's OAAT hash, which seem to have interesting properties. It differs to Jenkins' original by having an initial value of `1`, and reducing mixing to a single line: `hash += hash << 15`. It appears to have distribution problems for small keys, but requires one less xorshift. <!-- cyb_alpha2b appears to fail my new tests ??? -->
 
 
 ```js
@@ -75,20 +75,7 @@ function cyb_alpha2b(key) {
 }
 ```
 
-**Alpha-2C** is a (hopefully) much improved version, based on Alpha-2B.
-
-```js
-function cyb_alpha2c(key) {
-    var hash = 1;
-    for(var i = 0; i < key.length; i++) {
-        hash += key[i];
-        hash += hash << 14;
-        hash ^= hash >>> 7;
-    }
-    hash += hash << 15;
-    return hash >>> 0;
-}
-```
+Changing `hash >>> 6` to `hash >>> 3` may improve collision resistance, but I am not 100% sure. Got mixed results from my basic tests.
 
 # Cyb Alpha-3 (New)
 
