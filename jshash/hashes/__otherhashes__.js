@@ -28,7 +28,7 @@
 
 */
 
-// Jenkins OneAtATime Hash - very decent, but slower than FNV in JS(?)
+// Jenkins OneAtATime Hash - decent but slower than FNV in JS(?)
 // Original function had initial value of 0, but this is bad and causes
 // collisions when processing null bytes.
 
@@ -43,6 +43,69 @@ function OAATHash(data) {
     hash ^= hash >>> 11;
     hash += hash << 15;
     return hash >>> 0;
+}
+
+// MurmurOAAT - Based on Murmur2 (taken from SMHasher)
+// Comparable to FNV-1a, but avalanche is 91.4% rather than 100%.
+
+function MurmurOAAT(key, seed = 0) {
+    var h = 1 ^ seed;
+    for(var i = 0; i < key.length; i++) {
+        h = Math.imul(h ^ key[i], 1540483477);
+        h ^= h >>> 15;
+    }
+    return h >>> 0;
+}
+
+// GoodOAAT (taken from SMHasher)
+// This apparently passes SMHasher.
+
+function GoodOAAT(key, seed = 0) {
+    var h1 = 0x3b00 ^ seed;
+    var h2 = seed << 15 | seed >>> 17;
+    for(var i = 0; i < key.length; i++) {
+        h1 += key[i];
+        h1 = h1 + (h1 << 3) | 0;
+        h2 += h1;
+
+        h2 = h2 << 7 | h2 >>> 25;
+        h2 = h2 + (h2 << 2) | 0;
+    }
+    h1 ^= h2;
+    h1 += h2 << 14 | h2 >> 18;
+    h2 ^= h1; h2 += h1 >>> 6 | h1 << 26;
+    h1 ^= h2; h1 += h2 << 5 | h2 >>> 27;
+    h2 ^= h1; h2 += h1 >>> 8 | h1 << 24;
+    
+    return h2 >>> 0;
+}
+
+// MicroOAAT (taken from SMHasher)
+
+function MicroOAAT(key, seed = 0) {
+    var h1 = 0x3b00 ^ seed;
+    var h2 = seed << 15 | seed >>> 17;
+    for(var i = 0; i < key.length; i++) {
+        h1 += key[i];
+        h1 = h1 + (h1 << 3) | 0;
+        h2 = h2 - h1 | 0;
+        h1 = h1 << 7 | h1 >>> 25;
+    }
+    
+    return (h1 ^ h2) >>> 0;
+}
+
+// BadHash (taken from SMHasher)
+// Definitely not a good hash.
+
+function BadHash(key, seed = 0) {
+    var h = 1 ^ seed;
+    for(var i = 0; i < key.length; i++) {
+        h ^= h >>> 3;
+        h ^= h << 5;
+        h ^= key[i];
+    }
+    return h >>> 0;
 }
 
 // Bret Mulvey's SBox hash. Unique approach.
