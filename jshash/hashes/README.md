@@ -7,13 +7,13 @@ Also see: [CRC functions](CRC.md)
 ## 32-bit
 | Algorithm | Hash size | Speed | Notes |
 | --------- | --------- | ----- | ----- |
+| CRC-32 | 32-bit | 147/575 | For speed reference (it's pretty slow) |
 | [FNV](FNV.js) | 32-bit  | 3041/2649  | variants: FNV-0, FNV-1, FNV-1a, FNV-1a_BM |
 | [MurmurHash1](murmurhash1.js) | 32-bit | **3296**/2822 | Original version. Super fast. |
 | [MurmurHash2](murmurhash2.js) | 32-bit | 3027/2518 | aka `MurmurHash2_x86_32` |
 | [MurmurHash2A](murmurhash2a.js) | 32-bit | 3053/2484 | Fixes a flaw in MurmurHash2. Uses Merkle–Damgård construction. |
 | [MurmurHash3](murmurhash3.js) | 32-bit | 3090/2515 | aka `MurmurHash3_x86_32` |
 | [xxHash](xxhash_32.js) | 32-bit | 2968/2492 | not as fast as you'd think, but still good |
-| CRC-32 | 32-bit | 147/575 | For speed reference (it's pretty slow) |
 | [SuperFastHash](superfasthash.js) | 32-bit | -/- | Higher collision rates in some cases: 90 of 131072<br> (vs. Murmur3=0, Lookup2=2, Lookup3=3, xxHash=4) |
 | [Marvin32](marvin32.js) | 32-bit | -/- | Obscure function, but seems decent. Almost as fast as MurmurHash3. |
 | [CityHash32](cityhash32.js) | 32-bit | -/- | The only 32-bit variant in Google's City/Farm families. Not recommended, it's just a slower Murmur3 clone. |
@@ -28,8 +28,6 @@ Also see: [CRC functions](CRC.md)
 | [MurmurHash3_x86_128](murmurhash3_128.js) | 128-bit | **2498**/2162 | Modified version. Contains a possible flaw, see comments. |
 | [MurmurHash2_160](murmurhash2_160.js) | 160-bit | 1968/1590 | Unofficial mod that outputs five 32-bit hash states. |
 | [HalfSipHash](halfsiphash.js) | 32/64-bit | -/- | 32-bit version of SipHash. Can output a 64-bit hash. Kind of slow. |
-| CybBeta2 | 64-bit | 2853/2546 | Experimental 64-bit |
-| CybBeta0 | 32-bit | **3311**/2891 | Experimental 32-bit |
 
 ## Performance notes
 
