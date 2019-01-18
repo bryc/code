@@ -54,13 +54,15 @@ _BigInt does not currently seem to be a performant option._
 ****
 
 # Notes/TODO
+
 * **U32** [Zaphod32](https://github.com/demerphq/BeagleHash/blob/master/zaphod32_hash.h) - Try to implement this one.
 * **U32** [PhatHash](https://github.com/demerphq/BeagleHash/blob/master/phat_hash.h) - Try to implement this one.
 * **U32** [FunnyHash](https://github.com/funny-falcon/funny_hash/blob/master/funny_hash.h) - Try to implement this one.
 * Johannes Baagøe's Mash function - see what the big deal is.
 * [FNVPlus](https://github.com/tjwebb/fnv-plus) - enhanced JS version worth looking into. 
 * [CRC32C](http://www.evanjones.ca/crc32c.html) - [faster](https://stackoverflow.com/questions/17645167/implementing-sse-4-2s-crc32c-in-software/17646775) CRC32? 8 bytes at a time. Might be HW/SSE4.2 only though.
-* **U64** [t1ha](https://github.com/leo-yuriev/t1ha) - supposedly super fast, but requires 64-bit arithmetic.
+* **U64/U32** [CrapWow](https://github.com/carthy/beard.hash/blob/master/sources/crapwow.c) as well as Crap8. Unfortunately does 64-bit multiplication. Worth looking into though.
+* **U64** [t1ha](https://github.com/leo-yuriev/t1ha) - supposedly super fast, but requires 64-bit arithmetic. Has some 32-bit stuff worth looking into.
 * **U64** SlashHash - 64bit, supposedly fast but only 64-bit arch. Possibly viable in WebAssembly.
 * **U64** SpookyHash - 128bit hash, fast but 64-bit arch only. WebAssembly port?
 * **U64** [SeaHash](https://github.com/jroivas/seahash) - forgot about this one - 64-bit arch only.
