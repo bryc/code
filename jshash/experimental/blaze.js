@@ -1,34 +1,33 @@
 /*
     BlazeHash
-    ---------
-    Blazing fast 64-bit (or 52-bit) hash using native JS 32-bit math.
-    Should have good collision rate.
-    Passes my own tests but is untested in SMHasher, so this hash may be updated.
-
     c) 2018 bryc (github.com/bryc)
+    
+    Intended for blazing fast hashing of byte arrays. Produces two uncorrelated 32-bit hashes in parallel.
+    Expect this function to change in the future as it is further tested and developed.
 */
 
 function BlazeHash(key, seed = 0) {
-    var p1 = 597399067, p2 = 374761393, h1 = 0xcafebabe ^ seed, h2 = 0xdeadbeef ^ seed;
-    for(var i = 0, b = key.length & -4; i < b;) {
+    var p1 = 597399067, p2 = 374761393, p3 = 2246822507, p4 = 3266489909;
+    var h1 = 0xcafebabe ^ seed, h2 = 0xdeadbeef ^ seed;
+    for(var i = 0, b = key.length & -8; i < b;) {
         h1 ^= key[i+3]<<24 | key[i+2]<<16 | key[i+1]<<8 | key[i]; i += 4;
         h2 ^= key[i+3]<<24 | key[i+2]<<16 | key[i+1]<<8 | key[i]; i += 4;
-        h1 = Math.imul(h1, p1) ^ h2; h1 ^= h1 >>> 24;
-        h2 = Math.imul(h2, p2) ^ h1; h2 ^= h2 >>> 24;
+        h1 = Math.imul(h1 ^ h1 >>> 16, p1) ^ h2;
+        h2 = Math.imul(h2 ^ h2 >>> 24, p2) ^ h1;
     }
     switch(key.length & 7) {
         case 7: h2 ^= key[i+6] << 16;
         case 6: h2 ^= key[i+5] << 8;
         case 5: h2 ^= key[i+4];
-        h2 = Math.imul(h2, p2) ^ h1; h2 ^= h2 >>> 24;
+        h2 = Math.imul(h2 ^ h2 >>> 24, p2) ^ h1;
         case 4: h1 ^= key[i+3] << 24;
         case 3: h1 ^= key[i+2] << 16;
         case 2: h1 ^= key[i+1] << 8;
         case 1: h1 ^= key[i];
-        h1 = Math.imul(h1, p1) ^ h2; h1 ^= h1 >>> 24;
+        h1 = Math.imul(h1 ^ h1 >>> 16, p1) ^ h2;
     }
-    h1 ^= key.length; h2 ^= key.length;
-    h1 = Math.imul(h1, p1) ^ h2; h1 ^= h1 >>> 18; h1 >>>= 0;
-    h2 = Math.imul(h2, p2) ^ h1; h2 ^= h2 >>> 22; h2 >>>= 0;
-    return [h1, h2]; // 52bit: (h1 & 2097151) * 4294967296 + h2
+    h1 ^= key.length;
+    h1 = Math.imul(h1 ^ h1 >>> 16, p3) ^ Math.imul(h2 ^ h2 >>> 13, p4);
+    h2 = Math.imul(h2 ^ h2 >>> 16, p3) ^ Math.imul(h1 ^ h1 >>> 13, p4);
+    return [h1>>>0, h2>>>0]; // 53bit: 4294967296 * (2097151 & h2) + (h1>>>0)
 }
