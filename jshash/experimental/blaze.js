@@ -43,7 +43,7 @@ function BlazeHashB(key, seed = 0) {
         h2 ^= k; h2 = Math.imul(h2 ^ h2 >>> 24, p2) ^ h1;
     }
     k = 0;
-    switch (3 & key.length) {
+    switch (key.length & 3) {
         case 3: k ^= key[i+2] << 16;
         case 2: k ^= key[i+1] << 8;
         case 1: k ^= key[i];
