@@ -43,7 +43,7 @@ function BlazeHashB(key, seed = 0) {
         h2 ^= k; h2 = Math.imul(h2 ^ h2 >>> 24, p2) ^ h1;
     }
     k = 0;
-    switch (key.length & 3) {
+    switch(key.length & 3) {
         case 3: k ^= key[i+2] << 16;
         case 2: k ^= key[i+1] << 8;
         case 1: k ^= key[i];
@@ -62,7 +62,7 @@ function BlazeHashB(key, seed = 0) {
 function BlazeHashC(key, seed = 0) {
     var p1 = 597399067, p2 = 374761393, p3 = 2246822507, p4 = 3266489909;
     var h1 = 0xcafebabe ^ seed, h2 = 0xdeadbeef ^ seed;
-    for (var i = 0 i < key.length; i++) {
+    for(var i = 0; i < key.length; i++) {
         h1 = Math.imul(h1 ^ key[i], p1); h2 = Math.imul(h2 ^ key[i], p2);
     }
     h1 = Math.imul(h1 ^ h1 >>> 16, p3) ^ Math.imul(h2 ^ h2 >>> 13, p4);
