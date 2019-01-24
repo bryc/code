@@ -1,9 +1,9 @@
 /*
-    BlazeHash
+    BlazeHash (64-bit)
     c) 2018 bryc (github.com/bryc)
     
     Intended for blazing fast hashing of byte arrays. Produces two uncorrelated 32-bit hashes in parallel.
-    Expect this function to change in the future as it is further tested and developed.
+    Expect these functions to change in the future as they are further tested and developed.
 */
 
 function BlazeHash(key, seed = 0) {
@@ -55,3 +55,18 @@ function BlazeHashB(key, seed = 0) {
     h2 = Math.imul(h2 ^ h2 >>> 16, p3) ^ Math.imul(h1 ^ h1 >>> 13, p4);
     return [h1 >>> 0, h2 >>> 0]; // 53bit: 4294967296 * (2097151 & h2) + (h1>>>0)
 }
+
+// An alternate version that reads 1 byte at a time. It's slower (though still fast generally speaking) yet simple.
+// The extra mixing in previous functions seem unnecessary due to the multiplication occuring for every byte.
+
+function BlazeHashC(key, seed = 0) {
+    var p1 = 597399067, p2 = 374761393, p3 = 2246822507, p4 = 3266489909;
+    var h1 = 0xcafebabe ^ seed, h2 = 0xdeadbeef ^ seed;
+    for (var i = 0 i < key.length; i++) {
+        h1 = Math.imul(h1 ^ key[i], p1); h2 = Math.imul(h2 ^ key[i], p2);
+    }
+    h1 = Math.imul(h1 ^ h1 >>> 16, p3) ^ Math.imul(h2 ^ h2 >>> 13, p4);
+    h2 = Math.imul(h2 ^ h2 >>> 16, p3) ^ Math.imul(h1 ^ h1 >>> 13, p4);
+    return [h1 >>> 0, h2 >>> 0]; // 53bit: 4294967296 * (2097151 & h2) + (h1>>>0)
+}
+
