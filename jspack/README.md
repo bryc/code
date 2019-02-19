@@ -10,6 +10,8 @@ Here are various LZ-based compression algorithms ported to JS, aiming for functi
 
 ### LZW
 
+### LZP
+
 ### LZJB
 
 ```js
@@ -56,4 +58,4 @@ var LZJB = {
 };
 ```
 
-### LZP
+### Snappy
