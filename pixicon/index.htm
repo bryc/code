@@ -51,6 +51,11 @@ canvas {
     widtha:24px;heighta:24px;
 
 }
+canvas:hover {
+    background:#EEE;cursor:pointer;
+}
+
+canvas:active{opacity:0.5;}
 hr{border:0;border-bottom:1px solid #AAA;margin:8px;padding:0;}
 em{font-style:italic;}
 * {transition: opacity .25s ease-in-out;}
@@ -58,6 +63,7 @@ canvas#q{padding:10.5px 9px;width:253px; height:253px;} /* multiples of 8 only! 
 .info b{font:bold 32px consolas;margin-bottom:4px;}
 .info {text-align:left;}
 a{color:crimson}
+#m0de{margin-bottom:6px;}
 </style>
 <div>
 <div id=u>
@@ -66,7 +72,8 @@ a{color:crimson}
 </div>
 </div>
 <div class=info id=u2><b>pixicon</b> by <a target="_blank" href="http://github.com/bryc">@bryc</a><br>
-    An experimental hashicon generator. Designed to produce highly identifable icons with as many different results as possible. It is a WIP, still looking into better pattern/color generation methods and different shapes. Click <a href=?pixels>here</a> if you like pixels more than triangles.
+    <div id=m0de>Click <a href=?pixels>here</a> to swap pixels or triangles. Click any small icon to load it into the big one. Click the big icon to pause/start the random marquee.</div> 
+    An experimental hashicon generator. Designed to produce highly identifable icons with as many different results as possible. It is a WIP, still looking into better pattern/color generation methods and different shapes.
     <hr>
     To give you an idea of how many <em>base patterns</em> there are: in 11x11 grid, there are (2<sup>5</sup> x 6<sup>10</sup> x 2<sup>6</sup>) in diagonal symmetry mode or (6<sup>25</sup> x 2<sup>6</sup>) in fully random mode. So combined: 123,834,728,448 + 1,819,538,433,915,500,888,064 possible base patterns. Not bad! 
     <br><br>
@@ -77,6 +84,13 @@ a{color:crimson}
 
 
 <script>
+if(document.location.search=='?pixels') {
+    var x = document.querySelector('#m0de');
+    console.log(x.innerHTML)
+    x.innerHTML = x.innerHTML.replace("?pixels","?triangles")
+    console.log(x.innerHTML)
+}
+
 function hash(key, seed = 0) {
     // note: PRNG designers actually commend MurmurHash3's final mixing function and 
     // have tried testing it using traditional randomness tets: it fairs well apparently.
@@ -161,7 +175,7 @@ function hash(key, seed = 0) {
 }
 
 
-var pixi = document.location.search ? true : false;
+var pixi = document.location.search == '?pixels' ? true : false;
 
 function wJ(){return Math.random().toString(36).substr(2,4)}
 
@@ -172,7 +186,17 @@ function more() {
     
     for(var i=0;i<cnt;i++) {
         var str = wJ()+wJ()+wJ()+wJ()+wJ()+wJ();
-        cnv[i].title=str;pixicon(cnv[i],4, hash(arst(str)), pixi);
+        cnv[i].id = "p";
+        cnv[i].title = str;
+        pixicon(cnv[i],4, hash(arst(str)), pixi);
+
+        cnv[i].onclick = function() {
+            //pixicon(document.querySelector("canvas#q"),23, hash(arst(this.title)), pixi);
+            qactive = false;
+            document.querySelector("input").value = this.title;
+            document.querySelector("input").dispatchEvent(new Event('input'));
+            document.querySelector("canvas#q");
+        };
     }
 }
 
@@ -181,19 +205,21 @@ document.querySelector("input").oninput = function() {
     pixicon(document.querySelector("canvas#q"), 23, hash(arst(this.value)), pixi);
 };
 document.querySelector("input").onfocus = function() {
-    clearInterval(wat);
+    qactive = false;
 };
 document.querySelector("canvas#q").onclick = function() {
-    clearInterval(wat);
+    qactive = !qactive;
 };
-var wat;
+var wat, qactive = true;
 
 function startThing() {
     wat = setInterval(function(){
-        var str = wJ()+wJ()+wJ()+wJ()+wJ()+wJ();
-        console.log(str);
-        pixicon(document.querySelector("canvas#q"), 23, hash(arst(str)),pixi);
-        document.querySelector("input").value = str;
+        if(qactive) {
+            var str = wJ()+wJ()+wJ()+wJ()+wJ()+wJ();
+            console.log(str);
+            pixicon(document.querySelector("canvas#q"), 23, hash(arst(str)),pixi);
+            document.querySelector("input").value = str;
+        }
     },500)
 }
 
