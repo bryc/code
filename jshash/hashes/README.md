@@ -17,6 +17,7 @@ Also see: [CRC functions](CRC.md)
 | [SuperFastHash](superfasthash.js) | 32-bit | -/- | Higher collision rates in some cases: 90 of 131072<br> (vs. Murmur3=0, Lookup2=2, Lookup3=3, xxHash=4) |
 | [Marvin32](marvin32.js) | 32-bit | -/- | Obscure function, but seems decent. Almost as fast as MurmurHash3. |
 | [CityHash32](cityhash32.js) | 32-bit | -/- | The only 32-bit variant in Google's City/Farm families. Not recommended, it's just a slower Murmur3 clone. |
+| [FunnyHash32](funnyhash32.js) | 32-bit | -/- | Yet another 32-bit hash. |
 
 ## 64-bit or higher
 
@@ -53,11 +54,11 @@ _BigInt does not currently seem to be a performant option._
 
 ****
 
+<!--
 # Notes/TODO
 
 * **U32** [Zaphod32](https://github.com/demerphq/BeagleHash/blob/master/zaphod32_hash.h) - Try to implement this one.
 * **U32** [PhatHash](https://github.com/demerphq/BeagleHash/blob/master/phat_hash.h) - Try to implement this one.
-* **U32** [FunnyHash](https://github.com/funny-falcon/funny_hash/blob/master/funny_hash.h) - Try to implement this one.
 * Johannes Baagøe's Mash function - see what the big deal is.
 * [FNVPlus](https://github.com/tjwebb/fnv-plus) - enhanced JS version worth looking into. 
 * [CRC32C](http://www.evanjones.ca/crc32c.html) - [faster](https://stackoverflow.com/questions/17645167/implementing-sse-4-2s-crc32c-in-software/17646775) CRC32? 8 bytes at a time. Might be HW/SSE4.2 only though.
@@ -66,6 +67,7 @@ _BigInt does not currently seem to be a performant option._
 * **U64** SlashHash - 64bit, supposedly fast but only 64-bit arch. Possibly viable in WebAssembly.
 * **U64** SpookyHash - 128bit hash, fast but 64-bit arch only. WebAssembly port?
 * **U64** [SeaHash](https://github.com/jroivas/seahash) - forgot about this one - 64-bit arch only.
+-->
 
 # Misc benchmarks
 *  https://jsbench.me/fyjfja4xih/1 - MurmurHash3 benchmarks
