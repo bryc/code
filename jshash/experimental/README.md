@@ -6,13 +6,13 @@ Nothing is set in stone yet, still working on this.
 
 BlazeHash is intended to be polished family of fast hash functions in JavaScript.
 Nothing is final yet (so proceed with caution), but the [64-bit variants](blaze.js) are looking promising.
-I also plan to make a 128-bit version, and probably a plain 32-bit one. Nothing has been tested extensively, but things will probably have to change when it is tested properly.
+I also plan to make a 128-bit version, and probably a plain 32-bit one. Nothing has been tested extensively, but things will probably have to change when it is.
 
 ## Cyb
 
-Cyb is a hash function experiment to help gain a bit of insight into effective hashing techniques. It's still WIP, but I will publish it when it is done.
+Cyb is a hash function experiment to help gain a bit of insight into effective hashing techniques. It's still WIP, but will be published in this repo.
 
-For an example of what I mean, consider the following three functions which develop and improve:
+Consider the following three functions which develop and improve:
 
 ```js
 function cyb_test0(key) {
