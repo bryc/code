@@ -460,16 +460,14 @@ function Fletcher16a(buf) {
 // Fletcher-16 (?) - Checksum function
 
 function Fletcher16(data) {
-  var a = 0, b = 0;
+  var a = 0, b = 0, x = 0, y = 0;
   for (var i = 0; i < data.length; i++) {
-    a += data[i];
-    b += a;
+    a = (a + data[i]) % 255;
+    b = (a + b) % 255;
   }
-
-  a %= 255, b %= 255;
-  b = ~(a + b) & 255;  
-  a = ~(a + b) & 255;
-  return a | (b << 8);
+  y = 255 - (a + b) % 255;  
+  x = 255 - (a + y) % 255;
+  return x | (y << 8);
 }
 
 // BSD-16 - A 16-bit checksum code related to BSD.
