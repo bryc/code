@@ -225,14 +225,13 @@ function JSHash(data) {
 }
 
 // DEKHash - from 1973. Donald E. Knuth's book The Art Of Computer Programming Volume 3
-// >> or >>>?
 
 function DEKHash(data) {
     var hash = data.length;
     for(var i = 0; i < data.length; i++) {
-        hash = ((hash << 5) ^ (hash >> 27)) ^ data[i];
+        hash = ((hash << 5) ^ (hash >>> 27)) ^ data[i];
     }
-    return hash;
+    return hash >>> 0;
 }
 
 // Java's hashCode() - 31*hash = (hash<<5)-hash
