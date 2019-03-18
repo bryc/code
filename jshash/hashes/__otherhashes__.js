@@ -462,10 +462,13 @@ function Fletcher16a(buf) {
 function Fletcher16(data) {
   var a = 0, b = 0;
   for (var i = 0; i < data.length; i++) {
-    a = (a + data[i]) % 255;
-    b = (b + a) % 255;
+    a += data[i];
+    b += a;
   }
 
+  a %= 255, b %= 255;
+  b = ~(a + b) & 255;  
+  a = ~(a + b) & 255;
   return a | (b << 8);
 }
 
