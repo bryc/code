@@ -214,14 +214,13 @@ function GPHash(key) {
 }
 
 // JSHash -  Justin Sobel's bitwise hash
-// >> or >>>?
 
 function JSHash(data) {
     var hash = 0x4e67c6a7;
     for(var i = 0; i < data.length; i++) {
-        hash ^= (hash << 5) + data[i] + (hash >> 2);
+        hash ^= (hash << 5) + data[i] + (hash >>> 2);
     }
-    return hash;
+    return hash >>> 0;
 }
 
 // DEKHash - from 1973. Donald E. Knuth's book The Art Of Computer Programming Volume 3
