@@ -1,11 +1,13 @@
 # "Cyclic Codes for Error Detection"
 ### Implementing Cyclic Redundancy Check (CRC) in JavaScript
 
+_This article will probably be rewritten at some point, but have a look at this benchmark: https://jsbench.me/tujtg3xg1v/1. Seems that unrolling the inner-loop can greatly improve performance._
+
 This article serves as sequential documentation of attempts to implement my own versions of table-based and non-table based CRC algorithms in multiple widths (e.g. CRC-4, CRC-8, CRC-16, CRC-32). Many variants of CRC aren't readily available in JS, so the goal is to learn how CRC works and produce a concise library that supports all of the possible parameters. For now, the code will be kept as short and simple as possible while maintaining accurate output.
 
 *Quick observation before we start: I've noticed that certain parts of the code must be altered depending on whether reflections are used, which is annoying. Most other parameters do not require alterations (such as `poly` or `init`). Determining the exact nature of this will be important for the final library.*
 
-We will start by computing the CRC lookup table, since it's often a prerequisite of the algorithm. Later we will look into methods which bypass this step entirely (at a performance cost). Here are some attempts to generate the CRC table for various flavors of CRC:
+We will start by computing the CRC lookup table, since it's often a prerequisite of the algorithm. Later we will look into methods which bypass this step entirely (at a slight performance cost). Here are some attempts to generate the CRC table for various flavors of CRC:
 
 ## CRC-16/CCIITT-TRUE (KERMIT)
 **Settings:** `width=16`, `poly=0x1021`, `init=0x0000`, `refin=true`, `refout=true`, `xorout=0x0000`, `check=0x2189`
