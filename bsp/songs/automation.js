@@ -7,7 +7,7 @@ SONG.date    = "feb-22-2018"
 SONG.comment = "Implemented noise, PWM, LFO, filter and delay<br>Updated on may-04-2019 to allow independent control of parameters."
 SONG.bpm     = 112
 SONG.divide  = 4
-SONG.cVol    = [.3,.3,.3]
+SONG.cVol    = [.3,.3,.45]
 SONG.wave    = [5,5,4]
 SONG.delay   = [.22,.22,.22]
 
@@ -51,21 +51,21 @@ var lead = [
 
 var noise = [
 ,,,, // bar 1
-['c-5'],-1,,,
+['f-4'],-1,,,
 ,,,,
-['c-5'],-1,['c-5'],-1,
+['c-2'],-1,['c-5'],-1,
 ,,,, // bar 2
 ['c-5'],-1,,,
 ,,,,
-['c-5'],['c-5'],-1,['c-5'],
+['c-2'],['c-3'],-1,['c-5'],
 -1,,,, // bar 3
 ['c-5'],-1,,,
 ,,,,
-['c-5'],-1,,['c-5'],
--1,['c-5'],['c-5'],-1, // bar 4
-['c-5'],-1,,['c-5'],
-['c-5'],['c-5'],-1,['c-5'],
-['c-5'],['c-5'],['c-5'],-1,
+['c-2'],-1,,['c-5'],
+-1,['c-2'],['c-3'],-1, // bar 4
+['c-5'],-1,,['c-3'],
+['c-5'],['c-1'],-1,['c-4'],
+['c-2'],['c-3'],['c-5'],-1,
 ]
 
 SONG.seq = [bass, lead, noise]

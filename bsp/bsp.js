@@ -19,6 +19,9 @@ var schedule = function() {
                 // set PWM value if found
                 if(BSP.osc[j].width && step[2] !== undefined)
                     BSP.osc[j].width.setValueAtTime(step[2], tick);
+                // For noise
+                if(BSP.osc[j].constructor === AudioBufferSourceNode)
+                    BSP.osc[j].playbackRate.setValueAtTime((BSP.freq[step[0]]/(SONG.trans||2))/(44100/256), tick);
                 // only set frequency if OscNode
                 if(BSP.osc[j].constructor === OscillatorNode)
                 BSP.osc[j].frequency.setValueAtTime((BSP.freq[step[0]]/(SONG.trans||2)), tick);
@@ -45,7 +48,7 @@ var schedule = function() {
 var startSong = function() {
     function WhiteNoiseNode(ctx) {
         var noiseData = [];
-        for (var i = 0; i < 44100 / 16; i++) noiseData.push(Math.random() * 2);
+        for (var i = 0; i < 44100 / 8; i++) noiseData.push(Math.random() * 2);
         var noiseBuffer = ctx.createBuffer(1, noiseData.length, ctx.sampleRate  );
         noiseBuffer.getChannelData(0).set(noiseData);
         var bufferSource = ctx.createBufferSource();
