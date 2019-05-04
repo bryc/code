@@ -44,58 +44,39 @@ var schedule = function() {
 
 var startSong = function() {
 
-    var noiseData = new Float32Array(44100 * 5);
-    var noiseBuffer = null;
-    for (var i = 0, imax = noiseData.length; i < imax; i++) {
-      noiseData[i] = Math.random() * 2 - 1;
-    }
-
-    function WhiteNoiseNode(audioContext) {
-      if (noiseBuffer === null) {
-        noiseBuffer = audioContext.createBuffer(1, noiseData.length, audioContext.sampleRate);
+    function WhiteNoiseNode(ctx) {
+        var noiseData = [];
+        for (var i = 0; i < 44100 / 16; i++) noiseData.push(Math.random() * 2);
+        var noiseBuffer = ctx.createBuffer(1, noiseData.length, ctx.sampleRate  );
         noiseBuffer.getChannelData(0).set(noiseData);
-      }
-      var bufferSource = audioContext.createBufferSource();
+        var bufferSource = ctx.createBufferSource();
 
-      bufferSource.buffer = noiseBuffer;
-      bufferSource.loop = true;
+        bufferSource.buffer = noiseBuffer;
+        bufferSource.loop = true;
 
-      return bufferSource;
+        return bufferSource;
     }
 
-    var pulseCurve=new Float32Array(256);
-    for(var i=0;i<128;i++) {
-      pulseCurve[i]= -1;
-      pulseCurve[i+128]=1;
-    }
-    var constantOneCurve=new Float32Array(2);
-    constantOneCurve[0]=1;
-    constantOneCurve[1]=1;
-
-    function CreatePulseOscillator(audioContext) {
-        var node = audioContext.createOscillator();
+    function CreatePulseOscillator(ctx) {
+        var node = ctx.createOscillator();
         node.type = "sawtooth";
 
-        var pulseShaper = audioContext.createWaveShaper();
-        pulseShaper.curve = pulseCurve;
-        node.connect(pulseShaper);
+        var PWM = ctx.createWaveShaper();
+        PWM.curve = new Float32Array(256).map((a,b)=>b>128?1:-1);
 
-        var widthGain = audioContext.createGain();
+        var widthGain = ctx.createGain();
         widthGain.gain.setValueAtTime(0, 0);
         node.width = widthGain.gain;
-        widthGain.connect(pulseShaper);
+        node.connect(PWM);
+        widthGain.connect(PWM);
 
-        var constantOneShaper = audioContext.createWaveShaper();
-        constantOneShaper.curve = constantOneCurve;
+        var constantOneShaper = ctx.createWaveShaper();
+        constantOneShaper.curve = new Float32Array([1,1]);
         node.connect(constantOneShaper);
         constantOneShaper.connect(widthGain);
 
-        node.connect = function () {
-            pulseShaper.connect.apply(pulseShaper, arguments);
-        }
-        node.disconnect = function () {
-            pulseShaper.disconnect.apply(pulseShaper, arguments);
-        }
+        node.connect = PWM.connect.bind(PWM);
+        node.disconnect = PWM.disconnect.bind(PWM);
         return node;
     }
 
