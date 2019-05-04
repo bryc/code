@@ -12,10 +12,10 @@ var schedule = function() {
             if(step && BSP.freq[step[0]]) {
                 // set Filter cutoff if found
                 if(step[4] !== undefined)
-                    BSP.Filter.frequency.setValueAtTime(step[4], tick);
+                    BSP.Filter[j].frequency.setValueAtTime(step[4], tick);
                 // set LFO amount if found
                 if(step[3] !== undefined)
-                    BSP.modGain.gain.setValueAtTime(step[3], tick);
+                    BSP.modGain[j].gain.setValueAtTime(step[3], tick);
                 // set PWM value if found
                 if(BSP.osc[j].width && step[2] !== undefined)
                     BSP.osc[j].width.setValueAtTime(step[2], tick);
@@ -43,7 +43,6 @@ var schedule = function() {
 };
 
 var startSong = function() {
-
     function WhiteNoiseNode(ctx) {
         var noiseData = [];
         for (var i = 0; i < 44100 / 16; i++) noiseData.push(Math.random() * 2);
@@ -87,25 +86,16 @@ var startSong = function() {
     BSP.ctx     = new AudioContext();
     BSP.time    = BSP.ctx.currentTime;
     BSP.osc = [];
-    BSP.amp = [[],[]];
+    BSP.amp = [[], []];
+    BSP.Delay = [];
+    BSP.DelayGain = [];
+    BSP.Filter = [];
+    BSP.modGain = [];
     
     BSP.LFO = BSP.ctx.createOscillator();
     BSP.LFO.type = 'sine';
     BSP.LFO.frequency.setValueAtTime(7.8,0);
-    BSP.modGain = BSP.ctx.createGain();
-    BSP.modGain.gain.setValueAtTime(0,0);
-    BSP.LFO.connect(BSP.modGain);
     BSP.LFO.start(0);
-
-    BSP.Filter = BSP.ctx.createBiquadFilter();
-    BSP.Filter.frequency.setValueAtTime(18000,0);
-    BSP.Filter.Q.setValueAtTime(10,0);
-    BSP.Filter.type = 'lowpass';
-
-    BSP.Delay = BSP.ctx.createDelay(.5);
-    BSP.Delay.delayTime.setValueAtTime(BSP.speed*2,0)
-    var DelayGain = BSP.ctx.createGain();
-    DelayGain.gain.setValueAtTime(SONG.delay || 0,0);
 
     // create Oscillators for song.
     var waves = ["sine", "square", "triangle", "sawtooth"];
@@ -126,10 +116,13 @@ var startSong = function() {
         } else if(!SONG.wave) {
             BSP.osc[j].type = waves[1];
         }
-        if(SONG.wave && SONG.wave[j]!==4)
-        BSP.modGain.connect(BSP.osc[j].frequency);
+        if(SONG.wave && SONG.wave[j]!==4) {
+            BSP.modGain[j] = BSP.ctx.createGain();
+            BSP.modGain[j].gain.setValueAtTime(0, 0);
+            BSP.modGain[j].connect(BSP.osc[j].frequency);
+            BSP.LFO.connect(BSP.modGain[j]);
+        }
 
-        
         BSP.amp[0][j] = BSP.ctx.createGain(); // Osc Channel Volume 
         BSP.amp[1][j] = BSP.ctx.createGain(); // Osc Note Volume 
         BSP.amp[1][j].gain.setValueAtTime(0, 0);
@@ -137,20 +130,28 @@ var startSong = function() {
         BSP.osc[j].connect(BSP.amp[1][j]);
         BSP.amp[1][j].connect(BSP.amp[0][j]);
 
-        if(SONG.wave && SONG.wave[j]!==4) {
-            BSP.amp[0][j].connect(BSP.Filter);
-            BSP.Filter.connect(BSP.Delay);
-            BSP.Filter.connect(BSP.ctx.destination);
+        BSP.Filter[j] = BSP.ctx.createBiquadFilter();
+        BSP.Filter[j].frequency.setValueAtTime(18000,0);
+        BSP.Filter[j].Q.setValueAtTime(10,0);
+        BSP.Filter[j].type = 'lowpass';
+
+        BSP.Delay[j] = BSP.ctx.createDelay(.5);
+        BSP.Delay[j].delayTime.setValueAtTime(BSP.speed*2,0)
+        BSP.DelayGain[j] = BSP.ctx.createGain();
+        BSP.DelayGain[j].gain.setValueAtTime(SONG.delay && SONG.delay[j] ? SONG.delay[j] : 0, 0);
+
+        BSP.Delay[j].connect(BSP.DelayGain[j]);
+        BSP.DelayGain[j].connect(BSP.ctx.destination);
+
+        if(SONG.wave) {
+            BSP.amp[0][j].connect(BSP.Filter[j]);
+            BSP.Filter[j].connect(BSP.Delay[j]);
+            BSP.Filter[j].connect(BSP.ctx.destination);
 
         } else {
-            BSP.amp[0][j].connect(BSP.Delay);
+            BSP.amp[0][j].connect(BSP.Delay[j]);
             BSP.amp[0][j].connect(BSP.ctx.destination);
-        }
-        
-        BSP.Delay.connect(DelayGain);
-        DelayGain.connect(BSP.ctx.destination);
-
-        
+        }  
     }
 
     for(var i = 0; i < BSP.osc.length; i++) {

@@ -4,12 +4,12 @@ BSP.SONG = (function(SONG = {}) {
 SONG.title   = "automation"
 SONG.author  = "bryc"
 SONG.date    = "feb-22-2018"
-SONG.comment = "Implemented noise, PWM, LFO, filter and delay"
+SONG.comment = "Implemented noise, PWM, LFO, filter and delay<br>Updated on may-04-2019 to allow independent control of parameters."
 SONG.bpm     = 112
 SONG.divide  = 4
 SONG.cVol    = [.3,.3,.3]
 SONG.wave    = [5,5,4]
-SONG.delay   = .22
+SONG.delay   = [.22,.22,.22]
 
 var bass = [
 ['c-3',,0.71],,['c-4'],-1, // bar 1
