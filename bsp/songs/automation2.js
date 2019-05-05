@@ -4,7 +4,7 @@ BSP.SONG = (function(SONG = {}) {
 SONG.title   = "automation2"
 SONG.author  = "bryc"
 SONG.date    = "may-04-2019"
-SONG.comment = "Playing with some of the new features, including 'Auto PWM'."
+SONG.comment = "Playing with some of the new features, including 'Auto PWM'.<br>Unfortunately it is buggy."
 SONG.bpm     = 112
 SONG.divide  = 4
 SONG.cVol    = [.38,.25,.3]
