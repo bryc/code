@@ -24,7 +24,16 @@ var schedule = function() {
                     BSP.osc[j].playbackRate.setValueAtTime((BSP.freq[step[0]]/(SONG.trans||2))/(44100/256), tick);
                 // only set frequency if OscNode
                 if(BSP.osc[j].constructor === OscillatorNode)
-                BSP.osc[j].frequency.setValueAtTime((BSP.freq[step[0]]/(SONG.trans||2)), tick);
+                    BSP.osc[j].frequency.setValueAtTime((BSP.freq[step[0]]/(SONG.trans||2)), tick);
+                if(BSP.osc[j].osc1 && BSP.osc[j].osc2 && step[2] !== undefined)
+                    BSP.lastPWM[j] = step[2];
+                if(BSP.osc[j].osc1 && BSP.osc[j].osc2 && step[5] !== undefined)
+                    BSP.lastPWM2[j] = step[5];
+                if(BSP.osc[j].osc1 && BSP.osc[j].osc2)
+                    BSP.osc[j].osc1.frequency.setValueAtTime((BSP.freq[step[0]]/(SONG.trans||2)), tick),
+                    BSP.osc[j].osc2.frequency.setValueAtTime((BSP.lastPWM2[j]||0)+(BSP.freq[step[0]]/(SONG.trans||2)), tick),
+                    BSP.osc[j].delay.delayTime.setValueAtTime((1-BSP.lastPWM[j]||0)/BSP.freq[step[0]], tick);
+
                 if(tick > 0) {
                     BSP.amp[1][j].gain.setValueAtTime(BSP.lastVol[j]||0, fix(tick-n));
                     BSP.amp[1][j].gain.linearRampToValueAtTime(0, tick );
@@ -60,30 +69,38 @@ var startSong = function() {
     }
 
     function CreatePulseOscillator(ctx) {
-        var node = ctx.createOscillator();
-        node.type = "sawtooth";
+        var PWM = {},
+            osc1 = ctx.createOscillator(),
+            osc2 = ctx.createOscillator(),
+            inverter = ctx.createGain(),
+            output = ctx.createGain(),
+            delay = ctx.createDelay();
 
-        var PWM = ctx.createWaveShaper();
-        PWM.curve = new Float32Array(256).map((a,b)=>b>128?1:-1);
+        osc1.type = "sawtooth", osc2.type = "sawtooth";
+        inverter.gain.setValueAtTime(-1, 0);
+        delay.delayTime.setValueAtTime(.004, 0); // Hmm
 
-        var widthGain = ctx.createGain();
-        widthGain.gain.setValueAtTime(0, 0);
-        node.width = widthGain.gain;
-        node.connect(PWM);
-        widthGain.connect(PWM);
+        osc1.connect(output);
+        osc2.connect(inverter);
+        inverter.connect(delay);
+        delay.connect(output);
 
-        var constantOneShaper = ctx.createWaveShaper();
-        constantOneShaper.curve = new Float32Array([1,1]);
-        node.connect(constantOneShaper);
-        constantOneShaper.connect(widthGain);
+        PWM.osc1 = osc1, PWM.osc2 = osc2,
+        PWM.output = output, PWM.delay = delay;
 
-        node.connect = PWM.connect.bind(PWM);
-        node.disconnect = PWM.disconnect.bind(PWM);
-        return node;
+       // PWM.connect = inverter.connect;
+        PWM.start = function(t) { this.osc1.start(t); this.osc2.start(t) };
+        PWM.stop = function(t) { this.osc1.stop(t); this.osc2.stop(t) };
+        //this.delay.delayTime.value = amt/this.osc1.frequency.value;
+
+        //BSP.osc[j].delay.delayTime.setValueAtTime(step[2] / BSP.osc[j].osc1.frequency.value, tick);
+        return PWM;
     }
 
     var SONG = BSP.SONG;
     BSP.lastVol = [];
+    BSP.lastPWM = [];
+    BSP.lastPWM2 = [];
     BSP.speed   = 60 / SONG.bpm / (SONG.divide || 4);
     BSP.sub     = SONG.seq[0].length;
     BSP.ctx     = new AudioContext();
@@ -122,7 +139,11 @@ var startSong = function() {
         if(SONG.wave && SONG.wave[j]!==4) {
             BSP.modGain[j] = BSP.ctx.createGain();
             BSP.modGain[j].gain.setValueAtTime(0, 0);
-            BSP.modGain[j].connect(BSP.osc[j].frequency);
+            if(SONG.wave[j]!==5)
+                BSP.modGain[j].connect(BSP.osc[j].frequency);
+            else
+                BSP.modGain[j].connect(BSP.osc[j].osc1.frequency),
+                BSP.modGain[j].connect(BSP.osc[j].osc2.frequency); 
             BSP.LFO.connect(BSP.modGain[j]);
         }
 
@@ -130,7 +151,10 @@ var startSong = function() {
         BSP.amp[1][j] = BSP.ctx.createGain(); // Osc Note Volume 
         BSP.amp[1][j].gain.setValueAtTime(0, 0);
         BSP.amp[0][j].gain.setValueAtTime(SONG.cVol&&SONG.cVol[j]?SONG.cVol[j]:1, 0);
-        BSP.osc[j].connect(BSP.amp[1][j]);
+        if(SONG.wave && SONG.wave[j]==5) 
+            BSP.osc[j].output.connect(BSP.amp[1][j]);
+        else
+            BSP.osc[j].connect(BSP.amp[1][j]);
         BSP.amp[1][j].connect(BSP.amp[0][j]);
 
         BSP.Filter[j] = BSP.ctx.createBiquadFilter();
