@@ -1,10 +1,16 @@
 (function(){
 /* ------------------------ */
+BSP.eventz = [];
+function genF(c) {
+    var a = [0,1], h = c^8**9, i;
+    for(i=0; i<c; i++, h=Math.imul(h,9**9)) a.push(h/2**32);
+    return new Float32Array(a);
+};
 
 var schedule = function() {
     var SONG = BSP.SONG;
     var fix = function(n){return Math.round(n*1000)/1000;};
-
+ 
     for(var n = 0.000501, j = 0; j < SONG.seq.length; j++) {
         for(var i = 0, tick = BSP.time; i < SONG.seq[j].length;) {
             var step = SONG.seq[j][i];
@@ -29,11 +35,24 @@ var schedule = function() {
                     BSP.lastPWM[j] = step[2];
                 if(BSP.osc[j].osc1 && BSP.osc[j].osc2 && step[5] !== undefined)
                     BSP.lastPWM2[j] = step[5];
-                if(BSP.osc[j].osc1 && BSP.osc[j].osc2)
-                    BSP.osc[j].osc1.frequency.setValueAtTime((BSP.freq[step[0]]/(SONG.trans||2)), tick),
-                    BSP.osc[j].osc2.frequency.setValueAtTime((BSP.lastPWM2[j]||0)+(BSP.freq[step[0]]/(SONG.trans||2)), tick),
-                    BSP.osc[j].delay.delayTime.setValueAtTime((1-BSP.lastPWM[j]||0)/BSP.freq[step[0]], tick);
+                // Waveform automation using the WebWorker as a fallback.
+                if(BSP.osc[j].osc1 && BSP.osc[j].osc2 && step[6] && step[6][0] === 0) {
+                    BSP.eventz.push([tick, BSP.osc[j].osc1, step[6][0], BSP.waves[+step[6][1]]]);
+                    BSP.eventz.push([tick, BSP.osc[j].osc2, step[6][0], BSP.waves[+step[6][2]]]);
+                } else if(BSP.osc[j].osc1 && BSP.osc[j].osc2 && step[6] && step[6][0] === 1) {
+                    var w1 = genF(step[6][1]), w2 = genF(step[6][2]);
+                    w1 = BSP.ctx.createPeriodicWave(w1, w1), w2 = BSP.ctx.createPeriodicWave(w2, w2);
+                    BSP.eventz.push([tick, BSP.osc[j].osc1, step[6][0], w1 ] );
+                    BSP.eventz.push([tick, BSP.osc[j].osc2, step[6][0], w2 ] );
+                }
 
+                if(BSP.osc[j].osc1 && BSP.osc[j].osc2) {
+                    BSP.osc[j].osc1.frequency.setValueAtTime((BSP.freq[step[0]]/(SONG.trans||2)), tick),
+                    BSP.osc[j].osc2.frequency.setValueAtTime((BSP.freq[step[0]]/(SONG.trans||2)), tick),
+                    BSP.osc[j].delay.delayTime.setValueAtTime((1-BSP.lastPWM[j]||0)/BSP.freq[step[0]], tick);
+                    BSP.osc[j].osc2.detune.setValueAtTime(BSP.lastPWM2[j]||0, tick);
+                    //+
+                }
                 if(tick > 0) {
                     BSP.amp[1][j].gain.setValueAtTime(BSP.lastVol[j]||0, fix(tick-n));
                     BSP.amp[1][j].gain.linearRampToValueAtTime(0, tick );
@@ -119,6 +138,7 @@ var startSong = function() {
 
     // create Oscillators for song.
     var waves = ["sine", "square", "triangle", "sawtooth"];
+    BSP.waves = waves;
     for(var j = 0; j < SONG.seq.length; j++) {
         BSP.osc[j] = BSP.ctx.createOscillator();
         // White Noise
@@ -224,6 +244,22 @@ var init = function() {
         // if running out of time, schedule the next loop of the song
         if(BSP.ctx.currentTime >= BSP.time-(BSP.speed*BSP.sub)) {
             schedule();  
+        }
+        // process some timed events
+        if(BSP.eventz.length && BSP.ctx.currentTime >= BSP.eventz[0][0]) {
+            console.log("set param", BSP.eventz[0])
+
+            if(BSP.eventz[0][2] === 0) {
+
+                BSP.eventz[0][1].type = BSP.eventz[0][3];
+
+            } else if(BSP.eventz[0][2] === 1) {
+                BSP.eventz[0][1].setPeriodicWave(BSP.eventz[0][3]);
+                //BSP.eventz.shift()
+            }
+                BSP.eventz.shift()
+
+
         }
     };
 
