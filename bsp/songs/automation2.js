@@ -7,9 +7,15 @@ SONG.date    = "may-04-2019"
 SONG.comment = "Playing with some of the new features, including 'Auto PWM'.<br>Unfortunately it is buggy."
 SONG.bpm     = 112
 SONG.divide  = 4
-SONG.cVol    = [.38,.25,.3]
+SONG.cVol    = [.38,.25,.6]
 SONG.wave    = [5,5,4]
 SONG.delay   = [0,.27,.22]
+
+var noiseData = [];
+for (var i = 0; i < 2048; i++) noiseData.push(Math.random() * 2);
+
+SONG.sampleData = []
+SONG.sampleData[2] = [22050, noiseData]
 
 var bass = [
 ['c-2',,0.71,,,16],,['c-3'],-1, // bar 1
@@ -53,19 +59,19 @@ var noise = [
 ,,,, // bar 1
 ['f-4'],-1,,,
 ,,,,
-['c-2'],-1,['c-5'],-1,
+['c-2'],-1,['f-4'],-1,
 ,,,, // bar 2
-['c-5'],-1,,,
+['f-4'],-1,,,
 ,,,,
-['c-2'],['c-3'],-1,['c-5'],
+['c-2'],['c-3'],-1,['f-4'],
 -1,,,, // bar 3
-['c-5'],-1,,,
+['f-4'],-1,,,
 ,,,,
-['c-2'],-1,,['c-5'],
+['c-2'],-1,,['f-4'],
 -1,['c-2'],['c-3'],-1, // bar 4
-['c-5'],-1,,['c-3'],
-['c-5'],['c-1'],-1,['c-4'],
-['c-2'],['c-3'],['c-5'],-1,
+['f-4'],-1,,['c-3'],
+['f-4'],['c-1'],-1,['c-4'],
+['c-2'],['c-3'],['f-4'],-1,
 ]
 
 SONG.seq = [bass, lead, noise]

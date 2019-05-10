@@ -11,6 +11,12 @@ SONG.cVol    = [.3,.3,.3]
 SONG.wave    = [5,5,4]
 SONG.delay   = [.22,.22,.22]
 
+var noiseData = [];
+for (var i = 0; i < 4096; i++) noiseData.push(Math.random() * 2);
+
+SONG.sampleData = []
+SONG.sampleData[2] = [44100, noiseData]
+
 var bass = [
 ['c-3',,0.71],,['c-4'],-1, // bar 1
 ,,['a#3',,0.64],['c-4'],

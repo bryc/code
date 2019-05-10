@@ -56,14 +56,12 @@ var schedule = function() {
 };
 
 var startSong = function() {
-    function WhiteNoiseNode(ctx) {
-        var noiseData = [];
-        for (var i = 0; i < 44100 / 8; i++) noiseData.push(Math.random() * 2);
-        var noiseBuffer = ctx.createBuffer(1, noiseData.length, ctx.sampleRate  );
-        noiseBuffer.getChannelData(0).set(noiseData);
+    function BufferNode(ctx, rate, data) {
+        var buf = ctx.createBuffer(1, data.length, rate);
+        buf.getChannelData(0).set(data);
         var bufferSource = ctx.createBufferSource();
 
-        bufferSource.buffer = noiseBuffer;
+        bufferSource.buffer = buf;
         bufferSource.loop = true;
 
         return bufferSource;
@@ -124,7 +122,7 @@ var startSong = function() {
     for(var j = 0; j < SONG.seq.length; j++) {
         BSP.osc[j] = BSP.ctx.createOscillator();
         // White Noise
-        if(SONG.wave && SONG.wave[j]===4) BSP.osc[j] = WhiteNoiseNode(BSP.ctx);
+        if(SONG.wave && SONG.wave[j]===4) BSP.osc[j] = BufferNode(BSP.ctx, SONG.sampleData[j][0], SONG.sampleData[j][1], SONG.sampleData[j][2]);
         // PWM
         if(SONG.wave && SONG.wave[j]===5) BSP.osc[j] = CreatePulseOscillator(BSP.ctx);
         // Periodic wave
