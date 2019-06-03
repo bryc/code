@@ -4,7 +4,7 @@ BSP.SONG = (function(SONG = {}) {
 SONG.title   = "automation"
 SONG.author  = "bryc"
 SONG.date    = "feb-22-2018"
-SONG.comment = "Implemented noise, PWM, LFO, filter and delay<br>Updated on may-04-2019 to allow independent control of parameters."
+SONG.comment = "A cover of Adam Szabo - One Day.<br>Implemented noise, PWM, LFO, filter and delay<br>Updated on may-04-2019 to allow independent control of parameters."
 SONG.bpm     = 112
 SONG.divide  = 4
 SONG.cVol    = [.3,.3,.3]
