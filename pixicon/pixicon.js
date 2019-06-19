@@ -49,40 +49,18 @@ function pixicon(t, scale, seed, pixels) {
     }
     // swap values for triangles for rotation. TODO: make this less long and support other shapes.
     function trirot(arr, mode) {
-        var arr2 = arr.slice();
+        var arr2 = arr.slice(), t;
+        switch(mode) {
+            case 0: t=[5,4,3,2]; break;
+            case 1: t=[4,5,2,3]; break;
+            case 2: t=[4,5,3,2]; break;
+            case 3: t=[3,2,5,4]; break;
+            case 4: t=[5,4,2,3];
+        }
         for(var i = 0; i < arr.length; i++) {
-            switch(mode) {
-                case 0:
-                if(arr[i]===2)  (arr2[i] = 5);
-                if(arr[i]===3)  (arr2[i] = 4);
-                if(arr[i]===4)  (arr2[i] = 3);
-                if(arr[i]===5)  (arr2[i] = 2);
-                break;
-                case 1:
-                if(arr[i]===2)  (arr2[i] = 4);
-                if(arr[i]===3)  (arr2[i] = 5);
-                if(arr[i]===4)  (arr2[i] = 2);
-                if(arr[i]===5)  (arr2[i] = 3);
-                break;
-                case 2:
-                if(arr[i]===2)  (arr2[i] = 4);
-                if(arr[i]===3)  (arr2[i] = 5);
-                if(arr[i]===4)  (arr2[i] = 3);
-                if(arr[i]===5)  (arr2[i] = 2);
-                break;
-                case 3:
-                if(arr[i]===2)  (arr2[i] = 3);
-                if(arr[i]===3)  (arr2[i] = 2);
-                if(arr[i]===4)  (arr2[i] = 5);
-                if(arr[i]===5)  (arr2[i] = 4);
-                break;
-                case 4:
-                if(arr[i]===2)  (arr2[i] = 5);
-                if(arr[i]===3)  (arr2[i] = 4);
-                if(arr[i]===4)  (arr2[i] = 2);
-                if(arr[i]===5)  (arr2[i] = 3);
-                break;
-            }
+            var r=arr[i]-2;
+            if(r<0||r>3) continue;
+            arr2[i]=t[r];
         }
         return arr2;
     }
