@@ -27,8 +27,8 @@ function pixicon(t, scale, seed, pixels) {
     }
     // transform a base HSL color into an alternate color
     function modHSL(str,mode = 0){
-    var arr = str.replace(/[^\d,.%]/g, '').split(',').map(x => Number.parseFloat(x, 10));
-    return `hsl(${arr[0]+(mode?-20:-20)},${arr[1]+(mode?-10:-10)}%,${arr[2]+(mode?12:-8)}%)`;
+        var arr = str.replace(/[^\d,.%]/g, '').split(',').map(x => Number.parseFloat(x, 10));
+        return `hsl(${arr[0]+(mode?-20:-20)},${arr[1]+(mode?-10:-10)}%,${arr[2]+(mode?12:-8)}%)`;
     }
     // pixel array rotation/flip
     // 0 = x flip, 1 = y flip, 2 = 90° rot
