@@ -38,7 +38,7 @@ function pixicon(t, scale, seed, pixels) {
         if(mode===0 || mode===1) { // horizontal flip
             for(var i = 0, arr2 = []; i < arr.length; i++)
                 arr2[i] = arr[i-2*(i%w)+w-1];
-        }
+        } else
         if(mode===2 || mode===4) { // rotate 90° CW
             for(var i = 0, arr2 = []; i < arr.length; i++)
                 arr2[i] = arr[0|(h-1)*w-((i%h)*w)+i/h];
