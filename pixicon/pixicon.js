@@ -117,88 +117,89 @@ function pixicon(t, scale, seed, pixels) {
     if(t.width !== n*scale) t.width = t.height = n*scale;
 
     // Multiple passes (only two)
+    
+    var num = 0;
+    while(num < 2) {
+        // Set fill color for pixels. TODO: make sure no two colors are similar
+        var color1 = HSL(rng(), rng(), rng(), rng()*1|0);
+        var color2 = modHSL(color1);
+        var color2a = modHSL(color1, 1);
+        c.fillStyle = color1;
 
-    var num = 0; while(num < 2) {
-    // Set fill color for pixels. TODO: make sure no two colors are similar
-    var color1 = HSL(rng(), rng(), rng(), rng()*1|0);
-    var color2 = modHSL(color1);
-    var color2a = modHSL(color1, 1);
-    c.fillStyle = color1;
+        // - PATTERN ONE -
+        // Generate the number of pixels to occupy (threshold: within 25%-75%).
+        var divisor = 2.5;
+        var r = rng(), u = 0|((2*r*100+8*r+100)*.125) / divisor;
+        // Populate array with an amount of pixels (within threshold).
+        for(var pt1=[], s = 0; s < u; s++)
+            pt1[s] = 1 + rng()*pix|0;
+        // Shuffle pixel array (Fisher–Yates).
+        // !!! NOTE: |0 is required to prevent an infinite loop in odd sizes. !!!
+        for(var v, s = 25; s;)
+            v = 0|rng() * s--,
+            [pt1[s], pt1[v]] = [pt1[v], pt1[s]];
+        // - PATTERN TWO -
+        var r = rng(), u = 0|((2*r*100+8*r+100)*.125) / divisor;
+        for(var pt2=[], s = 0; s < u; s++)
+            pt2[s] = 1 + rng()*pix|0;
+        for(var v, s = 25; s;)
+            v = 0|rng() * s--,
+            [pt2[s], pt2[v]] = [pt2[v], pt2[s]];
+        // - PATTERN THREE - 
+        for(var pt3=[], s = 0; s < 6; s++)
+        pt3[s] = rng()*2|0;
 
-    // - PATTERN ONE -
-    // Generate the number of pixels to occupy (threshold: within 25%-75%).
-    var divisor = 2.5;
-    var r = rng(), u = 0|((2*r*100+8*r+100)*.125) / divisor;
-    // Populate array with an amount of pixels (within threshold).
-    for(var pt1=[], s = 0; s < u; s++)
-        pt1[s] = 1 + rng()*pix|0;
-    // Shuffle pixel array (Fisher–Yates).
-    // !!! NOTE: |0 is required to prevent an infinite loop in odd sizes. !!!
-    for(var v, s = 25; s;)
-        v = 0|rng() * s--,
-        [pt1[s], pt1[v]] = [pt1[v], pt1[s]];
-    // - PATTERN TWO -
-    var r = rng(), u = 0|((2*r*100+8*r+100)*.125) / divisor;
-    for(var pt2=[], s = 0; s < u; s++)
-        pt2[s] = 1 + rng()*pix|0;
-    for(var v, s = 25; s;)
-        v = 0|rng() * s--,
-        [pt2[s], pt2[v]] = [pt2[v], pt2[s]];
-    // - PATTERN THREE - 
-    for(var pt3=[], s = 0; s < 6; s++)
-    pt3[s] = rng()*2|0;
-
-    // Toggle diagonal inner symmetry
-    if(diagMode) {
-        var goodlist0 = [1,2,3,4,7,8,9,13,14,19];
-        var mask0 = pt1.slice(), mask1 = pt2.slice();
-        for(var i = 0; i < 25; i++) {
-            if(!goodlist0.includes(i)) mask0[i] = mask1[i] = 0;
+        // Toggle diagonal inner symmetry
+        if(diagMode) {
+            var goodlist0 = [1,2,3,4,7,8,9,13,14,19];
+            var mask0 = pt1.slice(), mask1 = pt2.slice();
+            for(var i = 0; i < 25; i++) {
+                if(!goodlist0.includes(i)) mask0[i] = mask1[i] = 0;
+            }
+            pt1 = rota(pt1,2,5,5), pt1 = rota(pt1,0,5,5);
+            pt2 = rota(pt2,2,5,5), pt2 = rota(pt2,0,5,5);  
+            for(var i = 0; i < 25; i++) {
+                if(goodlist0.includes(i)) pt1[i] = mask0[i], pt2[i] = mask1[i];
+            }
+            // force diagonal shapes to be squares for symmetry
+            var goodlist2 = [0,6,12,18,24];
+            for(var i = 0; i < 5; i++) {
+                var nm = goodlist2[i];
+                if(pt1[nm]) pt1[nm] = 1;
+                if(pt2[nm]) pt2[nm] = 1;
+            }
         }
-        pt1 = rota(pt1,2,5,5), pt1 = rota(pt1,0,5,5);
-        pt2 = rota(pt2,2,5,5), pt2 = rota(pt2,0,5,5);  
-        for(var i = 0; i < 25; i++) {
-            if(goodlist0.includes(i)) pt1[i] = mask0[i], pt2[i] = mask1[i];
+
+        // produce final pixel array.
+        var fin = [];
+        switch(symMode) {
+            case 0:  // Snowflake (Reflected-4)
+            fin[0] = (pt1);
+            fin[1] = trirot(rota(pt1,1, 5,5),1);
+            fin[2] = trirot(rota(pt1,0, 5,5),0);
+            fin[3] = trirot(rota(pt1,3, 5,5),3);
+            break;
+            case 1: // Snowflake (Rotated-4)
+            fin[0] = (pt1);
+            fin[1] = trirot(rota(pt1,4, 5,5),4);
+            fin[2] = trirot(rota(pt1,2, 5,5),2);
+            fin[3] = trirot(rota(pt1,3, 5,5),3);
+            break;
         }
-        // force diagonal shapes to be squares for symmetry
-        var goodlist2 = [0,6,12,18,24];
-        for(var i = 0; i < 5; i++) {
-            var nm = goodlist2[i];
-            if(pt1[nm]) pt1[nm] = 1;
-            if(pt2[nm]) pt2[nm] = 1;
+
+        paint(fin[0], 0,0, 25); // T-L
+        paint(fin[1], 0,n===11?6:5, 25); // B-L
+        c.fillStyle = color2;
+        paint(fin[2], n===11?6:5,0, 25);// T-R
+        paint(fin[3], n===11?6:5,n===11?6:5, 25); // B-R
+
+        if(rng()>0.3 && n === 11) {
+            c.fillStyle = color2a;
+            paint(pt3, 0,5, 6, 6); // >
+            paint(rota(pt3,0,5), 6,5, 5, 5); // <
+            paint(pt3, 5,0, 5, 1); // V
+            paint(rota(pt3,0,5), 5,6, 5, 1); // ^
         }
-    }
-
-    // produce final pixel array.
-    var fin = [];
-    switch(symMode) {
-        case 0:  // Snowflake (Reflected-4)
-        fin[0] = (pt1);
-        fin[1] = trirot(rota(pt1,1, 5,5),1);
-        fin[2] = trirot(rota(pt1,0, 5,5),0);
-        fin[3] = trirot(rota(pt1,3, 5,5),3);
-        break;
-        case 1: // Snowflake (Rotated-4)
-        fin[0] = (pt1);
-        fin[1] = trirot(rota(pt1,4, 5,5),4);
-        fin[2] = trirot(rota(pt1,2, 5,5),2);
-        fin[3] = trirot(rota(pt1,3, 5,5),3);
-        break;
-    }
-
-    paint(fin[0], 0,0, 25); // T-L
-    paint(fin[1], 0,n===11?6:5, 25); // B-L
-    c.fillStyle = color2;
-    paint(fin[2], n===11?6:5,0, 25);// T-R
-    paint(fin[3], n===11?6:5,n===11?6:5, 25); // B-R
-
-    if(rng()>0.3 && n === 11) {
-        c.fillStyle = color2a;
-        paint(pt3, 0,5, 6, 6); // >
-        paint(rota(pt3,0,5), 6,5, 5, 5); // <
-        paint(pt3, 5,0, 5, 1); // V
-        paint(rota(pt3,0,5), 5,6, 5, 1); // ^
-    }
-    num++;
+        num++;
     }
 }
