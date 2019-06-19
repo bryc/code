@@ -6,11 +6,11 @@ function pixicon(t, scale, seed, pixels) {
     // HSL color generator.
     function HSL(t, r, e, i=0) {
         var set = [
-            [(999*t)%360, 24+80*r%40, 26+70*e%40],
-            [(999*t)%360, 9*r%10, 15+36*e%50],
-            [(999*t)%360, 14*r%40, 33+36*e%40],
+            [24+80*r%40, 26+70*e%40],
+            [9*r%10, 15+36*e%50],
+            [14*r%40, 33+36*e%40],
         ];
-        return "hsl("+~~set[i][0]+","+~~set[i][1]+"%,"+~~set[i][2]+"%)";
+        return "hsl("+~~((999*t)%360)+","+~~set[i][0]+"%,"+~~set[i][1]+"%)";
     }
     // Pseudorandom number generator.
     function sfc32(a, b, c, d) {
