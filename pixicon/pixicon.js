@@ -73,33 +73,32 @@ function pixicon(t, scale, seed, pixels) {
                 if(j === WW) break;
             }
             if(arr[i]) {
-            c.beginPath();
-            switch(arr[i]) { // 1=square, 2-5=triangles
-                case 1:
-                    c.fillRect(x*o + k*o, y*o+ j*o, o, o);
-                    break;
-                case 2:
-                    c.moveTo(x*o + o*k,     y*o + o*j);
-                    c.lineTo(x*o + o*k + o, y*o + o*j);
-                    c.lineTo(x*o + o*k + o, y*o + o*j + o);
-                    break;
-                case 3:
-                    c.moveTo(x*o+o*k,     y*o + o*j);
-                    c.lineTo(x*o+o*k,     y*o + o*j + o);
-                    c.lineTo(x*o+o*k + o, y*o + o*j + o);
-                    break;
-                case 4:
-                    c.moveTo(x*o+o*k + o, y*o + o*j);
-                    c.lineTo(x*o+o*k,     y*o + o*j + o);
-                    c.lineTo(x*o+o*k + o, y*o + o*j + o);
-                    break;
-                case 5:
-                    c.moveTo(x*o+o*k + o, y*o + o*j);
-                    c.lineTo(x*o+o*k,     y*o + o*j);
-                    c.lineTo(x*o+o*k,     y*o + o*j + o);
-                    break;
-            }
-            c.fill();
+                c.beginPath();
+                switch(arr[i]) { // 1=square, 2-5=triangles
+                    case 1:
+                        c.fillRect(x*o + k*o, y*o+ j*o, o, o);
+                        break;
+                    case 2:
+                        c.moveTo(x*o + o*k,     y*o + o*j);
+                        c.lineTo(x*o + o*k + o, y*o + o*j);
+                        c.lineTo(x*o + o*k + o, y*o + o*j + o);
+                        break;
+                    case 3:
+                        c.moveTo(x*o+o*k,     y*o + o*j);
+                        c.lineTo(x*o+o*k,     y*o + o*j + o);
+                        c.lineTo(x*o+o*k + o, y*o + o*j + o);
+                        break;
+                    case 4:
+                        c.moveTo(x*o+o*k + o, y*o + o*j);
+                        c.lineTo(x*o+o*k,     y*o + o*j + o);
+                        c.lineTo(x*o+o*k + o, y*o + o*j + o);
+                        break;
+                    case 5:
+                        c.moveTo(x*o+o*k + o, y*o + o*j);
+                        c.lineTo(x*o+o*k,     y*o + o*j);
+                        c.lineTo(x*o+o*k,     y*o + o*j + o);
+                }
+                c.fill();
             }
         }
     }
