@@ -4,7 +4,7 @@ BSP.SONG = (function(SONG = {}) {
 SONG.title   = "wavetablez"
 SONG.author  = "bryc"
 SONG.date    = "may-10-2019"
-SONG.comment = "messing with single cycle waveforms (not really yet)"
+SONG.comment = "messing with single cycle waveforms (not yet actually wavetables)"
 SONG.bpm     = 84
 SONG.divide  = 6
 SONG.cVol    = [

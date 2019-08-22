@@ -1,30 +1,28 @@
 <link href="style.css" rel="stylesheet">
 
 <fieldset><legend>Global</legend>
-    <button>Export Song</button> Title: <input placeholder=N/A size=19> Artist: <input placeholder=N/A size=15>
-    <hr>
-    BPM: <input id=BPM type=number min=10 max=700 value=112 style='width:3.1em'>
-    Steps/beat: <input id=SpB type=number min=2 max=8 value=4 style='width:2.1em'>
-    Beats/bar: <input id=BpB type=number min=2 max=8 value=4 style='width:2.1em'>
-    Bars/pattern: <input id=BpP type=number min=1 max=32 value=4 style='width:3.1em'><hr>
-    <div seq>
-        Oct: <input id=Oct type=number min=-4 max=4 value=0 style='width:2.4em'>
-
-
-        Sequence: <input id=Seq type=number min=0 max=999 value=0 style='width:3.1em'>
-
-        <button id=SetSeq>S</button> <span id=seqDisp>-</span>
-    </div>
+    <button>Load</button><button>Export</button>
+    BPM: <input id=BPM type=number min=10 max=700 value=112 style='width:3.2em'>
 </fieldset>
 
-<fieldset><legend>Patch: <input id=Pat type=number min=0 max=999 value=0 style='width:3.1em'></legend>
-[Insert Synth editor here]
-</fieldset>
+<!--<fieldset><legend>Channel: <input id=Pat type=number min=0 max=999 value=0 style='width:3.2em'></legend>
+[Insert Channel editor here]
+</fieldset>-->
 
 
-<fieldset><legend>Pattern: <input id=Pat type=number min=0 max=999 value=0 style='width:3.1em'></legend>
+<fieldset><legend>Pattern <input id=Pat type=number min=0 max=999 value=0 style='width:3.2em'></legend>
+    Oct: <input id=Oct type=number min=-4 max=4 value=0 style='width:2.7em'>
+    Steps/Beat: <input id=SpB type=number min=2 max=8 value=4 style='width:2.2em'>
+    Beats/Bar: <input id=BpB type=number min=2 max=8 value=4 style='width:2.2em'>
+    Bars/Patt: <input id=BpP type=number min=1 max=32 value=4 style='width:2.7em'><hr>
 <table class=edit></table>
 </fieldset>
 
+<fieldset><legend>Sequence</legend>
+    Channels: <input id=chn type=number min=1 max=16 value=4 style='width:2.7em'>
+    Rows: <input id=r0w type=number min=1 max=63 value=4 style='width:3.2em'>
+    <hr>
+<table class=edit2></table>
+</fieldset>
 
 <script src=app.js></script>

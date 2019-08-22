@@ -36,17 +36,38 @@ var keymap = {
 };
 
 window.onkeydown = function(e) {
-    if(current && keymap[e.keyCode]) {
+    if(selTable === 'pattern' && current && keymap[e.keyCode]) {
+        //console.log(current.parentNode)
         var note = current.patIdx;
         if(!patData[song.Pattern]) patData[song.Pattern] = [];
-        patData[song.Pattern][note] = []
+        patData[song.Pattern][note] = [];
         if(patData[song.Pattern][note]) patData[song.Pattern][note][0] = keymap[e.keyCode]+song.Octave*12;
         // document exactly what happens here
         else patData[song.Pattern][note] = [keymap[e.keyCode]+song.Octave*12];
         current.innerHTML = freq[keymap[e.keyCode]+song.Octave*12][1].toUpperCase();
-    } else if(current && e.keyCode === 46) {
+    } else if(selTable === 'pattern' && current && e.keyCode === 46) {
         var note = current.patIdx;
         patData[song.Pattern][note] = undefined;
+        current.innerHTML = "";
+    } else if(selTable === 'pattern' && current && e.keyCode === 192) {
+        var note = current.patIdx;
+        patData[song.Pattern][note] = -1;
+        current.innerHTML = "<b style=color:red>OFF</b>";
+    }
+//
+    if(selTable === 'sequesnce' && current) {
+        //console.log(current.parentNode)
+        //var note = current.patIdx;
+        //if(!patData[song.Pattern]) patData[song.Pattern] = [];
+        //patData[song.Pattern][note] = [];
+        //if(patData[song.Pattern][note]) patData[song.Pattern][note][0] = keymap[e.keyCode]+song.Octave*12;
+        // document exactly what happens here
+        //else patData[song.Pattern][note] = [keymap[e.keyCode]+song.Octave*12];
+        //current.innerHTML = freq[keymap[e.keyCode]+song.Octave*12][1].toUpperCase();
+        current.innerHTML = e.keyCode;
+    } else if(selTable === 'sequsence' && current && e.keyCode === 46) {
+        //var note = current.patIdx;
+        //patData[song.Pattern][note] = undefined;
         current.innerHTML = "";
     }
 };
@@ -91,7 +112,7 @@ function elem(options) {
 
 
 var song = {Octave:0, Pattern:0, Sequence:0};
-var current, previous;
+var current, previous, selTable;
 var inputs = document.querySelectorAll("input");
 var patData = [];
 var seqData = [];
@@ -123,17 +144,18 @@ for(var i = 0; i < inputs.length; i++) {
         default:
         el.oninput = function() {
         buildEditTable();
+        buildEditTable2();
         }
     }
 }
 
-document.querySelector("button#SetSeq").onclick = function() {
-    seqData[song.Sequence] = song.Pattern;
-    document.querySelector("span#seqDisp").innerHTML = song.Pattern;
-}
+//document.querySelector("button#SetSeq").onclick = function() {
+//    seqData[song.Sequence] = song.Pattern;
+//    document.querySelector("span#seqDisp").innerHTML = song.Pattern;
+//}
 
 
-    function buildEditTable() {
+function buildEditTable() {
     var steps = Number(document.getElementById('SpB').value);
     var beats = Number(document.getElementById('BpB').value);
     var bars  = Number(document.getElementById('BpP').value);
@@ -157,6 +179,7 @@ document.querySelector("button#SetSeq").onclick = function() {
                 if(current) prev = current, prev.style.outline="";
                 current = this;
                 current.style.outline="2px solid #0070AF";
+                selTable = 'pattern';
                 //console.dir(this)
                 //this.innerHTML = this.patIdx;
             }
@@ -180,4 +203,73 @@ document.querySelector("button#SetSeq").onclick = function() {
     replace(document.querySelector("table.edit"), out);
 }
 
+
+function buildEditTable2() {
+    var steps = Number(document.getElementById('r0w').value);
+    var r0ws  = Number(document.getElementById('chn').value);
+ 
+    var out = elem([]);
+
+    for(var i0=0,i = 0; i < r0ws; i++) {
+
+        
+        var tr = elem(["tr"]);
+        var total = steps;
+        for(var j1=0,j0=0,j = 0; j < total; j++) {
+            var td = elem(["td"]);
+            td.contentEditable = true;
+            td.onkeydown = function(e) {
+                var keycode = e.keyCode;
+                var bad = 
+                //(keycode > 47 && keycode < 58)   || // number keys
+                keycode == 32 || keycode == 13   || // spacebar & return key(s) (if you want to allow carriage returns)
+                (keycode > 64 && keycode < 91)   || // letter keys
+                (keycode > 95 && keycode < 112)  || // numpad keys
+                (keycode > 185 && keycode < 193) || // ;=,-./` (in order)
+                (keycode > 218 && keycode < 223);   // [\]' (in order)
+                if(bad) return false;
+
+
+             //this.innerText = this.innerText.replace(/[^\d]+/g,'')   
+            }
+            td.onkeypress = function() {
+                
+                if(document.getSelection().toString() === this.innerText) this.innerText = ""
+                return (this.innerText.length < 3)
+                
+            }
+            td.className = j1 ? 'aa':'bb';
+            //td.style.borderRight="2px solid #888"
+            td.innerHTML = "";
+            td.patIdx = i0++;
+            td.onclick = function() {
+                if(current) prev = current, prev.style.outline="";
+                current = this;
+                current.style.outline="2px solid #0070AF";
+                selTable = 'sequence';
+                //console.dir(this)
+                //this.innerHTML = this.patIdx;
+            }
+            tr.appendChild(td);
+        }
+        out.appendChild(tr);
+    }
+
+    if(!patData[song.Pattern]) {
+        patData[song.Pattern] = [];
+    }
+
+    var xxxx = out.querySelectorAll("td");
+
+        for(var i = 0; i < patData[song.Pattern].length; i++) {
+            if(patData[song.Pattern][i])
+            xxxx[i].innerHTML = freq[patData[song.Pattern][i]][1].toUpperCase();
+        }
+    
+    console.log(patData)
+    replace(document.querySelector("table.edit2"), out);
+}
+
+
 buildEditTable();
+buildEditTable2();

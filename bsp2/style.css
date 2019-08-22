@@ -30,12 +30,14 @@ table#seq{border-collapse:collapse;display:inline-table;vertical-align:middle;}
 table#seq td{font-size:14px;text-align:center;width:24px;border:1px solid #AAA;}
 div[seq] > button{vertical-align:middle;width:2em}
 
-table.edit{font-size:12px;border-collapse:collapse;vertical-align:middle;margin:8px;padding:8px;background: #2c3e5010;}
+table.edit,table.edit2{font-size:12px;border-collapse:collapse;vertical-align:middle;margin:8px;padding:8px;background: #2c3e5010;}
+
+table.edit2 td{background:#2c3e5010;border-color:#2c3e5030;width:25px !important;}
 
 td{
     font-family:monospace;
     border:1px solid #CCC;
-    width:32px !important;
+    width:24px !important;
     height:20px;
     padding:2px;
     text-align:center;white-space: nowrap;

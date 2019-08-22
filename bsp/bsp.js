@@ -122,7 +122,7 @@ var startSong = function() {
     for(var j = 0; j < SONG.seq.length; j++) {
         BSP.osc[j] = BSP.ctx.createOscillator();
         // White Noise
-        if(SONG.wave && SONG.wave[j]===4) BSP.osc[j] = BufferNode(BSP.ctx, SONG.sampleData[j][0], SONG.sampleData[j][1], SONG.sampleData[j][2]);
+        if(SONG.wave && SONG.wave[j]===4) BSP.osc[j] = BufferNode(BSP.ctx, SONG.sampleData[j][0], SONG.sampleData[j][1]);
         // PWM
         if(SONG.wave && SONG.wave[j]===5) BSP.osc[j] = CreatePulseOscillator(BSP.ctx);
         // Periodic wave
@@ -136,10 +136,12 @@ var startSong = function() {
         } else if(!SONG.wave) {
             BSP.osc[j].type = waves[1];
         }
-        if(SONG.wave && SONG.wave[j]!==4) {
+        if(SONG.wave) {
             BSP.modGain[j] = BSP.ctx.createGain();
             BSP.modGain[j].gain.setValueAtTime(0, 0);
-            if(SONG.wave[j]!==5)
+            if(SONG.wave[j]===4)
+                BSP.modGain[j].connect(BSP.osc[j].playbackRate);
+            else if(SONG.wave[j]!==5)
                 BSP.modGain[j].connect(BSP.osc[j].frequency);
             else
                 BSP.modGain[j].connect(BSP.osc[j].osc1.frequency),
