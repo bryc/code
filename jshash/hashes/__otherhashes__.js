@@ -240,7 +240,7 @@ function hashCode(data) {
     for(var i = 0; i < data.length; i++) {
         hash = Math.imul(31, hash) + data[i] | 0; 
     }
-    return h;
+    return hash;
 }
 
 // Google Analytics URL domain name hash. Not that good. Still gotta clean it up though.
