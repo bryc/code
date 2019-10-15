@@ -26,7 +26,7 @@ var LZJB = {
             hp = I[S] << 16 | I[S+1] << 8 | I[S+2];
             hp ^= hp >> 9; hp = (I[S] ^ hp + (hp >> 5)) & 1023;
 
-            ofs = S-tbl[hp] & 1023;
+            ofs = S-tbl[hp] & 255;
             tbl[hp] = S;
 
             C = S - ofs;
