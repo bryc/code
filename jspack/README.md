@@ -2,7 +2,7 @@
 
 ## Lossless compression algorithms in JavaScript
 
-Here are various LZ-based compression algorithms ported to JS, aiming for functional simplicity and speed in the spirit of my other hash/PRNG implementations. The goal is for each to weigh less than 1000 bytes when minified.
+Here are various compression algorithms ported to JS, aiming for functional simplicity and speed in the spirit of my other hash/PRNG implementations. The goal is for each to weigh less than 1000 bytes when minified.
 
 ### LZJB (2005)
 
