@@ -4,15 +4,7 @@
 
 Here are various LZ-based compression algorithms ported to JS, aiming for functional simplicity and speed in the spirit of my other hash/PRNG implementations. The goal is for each to weigh less than 1000 bytes when minified.
 
-### LZ77
-
-### LZSS
-
-### LZW
-
-### LZP
-
-### LZJB
+### LZJB (2005)
 
 ```js
 var LZJB = {
@@ -58,4 +50,9 @@ var LZJB = {
 };
 ```
 
-### Snappy
+### Maybe
+- LZSS (1982)
+- LZW (1984)
+- LZRW1-A (1991)
+- LZP (1995)
+- Snappy (2011)
