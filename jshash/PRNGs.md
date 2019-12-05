@@ -1,4 +1,4 @@
-*License: This is public domain. Software licenses are annoying. If your code is sacred, don't publish it. If you want to scew with people, golf your code or only release binaries. If your country lacks a public domain, then you should probably start a revolution.*
+*License: Public domain. Software licenses are annoying. If your code is sacred, don't publish it. If you want to mess with people, golf your code or only release binaries. If your country lacks a public domain, you should probably start a revolution.*
 
 # Pseudorandom number generators
 
