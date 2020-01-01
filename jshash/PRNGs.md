@@ -364,7 +364,7 @@ for(var i = 0; i < 16; i++) next();
 
 ****
 
-# Seed generating functions
+# Addendum A: Seed generating functions
 
 Certain generators originally had their own seeding procedure, such as jsf32, sfc32 and gjrand32. Those three in particular run the next() function 10-20 times in advance, assumingly to aid in the initialization process. I believe this process can be skipped by using a suitable hash function such as MurmurHash3 to generate the full initial state of the generator.
 
