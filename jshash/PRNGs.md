@@ -133,11 +133,10 @@ function xorshift32(a) {
 
 function xorshift128(a, b, c, d) {
     return function() {
-        a |= 0; b |= 0; c |= 0;
-        var t = d ^ d << 11; t = t ^ t >>> 8;
-        t = t ^ a; t = t ^ a >>> 19; 
-        d = c; c = b; b = a; a = t;
-        return (t >>> 0) / 4294967296;
+        var t = a ^ a << 11;
+        a = b, b = c, c = d;
+        d = (d ^ d >>> 19) ^ (t ^ t >>> 8);
+        return (d >>> 0) / 4294967296;
     }
 }
 
