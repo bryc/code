@@ -172,7 +172,7 @@ function xorshift32amx(a) {
 
 ## Xoroshiro
 
-The xoroshiro family included two 32-bit compatible entries, `xoroshiro64**` and `xoroshiro64*`. It has a state size of 64-bit. I've included an unoffical implementation of `xoroshiro64+`. 
+The Xoroshiro family included two 32-bit compatible entries, `xoroshiro64**` and `xoroshiro64*`. It has a state size of 64-bit, and is named after its operations (Xor, Rotate, Shift, Rotate). I've included an unoffical implementation of `xoroshiro64+`, and some experimental 32-bit equivalents of `xoroshiro128` and `xorshift128+`, its predecessor. It is considered obsolete in favor of Xoshiro, although Google Chrome still uses `xorshift128+` under the hood for Math.random().
 
 ```js
 function xoroshiro64ss(a, b) {
@@ -202,11 +202,55 @@ function xoroshiro64p(a, b) {
         return (r >>> 0) / 4294967296;
     }
 }
+
+// 32-bit xoroshiro128 (experimental)
+// Source: https://github.com/umireon/my-random-stuff/blob/master/xorshift/xoroshiro128plus_32_test.c
+function xoroshiro128plus_32(a, b, c, d) {
+    return function() {
+      var x = a >>> 0,
+          y = b >>> 0,
+          z = c >>> 0,
+          w = d >>> 0, t;
+
+      t = w + y + (z !== 0 && x >= (-z>>>0) ? 1 : 0);
+      z ^= x;
+      w ^= y;
+
+      a = (y << 23 | x >>> 9) ^ z ^ (z << 14);
+      b = (x << 23 | y >>> 9) ^ w ^ (w << 14 | z >>> 18);
+      c = w << 4 | z >>> 28;
+      d = z << 4 | w >>> 28;
+
+      return t >>> 0;
+    }
+}
+
+// 32-bit xorshift128+ (experimental, later improved to xoroshiro)
+// Source: https://github.com/umireon/my-random-stuff/blob/master/xorshift/xorshift128plus_32_test.c
+function xorshift128plus_32b(a, b, c, d) {
+    return function() {
+      var x = a >>> 0,
+          y = b >>> 0,
+          z = c >>> 0,
+          w = d >>> 0, t;
+
+      t = w + y + (x !== 0 && z >= (-x>>>0) ? 1 : 0);
+      y ^= y << 23 | x >>> 9;
+      x ^= x << 23;
+
+      a = z;
+      b = w;
+      c = x ^ z ^ (x >>> 18 | y << 14) ^ (z >>> 5 | w << 27);
+      d = y ^ w ^ (y >>> 18) ^ (w >>> 5);
+
+      return t >>> 0;
+    }
+}
 ```
 
 ## Xoshiro
 
-The latest (as of May 2018) in the Xorshift-derivative series, xoshiro family now offers 128-bit state generators in 32-bit just like the original xorshift. Comes in two variants: `xoshiro128**` and `xoshiro128+`
+The latest (as of May 2018) in the Xorshift-derivative series, Xoshiro family now offers 128-bit state generators in 32-bit just like the original xorshift. Comes in two variants: `xoshiro128**` and `xoshiro128+`
 
 ```js
 function xoshiro128ss(a, b, c, d) {
