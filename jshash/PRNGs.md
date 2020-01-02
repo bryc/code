@@ -63,22 +63,40 @@ function Alea(seed) {
 }
 ```
 
-## LCG (Lehmer MCG)
+## LCG (Lehmer RNG)
 
-Has a state/period of 2^31-1. Is not that ideal, but it works. Apparently it's blazing fast.
+Commonly called a *Linear congruential generator (LCG)*, but in this case, more correctly called a *Multiplicative congruential generator (MCG)* or *Lehmer RNG*. It has a state and period of 2^31-1. It's blazingly fast in JavaScript (likely the fastest), but its quality is quite poor.
 
 ```js
-function lcg(a) {
+function LCG(a) {
     return function() {
       a = Math.imul(48271, a) | 0 % 2147483647;
       return (a & 2147483647) / 2147483648;
     }
 }
+
+// Here are some optimized ES6 one-liners:
+var LCG=s=>()=>(2**31-1&(s=Math.imul(48271,s)))/2**31; // Same as above
+var LCG=s=>()=>((s=Math.imul(741103597,s))>>>0)/2**32; // 32-bit version, likely far better
+var LCG=s=>()=>((s=Math.imul(1597334677,s))>>>0)/2**32; // Another 32-bit version
 ```
+
+The Lehmer RNG is the *minimal standard* RNG as proposed by Park–Miller in 1988 & 1993 and implemented in C++11 as `minstd_rand`. Keep in mind that the state and period are only 31-bit (31 bits give 2 billion possible states, 32 bits give double that).
+
+I cannot recommend using this, as it seems to have a bit of quality problems. Always **discard** the first result of an LCG, and be aware that some chosen seeds can exhibit unwanted patterns in output.
+
+Mathematically, LCGs have different parameters such as _a_, _m_ and _c_, which is often up to the implementor. The MCG or Lehmer RNG described here is a special case when _c_ is always zero, most likely for simplification purposes. Other popular multipliers in sequence: 16807, 48271, 69621, and 39373.
+
+**References:**
+- [LCG on Wikipedia](https://en.wikipedia.org/wiki/Linear_congruential_generator)
+- [Random Number Generators: Good Ones Are Hard To Find (1988)](http://www.firstpr.com.au/dsp/rand31/p1192-park.pdf) - Park–Miller's original paper, suggesting a multipler as 16807.
+- [Another Test For Randomness (1993)](http://www.firstpr.com.au/dsp/rand31/p105-crawford.pdf#page=4) - In response to criticism, suggesting 48271 over 16807.
+- [A table of Linear Congruential Generators of different sizes and good lattice structure (1997)](https://pdfs.semanticscholar.org/8284/542deb19d556c8818e0456cce771a50ed0ff.pdf) - By P. L'Ecuyer, source of 32-bit constants.
+
 
 ## Multiply-with-carry
 
-This is Marsaglia's MWC generator (KISS99 version). There are tons of variations that use different constants, but this is probably the definitive one. It actually dates back to 1994 but wasn't well known until it was published as part of KISS. It's not that good; modern generators are better. Xorshift is probably better.
+This is Marsaglia's MWC generator (KISS99 version). There are multiple variations that use different constants, but this is likely the definitive one. It actually dates back to 1994 but its origins are hard to trace. I don't recommend using it, it's quite old and it has some significant quality issues.
 
 ```js
 function mwc(a, b) {
@@ -90,6 +108,16 @@ function mwc(a, b) {
     }
 }
 ```
+
+It uses two 16-bit integers as input (hence the MWC1616 name). So technically a 32-bit state.
+A variant of this was used in Google Chrome until 2015 when it was replaced with "Xorshift128+" due to quality concerns.
+
+**References:**
+- [The Mother of All Random Number Generators (1993?)](https://web.archive.org/web/20200102030515/http://home.sandiego.edu/~pruski/MotherExplanation.txt) - Originally used multiplier 30903 and 18000.
+- [Marsaglia's original usenset post (1999)](http://www.ciphersbyritter.com/NEWS4/RANDC.HTM#369B5E30.65A55FD1@stat.fsu.edu) - Also contains some other sub-generators
+- [KISS: A Bit Too Simple (2011)]() - Some criticism on the KISS99 generators
+- [There’s Math.random(), and then there’s Math.random()](https://v8.dev/blog/math-random) - Chrome originally used MWC with 30903 and 18030
+- [TIFU By Using Math.random()](https://medium.com/@betable/tifu-by-using-math-random-f1c308c4fd9d) - Other criticisms leading to MWC being replaced.
 
 ## Xorshift
 
@@ -155,7 +183,7 @@ function xoroshiro64s(a, b) {
     }
 }
 
-// unofficial xoroshiro64+ for completeness
+// unofficial xoroshiro64+ (bryc)
 function xoroshiro64p(a, b) {
     return function() {
         var r = a + b;
@@ -295,12 +323,11 @@ function tyche(a, b, c, d) {
 }
 ```
 
-## Mulberry32 and SplitMix32
+## Mulberry32
 
-These PRNGs use a 32-bit state, similar to xorshift32. Quite useful for embedded systems. And potentially better than the Lehmer MCG. But due to the small state size, they aren't as good as the 128-bit state PRNGs.
+Mulberry32 is minimalistic generator utilizing a 32-bit state, originally intended for embedded applications. It appears to be very good; the author states it passes all tests of gjrand, and this JavaScript implementation is very fast. But since the state is 32-bit like Xorshift, it's period (how long the random sequence lasts before repeating) is significantly less than those with 128-bit states, but it's still quite large, at around 4 billion.
 
-
-```c
+```js
 function mulberry32(a) {
     return function() {
       a |= 0; a = a + 0x6D2B79F5 | 0;
@@ -309,16 +336,33 @@ function mulberry32(a) {
       return ((t ^ t >>> 14) >>> 0) / 4294967296;
     }
 }
+```
 
+**References:**
+- [Original C implementation (2017)](https://gist.github.com/tommyettinger/46a874533244883189143505d203312c)
+
+## SplitMix32
+
+SplitMix32 is a transformation of the `fmix32` finalizer from MurmurHash3 into a PRNG. It has a 32-bit internal state, like Xorshift and Mulberry32. 
+
+```js
 function splitmix32(a) {
     return function() {
       a |= 0; a = a + 0x9e3779b9 | 0;
       var t = a ^ a >>> 15; t = Math.imul(t, 0x85ebca6b);
-      t = t ^ t >>> 13; t = Math.imul(t, 0xc2b2ae3d);
+      t = t ^ t >>> 13; t = Math.imul(t, 0xc2b2ae35);
       return ((t = t ^ t >>> 16) >>> 0) / 4294967296;
     }
 }
 ```
+
+This is based on an algorithm known as `SplitMix` included in Java JDK8. It uses 64-bit arithmetic and doesn't define a 32-bit version. However, It is derived from the `fmix64` finalizer used in MurmurHash3 and appears to be an application of Weyl sequences. MurmurHash3 also contains a 32-bit equivalent of this function, `fmix32`. The constant `0x9e3779b` is the 32-bit truncation of the golden ratio, which is also what is used in the original.
+
+**References:**
+- [Fast Splittable Pseudorandom Number Generators (2014)](http://gee.cs.oswego.edu/dl/papers/oopsla14.pdf)
+- [C implementation of splitmix32.c by Kaito Udagawa (2016)](https://github.com/umireon/my-random-stuff/blob/e7b17f992955f4dbb02d4016682113b48b2f6ec1/xorshift/splitmix32.c)
+- [A more generic description of 32-bit SplitMix (2017)](http://marc-b-reynolds.github.io/shf/2017/09/27/LPRNS.html)
+- [Exploring variants of the same function for integer hashing (2018)](https://nullprogram.com/blog/2018/07/31/)
 
 ## v3b
 
