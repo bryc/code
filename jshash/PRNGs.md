@@ -121,7 +121,7 @@ A variant of this was used in Google Chrome until 2015 when it was replaced with
 
 ## Xorshift
 
-The original vanilla xorshift introduced in 2003. Comes in 128 and 32-bit flavors. All of the xo* PRNGs have some LFSR characteristics, which may have issues in linearity/binary rank tests. But they're fast and cute.
+Marsaglia's original Xorshift generator from 2003. Comes in 128 and 32-bit versions. They are better than LCG or MWC, but still very flawed.
 
 ```js
 function xorshift128(a, b, c, d) {
@@ -159,6 +159,10 @@ function xorshift32b(a) {
 }
 
 ```
+
+**References:**
+- [Xorshift RNGs (2003)](https://www.jstatsoft.org/article/view/v008i14) - 	George Marsaglia's paper on Xorshift generators
+- [On the Xorshift Random Number Generators (2005)](http://www-perso.iro.umontreal.ca/~lecuyer/myftp/papers/xorshift.pdf) - An analysis of Xorshift, highlighting strengths and weaknesses
 
 ## Xoroshiro
 
