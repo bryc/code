@@ -184,6 +184,7 @@ function xoroshiro64ss(a, b) {
     }
 }
 
+// only good for floating point values, linearity issues on lower bits.
 function xoroshiro64s(a, b) {
     return function() {
         var r = Math.imul(a, 0x9E3779BB);
@@ -193,7 +194,7 @@ function xoroshiro64s(a, b) {
     }
 }
 
-// unofficial xoroshiro64+ (bryc)
+// unofficial xoroshiro64+ (experimental)
 function xoroshiro64p(a, b) {
     return function() {
         var r = a + b;
@@ -250,7 +251,7 @@ function xorshift128plus_32b(a, b, c, d) {
 
 ## Xoshiro
 
-The latest (as of May 2018) in the Xorshift-derivative series, Xoshiro family now offers 128-bit state generators in 32-bit just like the original xorshift. Comes in two variants: `xoshiro128**` and `xoshiro128+`
+The latest (as of May 2018) in the Xorshift-derivative series, Xoshiro family now offers 128-bit state generators in 32-bit just like the original xorshift. Comes in three variants: `xoshiro128**`, `xoshiro128++` and `xoshiro128+`. 
 
 ```js
 function xoshiro128ss(a, b, c, d) {
@@ -262,6 +263,16 @@ function xoshiro128ss(a, b, c, d) {
     }
 }
 
+function xoshiro128pp(a, b, c, d) {
+    return function() {
+        var t = b << 9, r = a + d; r = (r << 7 | r >>> 25) + a;
+        c = c ^ a; d = d ^ b; b = b ^ c; a = a ^ d; c = c ^ t;
+        d = d << 11 | d >>> 21;
+        return (r >>> 0) / 4294967296;
+    }
+}
+
+// "for floating-point generation" - indicating serious bias in lowest bits.
 function xoshiro128p(a, b, c, d) {
     return function() {
         var t = b << 9, r = a + d;
@@ -270,7 +281,11 @@ function xoshiro128p(a, b, c, d) {
         return (r >>> 0) / 4294967296;
     }
 }
+
 ```
+
+**References:**
+- [Scrambled Linear Pseudorandom Number Generators](http://vigna.di.unimi.it/ftp/papers/ScrambledLinear.pdf)
 
 ## JSF / smallprng
 
