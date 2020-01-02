@@ -121,9 +121,16 @@ A variant of this was used in Google Chrome until 2015 when it was replaced with
 
 ## Xorshift
 
-Marsaglia's original Xorshift generator from 2003. Comes in 128 and 32-bit versions. They are better than LCG or MWC, but still very flawed.
+Marsaglia's original Xorshift generator from 2003. Comes in 32-bit and 128-bit states. It's better than LCG or MWC, but fails many modern tests.
 
 ```js
+function xorshift32(a) {
+    return function() {
+        a ^= a << 13; a ^= a >>> 17; a ^= a << 5;
+        return (a >>> 0) / 4294967296;
+    }
+}
+
 function xorshift128(a, b, c, d) {
     return function() {
         a |= 0; b |= 0; c |= 0;
@@ -134,26 +141,24 @@ function xorshift128(a, b, c, d) {
     }
 }
 
-function xorshift32(a) {
-    return function() {
-        a ^= a << 25; a ^= a >>> 7; a ^= a << 2;
-        return (a >>> 0) / 4294967296;
-    }
-}
+// Improved variants, based on ideas from Marc-B-Reynolds and Sebastiano Vigna
+// https://gist.github.com/Marc-B-Reynolds/0b5f1db5ad7a3e453596
+// https://gist.github.com/Marc-B-Reynolds/82bcd9bd016246787c95
 
-// potentially better variants of xorshift32:
-function xorshift32a(a) {
+// 32-bit version of "xorshift64star" using a 32-bit LCG multiplier
+function xorshift32m(a) {
     return function() {
-        a ^= a << 25; a ^= a >>> 7; a ^= a << 2;
+        a ^= a << 13; a ^= a >>> 17; a ^= a << 5;
         return (Math.imul(a, 1597334677) >>> 0) / 4294967296;
     }
 }
 
-function xorshift32b(a) {
+// This version should pass SmallCrush, implements __builtin_bswap32
+function xorshift32amx(a) {
     return function() {
         var t = Math.imul(a, 1597334677);
-        t = t>>>24 | t>>>8&65280 | t<<8&16711680 | t<<24;
-        a ^= a << 25; a ^= a >>> 7; a ^= a << 2;
+        t = t>>>24 | t>>>8&65280 | t<<8&16711680 | t<<24; // reverse byte order
+        a ^= a << 13; a ^= a >>> 17; a ^= a << 5;
         return (a + t >>> 0) / 4294967296;
     }
 }
@@ -163,6 +168,8 @@ function xorshift32b(a) {
 **References:**
 - [Xorshift RNGs (2003)](https://www.jstatsoft.org/article/view/v008i14) - 	George Marsaglia's paper on Xorshift generators
 - [On the Xorshift Random Number Generators (2005)](http://www-perso.iro.umontreal.ca/~lecuyer/myftp/papers/xorshift.pdf) - An analysis of Xorshift, highlighting strengths and weaknesses
+- [Exploration of Marsaglia’s xorshift generators, scrambled (2014)](http://vigna.di.unimi.it/ftp/papers/xorshift.pdf)
+- [Further scramblings of Marsaglia’s xorshift generators (2017)](http://vigna.di.unimi.it/ftp/papers/xorshiftplus.pdf)
 
 ## Xoroshiro
 
