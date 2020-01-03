@@ -140,6 +140,16 @@ function xorshift128(a, b, c, d) {
     }
 }
 
+function xorwow(a, b, c, d, e, f) {
+    return function() {
+        var t = a ^ a >>> 2;
+        a = b, b = c, c = d, d = e;
+        e = (e ^ e << 4) ^ (t ^ t << 1);
+        f = (f + 362437) >>> 0;
+        return ((e+f) >>> 0) / 4294967296;
+    }
+}
+
 // Improved variants, based on ideas from Marc-B-Reynolds and Sebastiano Vigna
 // https://gist.github.com/Marc-B-Reynolds/0b5f1db5ad7a3e453596
 // https://gist.github.com/Marc-B-Reynolds/82bcd9bd016246787c95
