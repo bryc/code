@@ -85,7 +85,7 @@ var LCG=s=>()=>((s=Math.imul(1597334677,s))>>>0)/2**32; // Another 32-bit versio
 
 The Lehmer RNG is the *minimal standard* RNG as proposed by Park–Miller in 1988 & 1993 and implemented in C++11 as `minstd_rand`. Keep in mind that the state and period are only 31-bit (31 bits give 2 billion possible states, 32 bits give double that).
 
-I cannot recommend using this, as it seems to have a bit of quality problems. Always **discard** the first result of an LCG, and be aware that some chosen seeds can exhibit unwanted patterns in output.
+I cannot recommend using this, as it seems to have a bit of quality problems. Always **discard** the first result of an LCG, and be aware that some chosen seeds can exhibit unwanted patterns in output, most notably those which are **even**.
 
 Mathematically, LCGs have different parameters such as _a_, _m_ and _c_, which is often up to the implementor. The MCG or Lehmer RNG described here is a special case when _c_ is always zero, most likely for simplification purposes. Other popular multipliers in sequence: 16807, 48271, 69621, and 39373.
 
