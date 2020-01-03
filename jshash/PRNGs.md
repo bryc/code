@@ -2,38 +2,40 @@
 
 # Pseudorandom number generators
 
+This is a repository of optimized PRNG implementations, in the same spirit of my [hash function implementations](hashes/README.md).
+
 PRNGs appear to have a lot in common with non-cryptographic hashes. They both try to achieve _random-looking output_, and in some cases employ similar concepts and borrow from each other. Some people who designed hash functions also made PRNGs.
 
-Like hashes, PRNGs often predominantly utilize 64-bit arithmetic, making it hard to find good JavaScript random number generators. So this article documents my own implementations of PRNGs. All of the PRNGs here are optimized for speed and are quite short (only a few lines each). The quality of most of them should also be quite acceptable, despite being limited to 32-bit operations.
+Like hashes, PRNGs often predominantly utilize 64-bit arithmetic, making it hard to find good, seedable JavaScript random number generators. So this article documents my own implementations of PRNGs. All of the PRNGs here are optimized for speed and are quite short (only a few lines each). The quality of most of them should also be quite acceptable, despite being limited to 32-bit operations. However, some of these functions aren't very good and are only included for comparison purposes.
 
 _Note that PRNGs typically need a separate algorithm to generate a seed with sufficient entropy. This is best achieved by a hashing algorithm._
 
 ## Table of PRNGs
 
-Out of the table, the best JS PRNGS seem to be: `sfc32`, and `mulberry32` for speed and statistic quality. Runners-up `jsf32b` and `gjrand32` should also be good but seems to lag behind in performance. `xoshiro128**` is fast and "decent" but has poor randomness in the low bits. It fails linear-complexity and binary-rank tests (`sfc32`, `jsf32`, `gjrand32` passes these). All the xorshift variants suffer from this issue, so be aware of the the low bits when using this generator.
+Out of the table, the best JS PRNGS seem to be: `sfc32`, and `mulberry32` for speed and statistical quality. Runners-up `jsf32b` and `gjrand32` should also be good but seems to lag behind in performance. `xoshiro128**` is fast and totally acceptable, but has poor randomness in the lower bits. It fails linear-complexity and binary-rank tests (`sfc32`, `jsf32`, and `gjrand32` pass these). All the Xorshift variants seem to suffer from this issue, so be aware of the the low bits when using this generator.
 
-Alea is not in the table yet, since the current version seems super slow in comparison to these new fast 32-bit PRNGs. I plan to add some other PRNGs from [here](https://github.com/nquinlan/better-random-numbers-for-javascript-mirror) and seedrandom.
+<!--Alea is not in the table yet, since the current version seems super slow in comparison to these new fast 32-bit PRNGs. I plan to add some other PRNGs from [here](https://github.com/nquinlan/better-random-numbers-for-javascript-mirror), seedrandom or any other source I can find.-->
 
 | Algorithm | State size | Speed | Notes |
 | --------- | ---------- | ----- | ----- |
-| xoroshiro64+ | 64-bit | 8,077,296 | lfsr issues. |
-| xoroshiro64* | 64-bit | 8,058,755 | lfsr issues. |
-| xoroshiro64** | 64-bit | 8,037,441 | preferred version. lfsr issues, but fast. |
-| xoshiro128+ | 128-bit | 6,968,875 | lfsr issues. |
+| xoroshiro64+ | 64-bit | 8,077,296 | |
+| xoroshiro64** | 64-bit | 8,037,441 | |
+| xoroshiro64* | 64-bit | 8,058,755 | |
+| xoshiro128+ | 128-bit | 6,968,875 | |
 | xoshiro128** | 128-bit | 6,930,900 | preferred version. has lfsr issues, but better than xorshift. |
-| sfc32 | 128-bit | 7,451,860 | pretty fast. chaotic. best 2^128 state JS PRNG. passes practrand. |
-| gjrand32 | 128-bit | 5,948,657 | chaotic.  |
-| jsf32 | 128-bit | 6,183,320 | chaotic. |
+| sfc32 | 128-bit | 7,451,860 | pretty fast. best 2^128 state JS PRNG. passes practrand. |
+| gjrand32 | 128-bit | 5,948,657 | not well tested, but possibly good. |
+| jsf32 | 128-bit | 6,183,320 | well-tested, pretty good. |
 | jsf32b | 128-bit | 6,161,758 | jsf32 with another rotate. better randomness, same speed in JS. |
-| tyche | 128-bit | 2,892,738 | sloww |
+| tyche | 128-bit | 2,892,738 | slow. |
 | tychei | 128-bit | 4,592,413 | still kinda slow. but tyche/i passes BigCrush. |
 | xorshift128 | 128-bit | 6,101,622 |  |
-| xorshift32 | 32-bit | 5,902,315 | no idea why it's slow. |
+| xorshift32 | 32-bit | 5,902,315 | need to retest. |
 | xorshift32a | 32-bit | 5,895,329 |  |
 | xorshift32b | 32-bit | 5,858,901 |  |
-| lcg | 31-bit | 10,613,765 | park-miller lcg. fast but only 31 bits and fails tests. |
-| mulberry32 | 32-bit | 10,440,286 | FAST. best 2^32 state JS PRNG. passes gjrand. |
-| splitmix32 | 32-bit | 10,477,915 | based on xxhash/murmurhash3, untested. |
+| lcg | 31-bit | 10,613,765 | fails tests rapidly. |
+| mulberry32 | 32-bit | 10,440,286 | very fast and passes gjrand. best 2^32 state JS PRNG. |
+| splitmix32 | 32-bit | 10,477,915 | based on murmurhash3. |
 
 ## Alea
 
