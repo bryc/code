@@ -1,37 +1,41 @@
+*License: Public domain. Software licenses are annoying. If your code is sacred, don't publish it. If you want to mess with people, golf your code or only release binaries. If your country lacks a public domain, you should probably start a revolution.*
+
 # Pseudorandom number generators
+
+This is a repository of optimized PRNG implementations, in the same spirit of my [hash function implementations](hashes/README.md).
 
 PRNGs appear to have a lot in common with non-cryptographic hashes. They both try to achieve _random-looking output_, and in some cases employ similar concepts and borrow from each other. Some people who designed hash functions also made PRNGs.
 
-Like hashes, PRNGs often predominantly utilize 64-bit arithmetic, making it hard to find good JavaScript random number generators. So this article documents my own implementations of PRNGs. All of the PRNGs here are optimized for speed and are quite short (only a few lines each). The quality of most of them should also be quite acceptable, despite being limited to 32-bit operations.
+Like hashes, PRNGs often predominantly utilize 64-bit arithmetic, making it hard to find good, seedable JavaScript random number generators. So this article documents my own implementations of PRNGs. All of the PRNGs here are optimized for speed and are quite short (only a few lines each). The quality of most of them should also be quite acceptable, despite being limited to 32-bit operations. However, some of these functions aren't very good and are only included for comparison purposes.
 
 _Note that PRNGs typically need a separate algorithm to generate a seed with sufficient entropy. This is best achieved by a hashing algorithm._
 
 ## Table of PRNGs
 
-Out of the table, the best JS PRNGS seem to be: `sfc32`, and `mulberry32` for speed and statistic quality. Runners-up `jsf32b` and `gjrand32` should also be good but seems to lag behind in performance. `xoshiro128**` is fast and "decent" but has poor randomness in the low bits. It fails linear-complexity and binary-rank tests (`sfc32`, `jsf32`, `gjrand32` passes these). All the xorshift variants suffer from this issue, so be aware of the the low bits when using this generator.
+Out of the table, the best JS PRNGS seem to be: `sfc32`, and `mulberry32` for speed and statistical quality. Runners-up `jsf32b` and `gjrand32` should also be good but seems to lag behind in performance. `xoshiro128**` is fast and totally acceptable, but has poor randomness in the lower bits. It fails linear-complexity and binary-rank tests (`sfc32`, `jsf32`, and `gjrand32` pass these). All the Xorshift variants seem to suffer from this issue, so be aware of the the low bits when using this generator.
 
-Alea is not in the table yet, since the current version seems super slow in comparison to these new fast 32-bit PRNGs. I plan to add some other PRNGs from [here](https://github.com/nquinlan/better-random-numbers-for-javascript-mirror) and seedrandom.
+<!--Alea is not in the table yet, since the current version seems super slow in comparison to these new fast 32-bit PRNGs. I plan to add some other PRNGs from [here](https://github.com/nquinlan/better-random-numbers-for-javascript-mirror), seedrandom or any other source I can find.-->
 
 | Algorithm | State size | Speed | Notes |
 | --------- | ---------- | ----- | ----- |
-| xoroshiro64+ | 64-bit | 8,077,296 | lfsr issues. |
-| xoroshiro64* | 64-bit | 8,058,755 | lfsr issues. |
-| xoroshiro64** | 64-bit | 8,037,441 | preferred version. lfsr issues, but fast. |
-| xoshiro128+ | 128-bit | 6,968,875 | lfsr issues. |
+| xoroshiro64+ | 64-bit | 8,077,296 | |
+| xoroshiro64** | 64-bit | 8,037,441 | |
+| xoroshiro64* | 64-bit | 8,058,755 | |
+| xoshiro128+ | 128-bit | 6,968,875 | |
 | xoshiro128** | 128-bit | 6,930,900 | preferred version. has lfsr issues, but better than xorshift. |
-| sfc32 | 128-bit | 7,451,860 | pretty fast. chaotic. best 2^128 state JS PRNG. passes practrand. |
-| gjrand32 | 128-bit | 5,948,657 | chaotic.  |
-| jsf32 | 128-bit | 6,183,320 | chaotic. |
+| sfc32 | 128-bit | 7,451,860 | pretty fast. best 2^128 state JS PRNG. passes practrand. |
+| gjrand32 | 128-bit | 5,948,657 | not well tested, but possibly good. |
+| jsf32 | 128-bit | 6,183,320 | well-tested, pretty good. |
 | jsf32b | 128-bit | 6,161,758 | jsf32 with another rotate. better randomness, same speed in JS. |
-| tyche | 128-bit | 2,892,738 | sloww |
+| tyche | 128-bit | 2,892,738 | slow. |
 | tychei | 128-bit | 4,592,413 | still kinda slow. but tyche/i passes BigCrush. |
 | xorshift128 | 128-bit | 6,101,622 |  |
-| xorshift32 | 32-bit | 5,902,315 | no idea why it's slow. |
+| xorshift32 | 32-bit | 5,902,315 | need to retest. |
 | xorshift32a | 32-bit | 5,895,329 |  |
 | xorshift32b | 32-bit | 5,858,901 |  |
-| lcg | 31-bit | 10,613,765 | park-miller lcg. fast but only 31 bits and fails tests. |
-| mulberry32 | 32-bit | 10,440,286 | FAST. best 2^32 state JS PRNG. passes gjrand. |
-| splitmix32 | 32-bit | 10,477,915 | based on xxhash/murmurhash3, untested. |
+| lcg | 31-bit | 10,613,765 | fails tests rapidly. |
+| mulberry32 | 32-bit | 10,440,286 | very fast and passes gjrand. best 2^32 state JS PRNG. |
+| splitmix32 | 32-bit | 10,477,915 | based on murmurhash3. |
 
 ## Alea
 
@@ -61,22 +65,40 @@ function Alea(seed) {
 }
 ```
 
-## LCG (Lehmer MCG)
+## LCG (Lehmer RNG)
 
-Has a state/period of 2^31-1. Is not that ideal, but it works. Apparently it's blazing fast.
+Commonly called a *Linear congruential generator (LCG)*, but in this case, more correctly called a *Multiplicative congruential generator (MCG)* or *Lehmer RNG*. It has a state and period of 2^31-1. It's blazingly fast in JavaScript (likely the fastest), but its quality is quite poor.
 
 ```js
-function lcg(a) {
+function LCG(a) {
     return function() {
       a = Math.imul(48271, a) | 0 % 2147483647;
       return (a & 2147483647) / 2147483648;
     }
 }
+
+// Here are some optimized ES6 one-liners:
+var LCG=s=>()=>(2**31-1&(s=Math.imul(48271,s)))/2**31; // Same as above
+var LCG=s=>()=>((s=Math.imul(741103597,s))>>>0)/2**32; // 32-bit version, likely far better
+var LCG=s=>()=>((s=Math.imul(1597334677,s))>>>0)/2**32; // Another 32-bit version
 ```
+
+The Lehmer RNG is the *minimal standard* RNG as proposed by Park–Miller in 1988 & 1993 and implemented in C++11 as `minstd_rand`. Keep in mind that the state and period are only 31-bit (31 bits give 2 billion possible states, 32 bits give double that).
+
+I cannot recommend using this, as it seems to have a bit of quality problems. Always **discard** the first result of an LCG, and be aware that some chosen seeds can exhibit unwanted patterns in output, most notably those which are **even**.
+
+Mathematically, LCGs have different parameters such as _a_, _m_ and _c_, which is often up to the implementor. The MCG or Lehmer RNG described here is a special case when _c_ is always zero, most likely for simplification purposes. Other popular multipliers in sequence: 16807, 48271, 69621, and 39373.
+
+**References:**
+- [LCG on Wikipedia](https://en.wikipedia.org/wiki/Linear_congruential_generator)
+- [Random Number Generators: Good Ones Are Hard To Find (1988)](http://www.firstpr.com.au/dsp/rand31/p1192-park.pdf) - Park–Miller's original paper, suggesting a multipler as 16807.
+- [Another Test For Randomness (1993)](http://www.firstpr.com.au/dsp/rand31/p105-crawford.pdf#page=4) - In response to criticism, suggesting 48271 over 16807.
+- [A table of Linear Congruential Generators of different sizes and good lattice structure (1997)](https://pdfs.semanticscholar.org/8284/542deb19d556c8818e0456cce771a50ed0ff.pdf) - By P. L'Ecuyer, source of 32-bit constants.
+
 
 ## Multiply-with-carry
 
-This is Marsaglia's MWC generator (KISS99 version). There are tons of variations that use different constants, but this is probably the definitive one. It actually dates back to 1994 but wasn't well known until it was published as part of KISS. It's not that good; modern generators are better. Xorshift is probably better.
+This is Marsaglia's MWC generator (KISS99 version). There are multiple variations that use different constants, but this is likely the definitive one. It actually dates back to 1994 but its origins are hard to trace. I don't recommend using it, it's quite old and it has some significant quality issues.
 
 ```js
 function mwc(a, b) {
@@ -89,50 +111,80 @@ function mwc(a, b) {
 }
 ```
 
+It uses two 16-bit integers as input (hence the MWC1616 name). So technically a 32-bit state.
+A variant of this was used in Google Chrome until 2015 when it was replaced with "Xorshift128+" due to quality concerns.
+
+**References:**
+- [The Mother of All Random Number Generators (1993?)](https://web.archive.org/web/20200102030515/http://home.sandiego.edu/~pruski/MotherExplanation.txt) - Originally used multiplier 30903 and 18000.
+- [Marsaglia's original usenset post (1999)](http://www.ciphersbyritter.com/NEWS4/RANDC.HTM#369B5E30.65A55FD1@stat.fsu.edu) - Also contains some other sub-generators
+- [KISS: A Bit Too Simple (2011)]() - Some criticism on the KISS99 generators
+- [There’s Math.random(), and then there’s Math.random()](https://v8.dev/blog/math-random) - Chrome originally used MWC with 30903 and 18030
+- [TIFU By Using Math.random()](https://medium.com/@betable/tifu-by-using-math-random-f1c308c4fd9d) - Other criticisms leading to MWC being replaced.
+
 ## Xorshift
 
-The original vanilla xorshift introduced in 2003. Comes in 128 and 32-bit flavors. All of the xo* PRNGs have some LFSR characteristics, which may have issues in linearity/binary rank tests. But they're fast and cute.
+Marsaglia's original Xorshift generator from 2003. Comes in 32-bit and 128-bit states. It's better than LCG or MWC, but fails many modern tests.
 
 ```js
-function xorshift128(a, b, c, d) {
-    return function() {
-        a |= 0; b |= 0; c |= 0;
-        var t = d ^ d << 11; t = t ^ t >>> 8;
-        t = t ^ a; t = t ^ a >>> 19; 
-        d = c; c = b; b = a; a = t;
-        return (t >>> 0) / 4294967296;
-    }
-}
-
 function xorshift32(a) {
     return function() {
-        a ^= a << 25; a ^= a >>> 7; a ^= a << 2;
+        a ^= a << 13; a ^= a >>> 17; a ^= a << 5;
         return (a >>> 0) / 4294967296;
     }
 }
 
-// potentially better variants of xorshift32:
-function xorshift32a(a) {
+function xorshift128(a, b, c, d) {
     return function() {
-        a ^= a << 25; a ^= a >>> 7; a ^= a << 2;
+        var t = a ^ a << 11;
+        a = b, b = c, c = d;
+        d = (d ^ d >>> 19) ^ (t ^ t >>> 8);
+        return (d >>> 0) / 4294967296;
+    }
+}
+
+function xorwow(a, b, c, d, e, f) {
+    return function() {
+        var t = a ^ a >>> 2;
+        a = b, b = c, c = d, d = e;
+        e = (e ^ e << 4) ^ (t ^ t << 1);
+        f = (f + 362437) >>> 0;
+        return ((e+f) >>> 0) / 4294967296;
+    }
+}
+
+// Improved variants, based on ideas from Marc-B-Reynolds and Sebastiano Vigna
+// https://gist.github.com/Marc-B-Reynolds/0b5f1db5ad7a3e453596
+// https://gist.github.com/Marc-B-Reynolds/82bcd9bd016246787c95
+
+// 32-bit version of "xorshift64star" using a 32-bit LCG multiplier
+function xorshift32m(a) {
+    return function() {
+        a ^= a << 13; a ^= a >>> 17; a ^= a << 5;
         return (Math.imul(a, 1597334677) >>> 0) / 4294967296;
     }
 }
 
-function xorshift32b(a) {
+// This version should pass SmallCrush, implements __builtin_bswap32
+function xorshift32amx(a) {
     return function() {
         var t = Math.imul(a, 1597334677);
-        t = t>>>24 | t>>>8&65280 | t<<8&16711680 | t<<24;
-        a ^= a << 25; a ^= a >>> 7; a ^= a << 2;
+        t = t>>>24 | t>>>8&65280 | t<<8&16711680 | t<<24; // reverse byte order
+        a ^= a << 13; a ^= a >>> 17; a ^= a << 5;
         return (a + t >>> 0) / 4294967296;
     }
 }
 
 ```
 
+**References:**
+- [Xorshift RNGs (2003)](https://www.jstatsoft.org/article/view/v008i14) - 	George Marsaglia's paper on Xorshift generators
+- [On the Xorshift Random Number Generators (2005)](http://www-perso.iro.umontreal.ca/~lecuyer/myftp/papers/xorshift.pdf) - An analysis of Xorshift, highlighting strengths and weaknesses
+- [Exploration of Marsaglia’s xorshift generators, scrambled (2014)](http://vigna.di.unimi.it/ftp/papers/xorshift.pdf)
+- [Further scramblings of Marsaglia’s xorshift generators (2017)](http://vigna.di.unimi.it/ftp/papers/xorshiftplus.pdf)
+
 ## Xoroshiro
 
-The xoroshiro family included two 32-bit compatible entries, `xoroshiro64**` and `xoroshiro64*`. It has a state size of 64-bit. I've included an unoffical implementation of `xoroshiro64+`. 
+The Xoroshiro family included two 32-bit compatible entries, `xoroshiro64**` and `xoroshiro64*`. It has a state size of 64-bit, and is named after its operations (Xor, Rotate, Shift, Rotate). I've included an unoffical implementation of `xoroshiro64+`, and some experimental 32-bit equivalents of `xoroshiro128` and `xorshift128+`, its predecessor. It is considered obsolete in favor of Xoshiro, although Google Chrome still uses `xorshift128+` under the hood for Math.random().
 
 ```js
 function xoroshiro64ss(a, b) {
@@ -144,6 +196,7 @@ function xoroshiro64ss(a, b) {
     }
 }
 
+// only good for floating point values, linearity issues on lower bits.
 function xoroshiro64s(a, b) {
     return function() {
         var r = Math.imul(a, 0x9E3779BB);
@@ -153,7 +206,7 @@ function xoroshiro64s(a, b) {
     }
 }
 
-// unofficial xoroshiro64+ for completeness
+// unofficial xoroshiro64+ (experimental)
 function xoroshiro64p(a, b) {
     return function() {
         var r = a + b;
@@ -162,11 +215,55 @@ function xoroshiro64p(a, b) {
         return (r >>> 0) / 4294967296;
     }
 }
+
+// 32-bit xoroshiro128 (experimental)
+// Source: https://github.com/umireon/my-random-stuff/blob/master/xorshift/xoroshiro128plus_32_test.c
+function xoroshiro128plus_32(a, b, c, d) {
+    return function() {
+      var x = a >>> 0,
+          y = b >>> 0,
+          z = c >>> 0,
+          w = d >>> 0, t;
+
+      t = w + y + (z !== 0 && x >= (-z>>>0) ? 1 : 0);
+      z ^= x;
+      w ^= y;
+
+      a = (y << 23 | x >>> 9) ^ z ^ (z << 14);
+      b = (x << 23 | y >>> 9) ^ w ^ (w << 14 | z >>> 18);
+      c = w << 4 | z >>> 28;
+      d = z << 4 | w >>> 28;
+
+      return t >>> 0;
+    }
+}
+
+// 32-bit xorshift128+ (experimental, later improved to xoroshiro)
+// Source: https://github.com/umireon/my-random-stuff/blob/master/xorshift/xorshift128plus_32_test.c
+function xorshift128plus_32b(a, b, c, d) {
+    return function() {
+      var x = a >>> 0,
+          y = b >>> 0,
+          z = c >>> 0,
+          w = d >>> 0, t;
+
+      t = w + y + (x !== 0 && z >= (-x>>>0) ? 1 : 0);
+      y ^= y << 23 | x >>> 9;
+      x ^= x << 23;
+
+      a = z;
+      b = w;
+      c = x ^ z ^ (x >>> 18 | y << 14) ^ (z >>> 5 | w << 27);
+      d = y ^ w ^ (y >>> 18) ^ (w >>> 5);
+
+      return t >>> 0;
+    }
+}
 ```
 
 ## Xoshiro
 
-The latest (as of May 2018) in the Xorshift-derivative series, xoshiro family now offers 128-bit state generators in 32-bit just like the original xorshift. Comes in two variants: `xoshiro128**` and `xoshiro128+`
+The latest (as of May 2018) in the Xorshift-derivative series, Xoshiro family now offers 128-bit state generators in 32-bit just like the original xorshift. Comes in three variants: `xoshiro128**`, `xoshiro128++` and `xoshiro128+`. 
 
 ```js
 function xoshiro128ss(a, b, c, d) {
@@ -178,6 +275,16 @@ function xoshiro128ss(a, b, c, d) {
     }
 }
 
+function xoshiro128pp(a, b, c, d) {
+    return function() {
+        var t = b << 9, r = a + d; r = (r << 7 | r >>> 25) + a;
+        c = c ^ a; d = d ^ b; b = b ^ c; a = a ^ d; c = c ^ t;
+        d = d << 11 | d >>> 21;
+        return (r >>> 0) / 4294967296;
+    }
+}
+
+// "for floating-point generation" - indicating serious bias in lowest bits.
 function xoshiro128p(a, b, c, d) {
     return function() {
         var t = b << 9, r = a + d;
@@ -186,7 +293,11 @@ function xoshiro128p(a, b, c, d) {
         return (r >>> 0) / 4294967296;
     }
 }
+
 ```
+
+**References:**
+- [Scrambled Linear Pseudorandom Number Generators](http://vigna.di.unimi.it/ftp/papers/ScrambledLinear.pdf)
 
 ## JSF / smallprng
 
@@ -293,12 +404,11 @@ function tyche(a, b, c, d) {
 }
 ```
 
-## Mulberry32 and SplitMix32
+## Mulberry32
 
-These PRNGs use a 32-bit state, similar to xorshift32. Quite useful for embedded systems. And potentially better than the Lehmer MCG. But due to the small state size, they aren't as good as the 128-bit state PRNGs.
+Mulberry32 is minimalistic generator utilizing a 32-bit state, originally intended for embedded applications. It appears to be very good; the author states it passes all tests of gjrand, and this JavaScript implementation is very fast. But since the state is 32-bit like Xorshift, it's period (how long the random sequence lasts before repeating) is significantly less than those with 128-bit states, but it's still quite large, at around 4 billion.
 
-
-```c
+```js
 function mulberry32(a) {
     return function() {
       a |= 0; a = a + 0x6D2B79F5 | 0;
@@ -307,16 +417,33 @@ function mulberry32(a) {
       return ((t ^ t >>> 14) >>> 0) / 4294967296;
     }
 }
+```
 
+**References:**
+- [Original C implementation (2017)](https://gist.github.com/tommyettinger/46a874533244883189143505d203312c)
+
+## SplitMix32
+
+SplitMix32 is a transformation of the `fmix32` finalizer from MurmurHash3 into a PRNG. It has a 32-bit internal state, like Xorshift and Mulberry32. 
+
+```js
 function splitmix32(a) {
     return function() {
       a |= 0; a = a + 0x9e3779b9 | 0;
       var t = a ^ a >>> 15; t = Math.imul(t, 0x85ebca6b);
-      t = t ^ t >>> 13; t = Math.imul(t, 0xc2b2ae3d);
+      t = t ^ t >>> 13; t = Math.imul(t, 0xc2b2ae35);
       return ((t = t ^ t >>> 16) >>> 0) / 4294967296;
     }
 }
 ```
+
+This is based on an algorithm known as `SplitMix` included in Java JDK8. It uses 64-bit arithmetic and doesn't define a 32-bit version. However, It is derived from the `fmix64` finalizer used in MurmurHash3 and appears to be an application of Weyl sequences. MurmurHash3 also contains a 32-bit equivalent of this function, `fmix32`. The constant `0x9e3779b` is the 32-bit truncation of the golden ratio, which is also what is used in the original.
+
+**References:**
+- [Fast Splittable Pseudorandom Number Generators (2014)](http://gee.cs.oswego.edu/dl/papers/oopsla14.pdf)
+- [C implementation of splitmix32.c by Kaito Udagawa (2016)](https://github.com/umireon/my-random-stuff/blob/e7b17f992955f4dbb02d4016682113b48b2f6ec1/xorshift/splitmix32.c)
+- [A more generic description of 32-bit SplitMix (2017)](http://marc-b-reynolds.github.io/shf/2017/09/27/LPRNS.html)
+- [Exploring variants of the same function for integer hashing (2018)](https://nullprogram.com/blog/2018/07/31/)
 
 ## v3b
 
@@ -362,7 +489,7 @@ for(var i = 0; i < 16; i++) next();
 
 ****
 
-# Seed generating functions
+# Addendum A: Seed generating functions
 
 Certain generators originally had their own seeding procedure, such as jsf32, sfc32 and gjrand32. Those three in particular run the next() function 10-20 times in advance, assumingly to aid in the initialization process. I believe this process can be skipped by using a suitable hash function such as MurmurHash3 to generate the full initial state of the generator.
 
