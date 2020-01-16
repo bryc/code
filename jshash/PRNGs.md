@@ -180,11 +180,10 @@ function xorshift32amx(a) {
 - [Xorshift RNGs (2003)](https://www.jstatsoft.org/article/view/v008i14) - 	George Marsaglia's paper on Xorshift generators
 - [On the Xorshift Random Number Generators (2005)](http://www-perso.iro.umontreal.ca/~lecuyer/myftp/papers/xorshift.pdf) - An analysis of Xorshift, highlighting strengths and weaknesses
 - [Exploration of Marsaglia’s xorshift generators, scrambled (2014)](http://vigna.di.unimi.it/ftp/papers/xorshift.pdf)
-- [Further scramblings of Marsaglia’s xorshift generators (2017)](http://vigna.di.unimi.it/ftp/papers/xorshiftplus.pdf)
+- [Further scramblings of Marsaglia’s xorshift generators (2014)](http://vigna.di.unimi.it/ftp/papers/xorshiftplus.pdf)
 
 ## Xoroshiro
-
-The Xoroshiro family included two 32-bit compatible entries, `xoroshiro64**` and `xoroshiro64*`. It has a state size of 64-bit, and is named after its operations (Xor, Rotate, Shift, Rotate). I've included an unoffical implementation of `xoroshiro64+`, and some experimental 32-bit equivalents of `xoroshiro128` and `xorshift128+`, its predecessor. It is considered obsolete in favor of Xoshiro, although Google Chrome still uses `xorshift128+` under the hood for Math.random().
+The Xoroshiro family includes two 32-bit compatible entries, `xoroshiro64**` and `xoroshiro64*`. They have a 64-bit state size, and is named after its operations (Xor, Rotate, Shift, Rotate). I've included an unoffical implementation of `xoroshiro64+`, and some experimental 32-bit equivalents of `xoroshiro128+` and `xorshift128+`, its predecessor. It is considered obsolete in favor of Xoshiro, although Google Chrome still uses `xorshift128+` under the hood for Math.random().
 
 ```js
 function xoroshiro64ss(a, b) {
@@ -216,7 +215,7 @@ function xoroshiro64p(a, b) {
     }
 }
 
-// 32-bit xoroshiro128 (experimental)
+// 32-bit xoroshiro128+ (experimental)
 // Source: https://github.com/umireon/my-random-stuff/blob/master/xorshift/xoroshiro128plus_32_test.c
 function xoroshiro128plus_32(a, b, c, d) {
     return function() {
@@ -297,7 +296,7 @@ function xoshiro128p(a, b, c, d) {
 ```
 
 **References:**
-- [Scrambled Linear Pseudorandom Number Generators](http://vigna.di.unimi.it/ftp/papers/ScrambledLinear.pdf)
+- [Scrambled Linear Pseudorandom Number Generators (2018)](http://vigna.di.unimi.it/ftp/papers/ScrambledLinear.pdf)
 
 ## JSF / smallprng
 
