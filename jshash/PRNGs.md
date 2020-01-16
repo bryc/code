@@ -183,7 +183,7 @@ function xorshift32amx(a) {
 - [Further scramblings of Marsaglia’s xorshift generators (2014)](http://vigna.di.unimi.it/ftp/papers/xorshiftplus.pdf)
 
 ## Xoroshiro
-The Xoroshiro family includes two 32-bit compatible entries, `xoroshiro64**` and `xoroshiro64*`. They have a 64-bit state size, and is named after its operations (Xor, Rotate, Shift, Rotate). I've included an unoffical implementation of `xoroshiro64+`, and some experimental 32-bit equivalents of `xoroshiro128+` and `xorshift128+`, its predecessor. It is considered obsolete in favor of Xoshiro, although Google Chrome still uses `xorshift128+` under the hood for Math.random().
+The Xoroshiro family includes two 32-bit compatible entries, `xoroshiro64**` and `xoroshiro64*`. They have a 64-bit state size, and is named after its operations (Xor, Rotate, Shift, Rotate). I've included an unoffical implementation of `xoroshiro64+`, and some experimental 32-bit equivalents of `xoroshiro128+` and `xorshift128+`, although I would advise caution with those. For 32-bit applications, Xoshiro has better options available.
 
 `xoroshiro128+` was originally published in April 2016 in source code form, but was not formally described until the [May 2018 paper](http://vigna.di.unimi.it/ftp/papers/ScrambledLinear.pdf) which introduced Xoshiro. As a result, they changed the parameters of the original to ones with better statistical results, which is the version used in the 32-bit implementation here.
 
@@ -241,6 +241,7 @@ function xoroshiro128plus_32(a, b, c, d) {
 
 // 32-bit xorshift128+ (experimental, later improved to xoroshiro)
 // Source: https://github.com/umireon/my-random-stuff/blob/master/xorshift/xorshift128plus_32_test.c
+// This is functionally equivalent to the generator currently used in Google Chrome since 2015.
 function xorshift128plus_32b(a, b, c, d) {
     return function() {
       var x = a >>> 0,
@@ -261,6 +262,10 @@ function xorshift128plus_32b(a, b, c, d) {
     }
 }
 ```
+
+**References:**
+- [Xoroshiro128+ (2016-2018)](https://web.archive.org/web/20180201134533/http://xoroshiro.di.unimi.it/)
+- [Scrambled Linear Pseudorandom Number Generators (2018)](http://vigna.di.unimi.it/ftp/papers/ScrambledLinear.pdf)
 
 ## Xoshiro
 
