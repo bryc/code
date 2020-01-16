@@ -264,7 +264,7 @@ function xorshift128plus_32b(a, b, c, d) {
 ```
 
 **References:**
-- [Xoroshiro128+ (2016-2018)](https://web.archive.org/web/20180201134533/http://xoroshiro.di.unimi.it/)
+- [Xoroshiro128+ website (2016-2018)](https://web.archive.org/web/20180201134533/http://xoroshiro.di.unimi.it/)
 - [Scrambled Linear Pseudorandom Number Generators (2018)](http://vigna.di.unimi.it/ftp/papers/ScrambledLinear.pdf)
 
 ## Xoshiro
