@@ -185,6 +185,8 @@ function xorshift32amx(a) {
 ## Xoroshiro
 The Xoroshiro family includes two 32-bit compatible entries, `xoroshiro64**` and `xoroshiro64*`. They have a 64-bit state size, and is named after its operations (Xor, Rotate, Shift, Rotate). I've included an unoffical implementation of `xoroshiro64+`, and some experimental 32-bit equivalents of `xoroshiro128+` and `xorshift128+`, its predecessor. It is considered obsolete in favor of Xoshiro, although Google Chrome still uses `xorshift128+` under the hood for Math.random().
 
+`xoroshiro128+` was originally published in April 2016 in source code form, but was not formally described until the [May 2018 paper](http://vigna.di.unimi.it/ftp/papers/ScrambledLinear.pdf) which introduced Xoshiro. As a result, they changed the parameters of the original to ones with better statistical results, which is the version used in the 32-bit implementation here.
+
 ```js
 function xoroshiro64ss(a, b) {
     return function() {
