@@ -3,12 +3,15 @@
 var schedule = function() {
     var SONG = BSP.SONG;
     var fix = function(n){return Math.round(n*1000)/1000;};
+    var gnt = function(n){return n.substr(0,3).replace("-","");}
  
     for(var n = 0.000501, j = 0; j < SONG.seq.length; j++) {
         for(var i = 0, tick = BSP.time; i < SONG.seq[j].length;) {
-            var step = SONG.seq[j][i];
-            if(step && step[0] && step[0][1]==='-') step[0] = step[0].replace("-","");
-            if(step && BSP.freq[step[0]]) {
+            var step = SONG.seq[j][i], note, nlen = 0;
+            if(step && step[0] && step[0].length === 4)  // note length parse
+                nlen = BSP.speed * (("ABCDEFGQ".indexOf(step[0][3].toUpperCase())+1)/8);
+
+            if(step && step[0] && BSP.freq[gnt(step[0])]) {
                 // set Filter cutoff if found
                 if(step[4] !== undefined)
                     BSP.Filter[j].frequency.setValueAtTime(step[4], tick);
@@ -20,26 +23,27 @@ var schedule = function() {
                     BSP.osc[j].width.setValueAtTime(step[2], tick);
                 // For noise
                 if(BSP.osc[j].constructor === AudioBufferSourceNode)
-                    BSP.osc[j].playbackRate.setValueAtTime((BSP.freq[step[0]]/(SONG.trans||2))/(44100/256), tick);
+                    // TODO: See if I can adjust the 44100/256 formula for different waveform lengths?
+                    BSP.osc[j].playbackRate.setValueAtTime((BSP.freq[gnt(step[0])]/(SONG.trans||2))/(44100/256), tick);
                 // only set frequency if OscNode
                 if(BSP.osc[j].constructor === OscillatorNode)
-                    BSP.osc[j].frequency.setValueAtTime((BSP.freq[step[0]]/(SONG.trans||2)), tick);
+                    BSP.osc[j].frequency.setValueAtTime((BSP.freq[gnt(step[0])]/(SONG.trans||2)), tick);
                 if(BSP.osc[j].osc1 && BSP.osc[j].osc2 && step[2] !== undefined)
                     BSP.lastPWM[j] = step[2];
                 if(BSP.osc[j].osc1 && BSP.osc[j].osc2 && step[5] !== undefined)
                     BSP.lastPWM2[j] = step[5];
 
                 if(BSP.osc[j].osc1 && BSP.osc[j].osc2) {
-                    BSP.osc[j].osc1.frequency.setValueAtTime((BSP.freq[step[0]]/(SONG.trans||2)), tick),
-                    BSP.osc[j].osc2.frequency.setValueAtTime((BSP.freq[step[0]]/(SONG.trans||2)), tick),
-                    BSP.osc[j].delay.delayTime.setValueAtTime((1-BSP.lastPWM[j]||0)/BSP.freq[step[0]], tick);
+                    BSP.osc[j].osc1.frequency.setValueAtTime((BSP.freq[gnt(step[0])]/(SONG.trans||2)), tick),
+                    BSP.osc[j].osc2.frequency.setValueAtTime((BSP.freq[gnt(step[0])]/(SONG.trans||2)), tick),
+                    BSP.osc[j].delay.delayTime.setValueAtTime((1-BSP.lastPWM[j]||0)/BSP.freq[gnt(step[0])], tick);
                     BSP.osc[j].osc2.detune.setValueAtTime(BSP.lastPWM2[j]||0, tick);
                 }
                 if(tick > 0) {
                     BSP.amp[1][j].gain.setValueAtTime(BSP.lastVol[j]||0, fix(tick-n));
                     BSP.amp[1][j].gain.linearRampToValueAtTime(0, tick );
                 }
-                BSP.amp[1][j].gain.setValueAtTime(0, tick);
+                BSP.amp[1][j].gain.setValueAtTime(0, nlen ? tick+(BSP.speed-nlen) : tick);
                 BSP.amp[1][j].gain.linearRampToValueAtTime(step[1] || 1, fix(tick+n));
                 BSP.lastVol[j] = step[1] || 1;
             } else if(step) {
