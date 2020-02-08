@@ -6,9 +6,9 @@ This is a repository of optimized PRNG implementations, in the same spirit of my
 
 PRNGs appear to have a lot in common with non-cryptographic hashes. They both try to achieve _random-looking output_, and in some cases employ similar concepts and borrow from each other. Some people who designed hash functions also made PRNGs.
 
-Like hashes, PRNGs often predominantly utilize 64-bit arithmetic, making it hard to find good, seedable JavaScript random number generators. So this article documents my own implementations of PRNGs. All of the PRNGs here are optimized for speed and are quite short (only a few lines each). The quality of most of them should also be quite acceptable, despite being limited to 32-bit operations. However, some of these functions aren't very good and are only included for comparison purposes.
+Like hashes, PRNGs often predominantly utilize 64-bit arithmetic, making it hard to find good, seedable JavaScript random number generators. So this article documents my own implementations of PRNGs. All of the PRNGs here are optimized for speed and are quite short (only a few lines each). The quality of most of them should also be quite acceptable, despite being limited to 32-bit operations. However, this is an inclusive list, and some weaker PRNGs are compared here as well.
 
-_Note that PRNGs typically need a separate algorithm to generate a seed with sufficient entropy. This is best achieved by a hashing algorithm._
+_Note that for best results, PRNGs typically need a seed with sufficient entropy. See [Addendum A: Seed generating functions](#addendum-a-seed-generating-functions)._
 
 ## Table of PRNGs
 
@@ -83,11 +83,9 @@ var LCG=s=>()=>((s=Math.imul(741103597,s))>>>0)/2**32; // 32-bit version, likely
 var LCG=s=>()=>((s=Math.imul(1597334677,s))>>>0)/2**32; // Another 32-bit version
 ```
 
-The Lehmer RNG is the *minimal standard* RNG as proposed by Park–Miller in 1988 & 1993 and implemented in C++11 as `minstd_rand`. Keep in mind that the state and period are only 31-bit (31 bits give 2 billion possible states, 32 bits give double that).
+The Lehmer RNG is the *minimal standard* RNG as proposed by Park–Miller in 1988 & 1993 and implemented in C++11 as `minstd_rand`. Keep in mind that the state and period are only 31-bit (31 bits give 2 billion possible states, 32 bits give double that). Mathematically, LCGs have different parameters such as _a_, _m_ and _c_, which is often up to the implementor. The MCG or Lehmer RNG described here is a special case when _c_ is always zero. Other popular multipliers in sequence: 16807, 48271, 69621, and 39373.
 
-I cannot recommend using this, as it seems to have a bit of quality problems. Always **discard** the first result of an LCG, and be aware that some chosen seeds can exhibit unwanted patterns in output, most notably those which are **even**.
-
-Mathematically, LCGs have different parameters such as _a_, _m_ and _c_, which is often up to the implementor. The MCG or Lehmer RNG described here is a special case when _c_ is always zero, most likely for simplification purposes. Other popular multipliers in sequence: 16807, 48271, 69621, and 39373.
+I don't recommend using LCG/MCG, as they seems to have quality problems. If you must use it, always **discard** the first few results, ensure the **seed is odd**, and use a larger multiplier.
 
 **References:**
 - [LCG on Wikipedia](https://en.wikipedia.org/wiki/Linear_congruential_generator)
@@ -173,7 +171,6 @@ function xorshift32amx(a) {
         return (a + t >>> 0) / 4294967296;
     }
 }
-
 ```
 
 **References:**
@@ -299,7 +296,6 @@ function xoshiro128p(a, b, c, d) {
         return (r >>> 0) / 4294967296;
     }
 }
-
 ```
 
 **References:**
@@ -336,8 +332,16 @@ function jsf32b(a, b, c, d) {
     }
 }
 
+// Seed procedure as recommended by the author:
+var seed = 0; // any unsigned 32-bit integer.
+var jsf = jsf32([0xF1EA5EED, seed, seed, seed]);
+for(var i = 0; i < 20; i++) jsf();
+
 // https://gist.github.com/imneme/85cff47d4bad8de6bdeb671f9c76c814
 ```
+
+**References:**
+- https://burtleburtle.net/bob/rand/smallprng.html
 
 ## gjrand32
 
@@ -361,11 +365,20 @@ function gjrand32(a, b, c, d) {
       return (a >>> 0) / 4294967296;
     }
 }
+
+// Seed procedure as recommended by the author (close enough):
+var seed = 0; // any unsigned 32-bit integer.
+var advance = gjrand32([0xCAFEF00D, 0xBEEF5EED, seed, seed]);
+for(var i = 0; i < 14; i++) advance();
 ```
+
+**References:**
+- http://gjrand.sourceforge.net/
+- [gjrand.hpp](https://gist.github.com/imneme/7a783e20f71259cc13e219829bcea4ac) - source of 32-bit version
 
 ## sfc32
 
-Yet another chaotic PRNG, the sfc stands for "Small Fast Counter". It passes PractRand, as well as Crush/BigCrush (TestU01). Also one of the fastest.
+Yet another chaotic PRNG, the sfc stands for "Small Fast Counter".  It is part of the PracRand PRNG test suite. It passes PractRand, as well as Crush/BigCrush (TestU01). Also one of the fastest.
 
 ```js
 function sfc32(a, b, c, d) {
@@ -380,7 +393,33 @@ function sfc32(a, b, c, d) {
       return (t >>> 0) / 4294967296;
     }
 }
+
+// Seed procedure --- clean this up later
+void PractRand::RNGs::Raw::sfc32::seed(Uint64 s) {
+	a = 0;//a gets mixed in the slowest
+	b = Uint32(s >> 0);
+	c = Uint32(s >> 32);
+	counter = 1;
+	for (int i = 0; i < 12; i++) raw32();//12
+}
+void PractRand::RNGs::Raw::sfc32::seed_fast(Uint64 s) {
+	a = 0;
+	b = Uint32(s >> 0); 
+	c = Uint32(s >> 32);
+	counter = 1;
+	for (int i = 0; i < 8; i++) raw32();//8
+}
+void PractRand::RNGs::Raw::sfc32::seed(Uint32 s1, Uint32 s2, Uint32 s3) {
+	a = s1;
+	b = s2;
+	c = s3;
+	counter = 1;
+	for (int i = 0; i < 15; i++) raw32();
+}
 ```
+
+**References:**
+- http://pracrand.sourceforge.net/
 
 ## tyche
 
@@ -409,6 +448,9 @@ function tyche(a, b, c, d) {
     }
 }
 ```
+
+**References:**
+- [Paper: Fast and Small Nonlinear Pseudorandom Number Generators for Computer Simulation](https://www.researchgate.net/publication/233997772_Fast_and_Small_Nonlinear_Pseudorandom_Number_Generators_for_Computer_Simulation)
 
 ## Mulberry32
 
@@ -453,7 +495,7 @@ This is based on an algorithm known as `SplitMix` included in Java JDK8. It uses
 
 ## v3b
 
-Very odd "chaotic" PRNG using a counter with variable output. It's supposed to be fast, but in Google Chrome specifically, it's quite slow. In Firefox it's fine, oddly enough. [C code here](https://pastebin.com/JBAUPKjw).
+Very odd "chaotic" PRNG using a counter with variable output. It's supposed to be fast, but in Google Chrome specifically, it's quite slow. In Firefox it's fine, oddly enough.
 
 ```js
 function v3b(a, b, c, d) {
@@ -485,45 +527,47 @@ function v3b(a, b, c, d) {
   }
 }
 
-// default seeding procedure (32-bit seed):
-
-var seed = 0; // uint32_t
-v = [seed, 2654435769, 1013904242, 3668340011]; // golden ratios
-var next = v3b(v[0], v[1], v[2], v[3]);
+// Seed procedure as recommended by the author:
+var seed = 0; // any unsigned 32-bit integer
+var next = v3b(seed, 2654435769, 1013904242, 3668340011); // golden ratios
 for(var i = 0; i < 16; i++) next();
 ```
+
+**References:**
+- http://cipherdev.org/v3b.c (Original C code source)
 
 ****
 
 # Addendum A: Seed generating functions
 
-Certain generators originally had their own seeding procedure, such as jsf32, sfc32 and gjrand32. Those three in particular run the next() function 10-20 times in advance, assumingly to aid in the initialization process. I believe this process can be skipped by using a suitable hash function such as MurmurHash3 to generate the full initial state of the generator.
+Most of the generators here have no built-in seed generating procedure (for sake of simplicity), but accept one or more 32-bit values as the initial state of the PRNG. Similar seeds (e.g. a simple seed of 1 and 2) can cause correlations in weaker PRNGs, resulting in the output having similar properties (such as randomly generated levels being similar). To avoid this, it is best practice to initialize PRNGs with a well-distributed seed.
 
-Here are various utility functions that can be used to generate seeds properly for PRNGs. <!-- I'll include integer and string hashing functions as well here. -->
+There are various ways to seed a PRNG, but care must be taken. Certain generators have their own seeding procedure (jsf32, sfc32, gjrand32, v3b), which typically fill the state with some preset data and run the generator a few times in advance. This appears to work, and is often by design, but it can reduce the effective number of input states dramatically.
 
-`xfnv1a` is a good example of generating seed bits from a string. It is based on Bret Mulvey's modified FNV1a.
+I propose using a seperate hash function to intiailize the entire state. Hash functions are very good at generating seeds for PRNGs from short strings. A good hash function will generate very different results even when two strings are similar. Here's an example based on MurmurHash3's mixing function:
 
 ```js
-function xfnv1a(str) {
-    for(var i = 0, h = 2166136261 >>> 0; i < str.length; i++)
-        h = Math.imul(h ^ str.charCodeAt(i), 16777619);
+function xmur3(str) {
+    for(var i = 0, h = 1779033703 ^ str.length; i < str.length; i++)
+        h = Math.imul(h ^ str.charCodeAt(i), 3432918353),
+        h = h << 13 | h >>> 19;
     return function() {
-        h += h << 13; h ^= h >>> 7;
-        h += h << 3;  h ^= h >>> 17;
-        return (h += h << 5) >>> 0;
+        h = Math.imul(h ^ h >>> 16, 2246822507),
+        h = Math.imul(h ^ h >>> 13, 3266489909);
+        return (h ^= h >>> 16) >>> 0;
     }
 }
 ```
 
-How it would be used:
+Each subsequent call to the *return function* of `xmur3` produces a new "random" 32-bit hash value to be used as a seed in a PRNG. Here's how you might use it:
 
 ```js
-// Create a xfnv1a state:
-var seed = xfnv1a("apples");
-// Output four 32-bit hashes to produce the seed for sfc32.
+// Create xmur3 state:
+var seed = xmur3("apples");
+// Output four 32-bit hashes to provide the seed for sfc32.
 var rand = sfc32(seed(), seed(), seed(), seed());
 
-// Or: output one 32-bit hash to produce the seed for mulberry32.
+// Output one 32-bit hash to provide the seed for mulberry32.
 var rand = mulberry32(seed());
 
 // Obtain sequential random numbers like so:
@@ -531,23 +575,7 @@ rand();
 rand();
 ```
 
-A possible issue with this function could be whether the xor and shift operations are sufficient to mix the state for each subsequent hash. A potential alternative, using MurmurHash sensibilities, dubbed 'xmur1a':
-
-```js
-function xmur1a(str) {
-    for(var i = 0, h = Math.imul(str.length, 2166136261) >>> 0; i < str.length; i++)
-        h = Math.imul(h + str.charCodeAt(i), 3432918353), h ^= h >>> 24;
-    return function() {
-        h ^= h >>> 15; h = Math.imul(h, 2246822507);
-        h ^= h >>> 13; h = Math.imul(h, 3266489917);
-        return (h ^= h >>> 16) >>> 0;
-    }
-}
-```
-
-This utilizes the famed fmix function seen in MurmurHash3, xxHash and SplitMix, as well as a slight MurmurHash1-style modification to FNV1a's combining step. This means switching xor to add, changing the multiplier, and adding a xorshift step.
-
-On paper, this may be an ideal and efficient function for generating good _hash seeds_. But I haven't tested it. As a final option, a full MurmurHash3 implementation:
+On paper, this may be an ideal and efficient function for generating good _hash seeds_. But I haven't tested it thoroughly. As a final option, one can choose a full MurmurHash3 implementation:
 
 ```js
 function xmur3a(str) {
@@ -566,9 +594,20 @@ function xmur3a(str) {
 }
 ```
 
-An earlier attempt at improving xfnv1a(), that is a bit more verbose as well:
+Before xmur3, I also had `xfnv1a`, based on [Bret Mulvey's modified FNV1a](https://papa.bretmulvey.com/post/124027987928/hash-functions), but is probably lesser in quality:
 
 ```js
+function xfnv1a(str) {
+    for(var i = 0, h = 2166136261 >>> 0; i < str.length; i++)
+        h = Math.imul(h ^ str.charCodeAt(i), 16777619);
+    return function() {
+        h += h << 13; h ^= h >>> 7;
+        h += h << 3;  h ^= h >>> 17;
+        return (h += h << 5) >>> 0;
+    }
+}
+
+// earlier attempt at improving xfnv1a, possibly overly verbose
 function initseed(k) {
     for(var i = 0, h = 0xdeadbeef | 0; i < k.length; i++)
         h = Math.imul(h + k.charCodeAt(i), 2654435761), h ^= h >>> 24,
@@ -582,7 +621,7 @@ function initseed(k) {
 }
 ```
 
-`initseed` is an older 128-bit seed generator I tried making. It takes an array of 4 32-bit numbers and mixes them using the mixing function from Murmur3/xxHash. Probably not worth using.
+`initseed` is an even older 128-bit seed generator I tried making. It takes an array of 4 32-bit numbers and mixes them using the mixing function from Murmur3/xxHash. Probably not worth using.
 
 ```js
 function initseed(s) {
