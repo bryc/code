@@ -1,16 +1,16 @@
 <script src=pixicon.js></script>
 <style>
 * {font: 14px Segoe UI,Trebuchet MS,Tahoma,sans-serif}
-body {background:#36393E;text-align:center;padding-top:64px}
+body {margin:0;height:100%;background:#36393E;background-image:radial-gradient(#B59D7E77,#36393E);background-size:4px;text-align:center;}
 div#p {width: 617px;margin-right:3px}
-div#p2 {width: 277px}
+div#p2 {width: 334px}
 div#u, div#uu {
     margin:0px;
     box-shadow: 2px 2px 20px #232427;
     border-radius: 4px;
     padding: 8px;
     display: inline-flex;
-    background: #5B616A;
+    background: #5B616A;margin-top:32px
 }
 div#u2{
     margin:0px;
@@ -37,7 +37,7 @@ input,button {
     box-shadow: 1px 1px 3px #232427;
 }
 
-input {width:273px}
+input {width:328px}
 input:hover,button:hover {background:#D0D2D7}
 button:active,input:focus{background:#C7C9CF;}
 button:active{cursor:pointer;}
@@ -59,7 +59,7 @@ canvas:active{opacity:0.5;}
 hr{border:0;border-bottom:1px solid #AAA;margin:8px;padding:0;}
 em{font-style:italic;}
 * {transition: opacity .25s ease-in-out;}
-canvas#q{padding:10.5px 9px;width:253px; height:253px;} /* multiples of 8 only! */
+canvas#q{padding:11px 9.5px;width:308px; height:308px;} /* multiples of 8 only! */
 .info b{font:bold 32px consolas;margin-bottom:4px;}
 .info {text-align:left;}
 a{color:crimson}
@@ -68,16 +68,17 @@ a{color:crimson}
 <div>
 <div id=u>
     <div id=p><div id=o></div><button>Generate more</button></div>
-    <div id=p2><canvas id=q width=256 height=256></canvas><input type=text placeholder='Type something here'></div>
+    <div id=p2><canvas id=q width=308 height=308></canvas><input type=text placeholder='Type something here'></div>
 </div>
 </div>
 <div class=info id=u2><b>pixicon</b> by <a target="_blank" href="http://github.com/bryc">@bryc</a><br>
-    <div id=m0de>Click <a href=?pixels>here</a> to swap pixels or triangles. Click any small icon to load it into the big one. Click the big icon to pause/start the random marquee.</div> 
-    An experimental hashicon generator. Designed to produce highly identifable icons with as many different results as possible. It is a WIP, still looking into better pattern/color generation methods and different shapes.
-    <hr>
+    An experimental hashicon generator. Designed to produce highly identifable icons with as many different results as possible. It is a WIP, still looking into better pattern/color generation methods and different shapes. The code is also a bit unoptimized and longer than it could be.
+    <br>
+    Click <a href=?pixels>here</a> to swap pixels or triangles. Click any small icon to load it into the big one. Click the big icon to pause/start the random marquee. 
+    <!--<hr>
     To give you an idea of how many <em>base patterns</em> there are: in 11x11 grid, there are (2<sup>5</sup> x 6<sup>10</sup> x 2<sup>6</sup>) in diagonal symmetry mode or (6<sup>25</sup> x 2<sup>6</sup>) in fully random mode. So combined: 123,834,728,448 + 1,819,538,433,915,500,888,064 possible base patterns. Not bad! 
     <br><br>
-    This however doesn't take into account color information, layering, or alternate symmetry modes which probably increase these numbers exponentially.
+    This however doesn't take into account color information, layering, or alternate symmetry modes which probably increase these numbers exponentially.-->
 </ul>
 </div>
 
@@ -86,9 +87,9 @@ a{color:crimson}
 <script>
 if(document.location.search=='?pixels') {
     var x = document.querySelector('#m0de');
-    console.log(x.innerHTML)
+    //console.log(x.innerHTML)
     x.innerHTML = x.innerHTML.replace("?pixels","?triangles")
-    console.log(x.innerHTML)
+    //console.log(x.innerHTML)
 }
 
 function hash(key, seed = 0) {
@@ -200,9 +201,9 @@ function more() {
     }
 }
 
-pixicon(document.querySelector("canvas#q"),23, hash(arst("a")),pixi);
+pixicon(document.querySelector("canvas#q"),28, hash(arst(Math.random().toString())),pixi);
 document.querySelector("input").oninput = function() {
-    pixicon(document.querySelector("canvas#q"), 23, hash(arst(this.value)), pixi);
+    pixicon(document.querySelector("canvas#q"), 28, hash(arst(this.value)), pixi);
 };
 document.querySelector("input").onfocus = function() {
     qactive = false;
@@ -216,15 +217,15 @@ function startThing() {
     wat = setInterval(function(){
         if(qactive) {
             var str = wJ()+wJ()+wJ()+wJ()+wJ()+wJ();
-            console.log(str);
-            pixicon(document.querySelector("canvas#q"), 23, hash(arst(str)),pixi);
+            //console.log(str);
+            pixicon(document.querySelector("canvas#q"), 28, hash(arst(str)),pixi);
             document.querySelector("input").value = str;
         }
     },500)
 }
 
 startThing();
-for(var cnt = 55, cnv = [], i = 0; i < cnt; i++) {
+for(var cnt = 66, cnv = [], i = 0; i < cnt; i++) {
     var c = document.createElement("canvas");
     cnv.push(c);
     document.querySelector("div#o").appendChild(c);

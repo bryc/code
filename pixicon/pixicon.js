@@ -82,6 +82,12 @@ function pixicon(t, scale, seed, pixels) {
                 if(arr[i]===4)  (arr2[i] = 2);
                 if(arr[i]===5)  (arr2[i] = 3);
                 break;
+                case 5:
+                if(arr[i]===2)  (arr2[i] = 3);
+                if(arr[i]===3)  (arr2[i] = 2);
+                if(arr[i]===4)  (arr2[i] = 4);
+                if(arr[i]===5)  (arr2[i] = 5);
+                break;
             }
         }
         return arr2;
@@ -133,19 +139,61 @@ function pixicon(t, scale, seed, pixels) {
         pix = pixels ? 1 : 5,
         diagMode = rng()*2|0; // use diagonal symmetry inner patterns.
 
+    // Generate random colors
+    var colz = [
+    [`209,31,21`,`218,24,33`,`181,56,47`,`161,68,65`],    //0 medium, NICE
+    [`244,24,19`,`177,34,30`,`117,20,57`,`60,70,70`],     //1 desaturated, but NICE contrast
+    [`291,24,29`,`346,34,48`,`6,78,59`,`30,96,63`],       //2 very NICE tones and contrast
+    [`182,23,24`,`128,21,37`,`75,31,47`,`42,73,72`],      //3 NICE tones but desaturated, kinda like gameboy
+    [`301,30,27`,`338,33,45`,`353,70,58`,`27,72,61`],     //4 NICE tones, higher saturation
+    [`184,47,23`,`182,28,38`,`154,40,56`,`113,100,79`],   //5 decent desaturated tones NICE?
+    [`0,43,33`,`0,65,55`,`22,100,61`,`53,100,69`],        //6 NICE , but.. too bright and maybe too saturated
+    [`237,29,30`,`274,15,38`,`18,45,59`,`49,81,71`],      //7 Slightly desaturated, but has NICE tones
+    [`333,79,29`,`0,53,47`,`15,76,51`,`31,68,69`],        //8 Monotone, but with a decent hue-shift.  NICE.
+    [`223,29,22`,`183,100,27`,`223,24,33`,`194,49,73`],   //9 Not bad but some colors are a little too bright. Could be NICE.
+    [`20,5,20`,`24,5,35`,`113,22,57`,`61,63,77`],         //10 Desaturated colors with some darks. NICE actually
+    [`229,14,23`,`310,20,42`,`357,47,57`,`39,73,72`],     //11 Desaturated, medium brightness - NICE?
+    [`239,97,15`,`278,28,30`,`330,34,40`,`0,97,65`],      //12 NICE neon tones, but a bit too bright? Try to adjust
+    [`303,40,34`,`336,47,49`,`0,82,64`,`13,98,69`],       //13 Soft, bright candy colors. Not bad. NICE maybe try to adjust?
+    [`14,31,32`,`356,72,58`,`51,47,64`,`330,79,70`],      //14 A bit bright, but colors look nice. Adjusting brightness could be NICE.
+    [`273,100,14`,`330,100,28`,`352,83,60`,`12,80,64`],   //15 High saturation/contrast but colors look NICE. Could be adjusted.
+    [`29,36,25`,`0,41,45`,`19,86,56`,`125,60,75`],        //16 NICE interesting results, a bit bright in some cases however.
+    [`304,33,28`,`349,37,53`,`0,69,63`,`29,88,70`],       //17 NICE tones, but greens are a bit too bright
+    [`239,97,16`,`278,28,30`,`330,34,40`,`0,97,61`],      //18 A bit dark in some cases and too bright in others (Green), but NICE.
+    [`201,39,28`,`55,74,46`,`192,60,61`,`172,60,70`],     //19 Too bright might be ok if adjusted -20 -20. NICE
+    [`0,63,28`,`0,59,47`,`86,45,61`,`54,99,71`],          //20 NICE candy colors. Could work with this
+    [`347,47,28`,`0,44,40`,`26,73,54`,`39,98,73`],        //21 NICE also very acceptable candy colors - green a bit bright.
+    [`0,9,40`,`20,14,53`,`47,31,67`,`63,69,74`],          //22 Milky bright desaturated colors. Could be good I think +5,-19
+    [`225,40,34`,`271,14,41`,`342,40,58`,`353,88,69`],    //23 Interesting one contrasting tones. NICE, I'll try it.
+    ]
+    // Choose random color scheme, then randomize hue
+    var cols = colz[colz.length*rng()|0];
+    for(var i = 0, hue = rng()*360; i < cols.length; i++) {
+        var cc = cols[i].split(',').map(a=>parseInt(a));
+        cols[i] = `${cc[0]+hue},${cc[1]}%,${cc[2]}%`;
+    }
+    // Shuffle palette
+    for(var v, s = 4; s;) {
+        v = 0|rng() * s--;
+        [cols[s], cols[v]] = [cols[v], cols[s]];        
+    }
+
     // Erase anything previously on the canvas context.
     c.clearRect(0, 0, t.width, t.height);
     // Set canvas dimensions if not already set.
     // Condition improves performance on subsequent calls to existing canvas (Firefox).
     if(t.width !== n*scale) t.width = t.height = n*scale;
 
+    // Generate a background of random size
+    var bg0 = (rng()*4|0)+1, bg1 = [9,7,5,3,1][bg0-1];
+    c.fillStyle = `hsl(${cols[3].toString()})`,c.fillRect(bg0*t.width/11, bg0*t.width/11, bg1*t.width/11, bg1*t.height/11);
     // Multiple passes (only two)
 
     var num = 0; while(num < 2) {
     // Set fill color for pixels. TODO: make sure no two colors are similar
-    var color1 = HSL(rng(), rng(), rng(), rng()*1|0);
-    var color2 = modHSL(color1);
-    var color2a = modHSL(color1, 1);
+    var color1 = `hsl(${cols[num].toString()})`;
+    var color2 = color1;
+    var color2a = `hsl(${cols[2].toString()})`;
     c.fillStyle = color1;
 
     // - PATTERN ONE -
@@ -178,6 +226,7 @@ function pixicon(t, scale, seed, pixels) {
         for(var i = 0; i < 25; i++) {
             if(!goodlist0.includes(i)) mask0[i] = mask1[i] = 0;
         }
+        mask0 = trirot(mask0,5); // rotate tris for diagMode
         pt1 = rota(pt1,2,5,5), pt1 = rota(pt1,0,5,5);
         pt2 = rota(pt2,2,5,5), pt2 = rota(pt2,0,5,5);  
         for(var i = 0; i < 25; i++) {
