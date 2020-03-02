@@ -136,35 +136,35 @@ function pixicon(t, scale, seed, pixels) {
         n   = 11,
         rng = sfc32(seed[0], seed[1], seed[2], seed[3]),
         symMode = rng()*2|0,
-        pix = pixels ? 1 : 5,
+        pix = !pixels ? 1 : 5,
         diagMode = rng()*2|0; // use diagonal symmetry inner patterns.
 
-    // Generate random colors
+    // HSL Palette presets
     var colz = [
-    [`209,31,21`,`218,24,33`,`181,56,47`,`161,68,65`],    //0 medium, NICE
-    [`244,24,19`,`177,34,30`,`117,20,57`,`60,70,70`],     //1 desaturated, but NICE contrast
-    [`291,24,29`,`346,34,48`,`6,78,59`,`30,96,63`],       //2 very NICE tones and contrast
-    [`182,23,24`,`128,21,37`,`75,31,47`,`42,73,72`],      //3 NICE tones but desaturated, kinda like gameboy
-    [`301,30,27`,`338,33,45`,`353,70,58`,`27,72,61`],     //4 NICE tones, higher saturation
-    [`184,47,23`,`182,28,38`,`154,40,56`,`113,100,79`],   //5 decent desaturated tones NICE?
-    [`0,43,33`,`0,65,55`,`22,100,61`,`53,100,69`],        //6 NICE , but.. too bright and maybe too saturated
-    [`237,29,30`,`274,15,38`,`18,45,59`,`49,81,71`],      //7 Slightly desaturated, but has NICE tones
-    [`333,79,29`,`0,53,47`,`15,76,51`,`31,68,69`],        //8 Monotone, but with a decent hue-shift.  NICE.
-    [`223,29,22`,`183,100,27`,`223,24,33`,`194,49,73`],   //9 Not bad but some colors are a little too bright. Could be NICE.
-    [`20,5,20`,`24,5,35`,`113,22,57`,`61,63,77`],         //10 Desaturated colors with some darks. NICE actually
-    [`229,14,23`,`310,20,42`,`357,47,57`,`39,73,72`],     //11 Desaturated, medium brightness - NICE?
-    [`239,97,15`,`278,28,30`,`330,34,40`,`0,97,65`],      //12 NICE neon tones, but a bit too bright? Try to adjust
-    [`303,40,34`,`336,47,49`,`0,82,64`,`13,98,69`],       //13 Soft, bright candy colors. Not bad. NICE maybe try to adjust?
-    [`14,31,32`,`356,72,58`,`51,47,64`,`330,79,70`],      //14 A bit bright, but colors look nice. Adjusting brightness could be NICE.
-    [`273,100,14`,`330,100,28`,`352,83,60`,`12,80,64`],   //15 High saturation/contrast but colors look NICE. Could be adjusted.
-    [`29,36,25`,`0,41,45`,`19,86,56`,`125,60,75`],        //16 NICE interesting results, a bit bright in some cases however.
-    [`304,33,28`,`349,37,53`,`0,69,63`,`29,88,70`],       //17 NICE tones, but greens are a bit too bright
-    [`239,97,16`,`278,28,30`,`330,34,40`,`0,97,61`],      //18 A bit dark in some cases and too bright in others (Green), but NICE.
-    [`201,39,28`,`55,74,46`,`192,60,61`,`172,60,70`],     //19 Too bright might be ok if adjusted -20 -20. NICE
-    [`0,63,28`,`0,59,47`,`86,45,61`,`54,99,71`],          //20 NICE candy colors. Could work with this
-    [`347,47,28`,`0,44,40`,`26,73,54`,`39,98,73`],        //21 NICE also very acceptable candy colors - green a bit bright.
-    [`0,9,40`,`20,14,53`,`47,31,67`,`63,69,74`],          //22 Milky bright desaturated colors. Could be good I think +5,-19
-    [`225,40,34`,`271,14,41`,`342,40,58`,`353,88,69`],    //23 Interesting one contrasting tones. NICE, I'll try it.
+        [`48,31,21`,`57,24,33`,`20,56,47`,`0,68,65`],
+        [`184,24,19`,`117,34,30`,`57,20,57`,`0,70,70`],
+        [`0,24,29`,`55,34,48`,`75,78,59`,`99,96,63`],
+        [`140,23,24`,`86,21,37`,`33,31,47`,`0,73,72`],
+        [`0,30,27`,`37,33,45`,`52,70,58`,`86,72,61`],
+        [`71,47,23`,`69,28,38`,`41,40,56`,`0,100,79`],
+        [`0,43,33`,`0,65,55`,`22,100,61`,`53,100,69`],
+        [`219,29,30`,`256,15,38`,`0,45,59`,`31,81,71`],
+        [`0,79,29`,`27,53,47`,`42,76,51`,`58,68,69`],
+        [`40,29,22`,`0,100,27`,`40,24,33`,`11,49,73`],
+        [`0,5,20`,`4,5,35`,`93,22,57`,`41,63,77`],
+        [`279,14,23`,`0,20,42`,`47,47,57`,`89,73,72`],
+        [`0,97,15`,`39,28,30`,`91,34,40`,`121,97,65`],
+        [`0,40,34`,`33,47,49`,`57,82,66`,`70,98,69`],
+        [`44,31,32`,`26,72,58`,`81,47,64`,`0,79,70`],
+        [`0,100,14`,`57,100,28`,`79,83,60`,`99,80,64`],
+        [`29,36,25`,`0,41,45`,`19,86,56`,`125,60,75`],
+        [`0,33,28`,`45,37,53`,`56,69,63`,`85,88,70`],
+        [`0,97,16`,`39,28,30`,`91,34,40`,`121,97,61`],
+        [`29,39,28`,`243,74,46`,`20,60,61`,`0,60,70`],
+        [`0,63,28`,`0,59,47`,`86,45,61`,`54,99,71`],
+        [`0,47,28`,`13,44,40`,`39,73,54`,`52,98,73`],
+        [`0,9,40`,`20,14,53`,`47,31,67`,`63,69,74`],
+        [`314,40,34`,`0,14,41`,`71,40,58`,`82,88,69`],
     ]
     // Choose random color scheme, then randomize hue
     var cols = colz[colz.length*rng()|0];
@@ -227,6 +227,7 @@ function pixicon(t, scale, seed, pixels) {
             if(!goodlist0.includes(i)) mask0[i] = mask1[i] = 0;
         }
         mask0 = trirot(mask0,5); // rotate tris for diagMode
+        mask1 = trirot(mask1,5); // rotate tris for diagMode
         pt1 = rota(pt1,2,5,5), pt1 = rota(pt1,0,5,5);
         pt2 = rota(pt2,2,5,5), pt2 = rota(pt2,0,5,5);  
         for(var i = 0; i < 25; i++) {
@@ -243,17 +244,19 @@ function pixicon(t, scale, seed, pixels) {
 
     // produce final pixel array.
     var fin = [];
+     // using two random buffers can look bad - so only use it when diagmode is used
+    var usept2 = diagMode && rng()>0.5;
     switch(symMode) {
         case 0:  // Snowflake (Reflected-4)
         fin[0] = (pt1);
-        fin[1] = trirot(rota(pt1,1, 5,5),1);
-        fin[2] = trirot(rota(pt1,0, 5,5),0);
+        fin[1] = trirot(rota(usept2?pt2:pt1,1, 5,5),1);
+        fin[2] = trirot(rota(usept2?pt2:pt1,0, 5,5),0);
         fin[3] = trirot(rota(pt1,3, 5,5),3);
         break;
         case 1: // Snowflake (Rotated-4)
         fin[0] = (pt1);
-        fin[1] = trirot(rota(pt1,4, 5,5),4);
-        fin[2] = trirot(rota(pt1,2, 5,5),2);
+        fin[1] = trirot(rota(usept2?pt2:pt1,4, 5,5),4);
+        fin[2] = trirot(rota(usept2?pt2:pt1,2, 5,5),2);
         fin[3] = trirot(rota(pt1,3, 5,5),3);
         break;
     }

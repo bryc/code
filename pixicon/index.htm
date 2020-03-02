@@ -74,7 +74,7 @@ a{color:crimson}
 <div class=info id=u2><b>pixicon</b> by <a target="_blank" href="http://github.com/bryc">@bryc</a><br>
     An experimental hashicon generator. Designed to produce highly identifable icons with as many different results as possible. It is a WIP, still looking into better pattern/color generation methods and different shapes. The code is also a bit unoptimized and longer than it could be.
     <br>
-    Click <a id=m0de href=?pixels>here</a> to swap pixels or triangles. Click any small icon to load it into the big one. Click the big icon to pause/start the random marquee. 
+    Click <a id=m0de href=?alt>here</a> to swap pixels or triangles. Click any small icon to load it into the big one. Click the big icon to pause/start the random marquee. 
     <!--<hr>
     To give you an idea of how many <em>base patterns</em> there are: in 11x11 grid, there are (2<sup>5</sup> x 6<sup>10</sup> x 2<sup>6</sup>) in diagonal symmetry mode or (6<sup>25</sup> x 2<sup>6</sup>) in fully random mode. So combined: 123,834,728,448 + 1,819,538,433,915,500,888,064 possible base patterns. Not bad! 
     <br><br>
@@ -85,8 +85,8 @@ a{color:crimson}
 
 
 <script>
-if(document.location.search=='?pixels') {
-    document.querySelector('#m0de').href = "?triangles";
+if(document.location.search=='?alt') {
+    document.querySelector('#m0de').href = "?";
 }
 
 function hash(key, seed = 0) {
@@ -173,7 +173,7 @@ function hash(key, seed = 0) {
 }
 
 
-var pixi = document.location.search == '?pixels' ? true : false;
+var pixi = document.location.search == '?alt' ? true : false;
 
 function wJ(){return Math.random().toString(36).substr(2,4)}
 
