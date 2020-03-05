@@ -191,7 +191,7 @@ function pixicon(t, scale, seed, pixels) {
         c.strokeStyle = `hsl(${cols[3].toString()})`,
         c.strokeRect(bg0*t.width/11+(c.lineWidth/2), bg0*t.width/11+(c.lineWidth/2), bg1*t.width/11-(c.lineWidth), bg1*t.height/11-(c.lineWidth));
     } else {
-        c.fillStyle = `hsl(${cols[1].toString()})`,c.fillRect(bg0*t.width/11, bg0*t.width/11, bg1*t.width/11, bg1*t.height/11);  
+        c.fillStyle = `hsl(${cols[3].toString()})`,c.fillRect(bg0*t.width/11, bg0*t.width/11, bg1*t.width/11, bg1*t.height/11);  
     }
     // Multiple passes (only two)
 
