@@ -186,7 +186,13 @@ function pixicon(t, scale, seed, pixels) {
 
     // Generate a background of random size
     var bg0 = (rng()*4|0)+1, bg1 = [9,7,5,3,1][bg0-1];
-    c.fillStyle = `hsl(${cols[3].toString()})`,c.fillRect(bg0*t.width/11, bg0*t.width/11, bg1*t.width/11, bg1*t.height/11);
+    if(bg0 < 3 && rng() > 0.5) {
+        c.lineWidth = bg0*t.width/11;
+        c.strokeStyle = `hsl(${cols[3].toString()})`,
+        c.strokeRect(bg0*t.width/11+(c.lineWidth/2), bg0*t.width/11+(c.lineWidth/2), bg1*t.width/11-(c.lineWidth), bg1*t.height/11-(c.lineWidth));
+    } else {
+        c.fillStyle = `hsl(${cols[1].toString()})`,c.fillRect(bg0*t.width/11, bg0*t.width/11, bg1*t.width/11, bg1*t.height/11);  
+    }
     // Multiple passes (only two)
 
     var num = 0; while(num < 2) {
