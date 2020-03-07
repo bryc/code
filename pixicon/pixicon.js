@@ -185,6 +185,7 @@ function pixicon(t, scale, seed, pixels) {
     if(t.width !== n*scale) t.width = t.height = n*scale;
 
     // Generate a background of random size
+    c.fillStyle = "#EEE", c.fillRect(0,0,t.width,t.height);
     var bg0 = (rng()*4|0)+1, bg1 = [9,7,5,3,1][bg0-1];
     if(bg0 < 3 && rng() > 0.5) {
         c.lineWidth = bg0*t.width/11;
@@ -251,7 +252,7 @@ function pixicon(t, scale, seed, pixels) {
     // produce final pixel array.
     var fin = [];
      // using two random buffers can look bad - so only use it when diagmode is used
-    var usept2 = diagMode && rng()>0.5;
+    var usept2 = diagMode && rng()>0.7;
     switch(symMode) {
         case 0:  // Snowflake (Reflected-4)
         fin[0] = (pt1);
@@ -267,7 +268,14 @@ function pixicon(t, scale, seed, pixels) {
         break;
     }
 
+    if(rng()>0.5 && !usept2) {
+        fin[0] = trirot(rota(fin[0],0, 5,5),0);
+        fin[1] = trirot(rota(fin[1],0, 5,5),0);
+        fin[2] = trirot(rota(fin[2],0, 5,5),0);
+        fin[3] = trirot(rota(fin[3],0, 5,5),0);
+    }
     if(rng()>0.5) [fin[1], fin[2]] = [fin[2], fin[1]];
+
     paint(fin[0], 0,0, 25); // T-L
     paint(fin[1], 0,n===11?6:5, 25); // B-L
     c.fillStyle = color2;
