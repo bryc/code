@@ -137,7 +137,7 @@ function pixicon(t, scale, seed, pixels) {
         rng = sfc32(seed[0], seed[1], seed[2], seed[3]),
         symMode = rng()*2|0,
         pix = !pixels ? 1 : 5,
-        diagMode = rng()*2|0; // use diagonal symmetry inner patterns.
+        diagMode = 1; // use diagonal symmetry inner patterns.
 
     // HSL Palette presets
     var colz = [
@@ -267,6 +267,7 @@ function pixicon(t, scale, seed, pixels) {
         break;
     }
 
+    if(rng()>0.5) [fin[1], fin[2]] = [fin[2], fin[1]];
     paint(fin[0], 0,0, 25); // T-L
     paint(fin[1], 0,n===11?6:5, 25); // B-L
     c.fillStyle = color2;
