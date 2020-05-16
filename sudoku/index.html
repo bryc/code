@@ -1,31 +1,35 @@
 <style>
-body{text-align:center;margin:5px;margin-top:20px;color:#335;font:14px tahoma;}
-table{margin:auto;color:#335;margin-top:5px;border:3px solid;border-collapse:collapse;}
+body{background:#111;text-align:center;margin:5px;margin-top:20px;color:#eee;font:14px tahoma;}
+table{font-size:24px;margin:auto;color:#555;margin-top:5px;border:3px solid;border-collapse:collapse;}
 
-td{outline:none;height:35px;min-width:35px;text-align:center;
- border-top:1px solid #AAC;border-left:1px solid #DDE;}
+td{background:#333;color:#8DF;outline:none;height:65px;min-width:65px;text-align:center;
+ border-top:1px solid #555;border-left:1px solid #555;}
 
-    td:nth-child(3n+3) {border-right:3px solid; }
+    td:nth-child(3n+3) {border-right:3px solid #555; }
+        td#z{background:#222;}
     tr:nth-child(3n+3) {border-bottom:3px solid; }
-    td:focus{background:#EEF;}
+    td:focus{background:#333;}
 
-    input{outline:none;color:#335;border:1px solid #AAC;background:#F5F5FF;text-align:center;margin-top:3px;display:block;width:100%;padding:5px;font-size:16px;font-family:monospace;}
+    input{outline:none;color:#eee;border:1px solid #AAC;background:#222;text-align:center;margin-top:5px;margin-bottom:5px;display:block;width:100%;padding:5px;font-size:16px;font-family:monospace;}
     span{font-weight:bold;font-size:12px;}
+    button{color:#aaa;border:0;background:#222;font-size:20px;margin:12px;padding:6px;}button:hover{background:#333;}
 </style>
 
 <span class="label">Puzzle code:</span>
 <input class="code" spellcheck=false placeholder="Paste sudoku string here">
 
 <table class="sudoku" border>
-<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-<tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td id=z></td><td id=z></td><td id=z></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td id=z></td><td id=z></td><td id=z></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td id=z></td><td id=z></td><td id=z></td><td></td><td></td><td></td></tr>
+<tr><td id=z></td><td id=z></td><td id=z></td><td></td><td></td><td></td><td id=z></td><td id=z></td><td id=z></td></tr>
+<tr><td id=z></td><td id=z></td><td id=z></td><td></td><td></td><td></td><td id=z></td><td id=z></td><td id=z></td></tr>
+<tr><td id=z></td><td id=z></td><td id=z></td><td></td><td></td><td></td><td id=z></td><td id=z></td><td id=z></td></tr>
+<tr><td></td><td></td><td></td><td id=z></td><td id=z></td><td id=z></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td id=z></td><td id=z></td><td id=z></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td id=z></td><td id=z></td><td id=z></td><td></td><td></td><td></td></tr>
 </table>
+<button onclick=generate()>Generate Puzzle</button>
 <div class="info"></div>
 <script src="app.js"></script>
+<script src="sudoku.js"></script>

@@ -116,11 +116,11 @@ function loadPuzzle(str2) {
     }
     if(err > 0) {
         input.style.border = "1px solid red";
-        input.style.background = "#FFF7F7";
+        //input.style.background = "#FFF7F7";
         return false;
     } else {
         input.style.border = "";
-        input.style.background = "";
+        //input.style.background = "";
     }
     info.innerHTML = "puzzHash: <code>" + cksm(arr).toString(36) + "</code>";
     for(var i = k = 0, t, y; i<81; i++, k++) {
