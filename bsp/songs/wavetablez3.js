@@ -60,7 +60,8 @@ SONG.comment =
 `Same as wavetablez2, but uses custom waveform generators rather than hard-coding them.
 These waveforms are longer (64 and 256 for bass) but require higher sample rates for proper tuning.
 Need to find a way around this sampling rate fiasco.
-Also added a "note-cut" modifier for the bass and drums.`
+Also added a "note-cut" modifier for the bass and drums.<br><br>
+UPDATE aug-07-2020: I (hopefully) fixed the previous sampling rate issue, and modified this file as necessary.`
 SONG.bpm     = 84
 SONG.divide  = 6
 SONG.cVol    = [
@@ -74,12 +75,12 @@ SONG.wave    = [4, 4, 4, 4, 4, 4]
 SONG.delay   = [.2, .13, 0, .4, .2, .3]
 
 SONG.sampleData = []
-SONG.sampleData[0] = [11025*2, mul(mix(tri,rnd("wqr")))]
-SONG.sampleData[1] = [44100*2, mul(mix(tri,tri)).concat(mul(mix(squ,rnd("das")))).concat(mul(mix(tri,tri)).concat(mul(mix(squ.rot(-16),rnd("das")))))   ]
+SONG.sampleData[0] = [44100, mul(mix(tri,rnd("wqr")))]
+SONG.sampleData[1] = [44100, mul(mix(tri,tri)).concat(mul(mix(squ,rnd("das")))).concat(mul(mix(tri,tri)).concat(mul(mix(squ.rot(-16),rnd("das")))))   ]
 SONG.sampleData[2] = [44100, [...Array(2048)].map(q=>rand1()*2-1)]
-SONG.sampleData[3] = [11025*2, mul(mix(saw,rnd("axf")))]
-SONG.sampleData[4] = [11025*2 + 64, mul(mix(squ,rnd("qzu")))]
-SONG.sampleData[5] = [44100*2 + 128, mul(mix(tri,tri)).concat(mul(mix(saw,rnd("das")))).concat(mul(mix(tri,tri)).concat(mul(mix(saw.rot(-16),rnd("das")))))   ]
+SONG.sampleData[3] = [44100, mul(mix(saw,rnd("axf")))]
+SONG.sampleData[4] = [44100 + 64, mul(mix(squ,rnd("qzu")))]
+SONG.sampleData[5] = [44100 + 128, mul(mix(tri,tri)).concat(mul(mix(saw,rnd("das")))).concat(mul(mix(tri,tri)).concat(mul(mix(saw.rot(-16),rnd("das")))))   ]
 
 SONG.ptrn = [
 [ 

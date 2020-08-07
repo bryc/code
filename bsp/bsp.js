@@ -23,8 +23,8 @@ var schedule = function() {
                     BSP.osc[j].width.setValueAtTime(step[2], tick);
                 // For noise
                 if(BSP.osc[j].constructor === AudioBufferSourceNode)
-                    // TODO: See if I can adjust the 44100/256 formula for different waveform lengths?
-                    BSP.osc[j].playbackRate.setValueAtTime((BSP.freq[gnt(step[0])]/(SONG.trans||2))/(44100/256), tick);
+                    BSP.osc[j].playbackRate.setValueAtTime(
+                        BSP.freq[gnt(step[0])] / (SONG.sampleData[j][1].length>=2048 ? SONG.sampleData[j][1].length/128 : 1) * SONG.sampleData[j][1].length / 44100, tick);
                 // only set frequency if OscNode
                 if(BSP.osc[j].constructor === OscillatorNode)
                     BSP.osc[j].frequency.setValueAtTime((BSP.freq[gnt(step[0])]/(SONG.trans||2)), tick);
