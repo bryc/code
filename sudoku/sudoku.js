@@ -127,7 +127,7 @@ function generate() {
     function mask(puzzle) {
         var ct = 0, ls = [...Array(81).keys()].map((a)=>[Math.random(),a]).sort((a,b)=>a[0]-b[0]).map((a)=>a[1]),
         npuzz = puzzle.slice();
-        for(var i = 0, cnt=35+Math.random()*7|0; i < cnt; i++) npuzz[ls[i]] = 0;
+        for(var i = 0, cnt=49+Math.random()*1|0; i < cnt; i++) npuzz[ls[i]] = 0;
         for(var sol of solver(npuzz, 0)) if(ct++, ct > 1) break;
         return ct === 1 ? npuzz : mask(puzzle);
     }
