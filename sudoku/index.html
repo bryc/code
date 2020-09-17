@@ -1,16 +1,19 @@
 <style>
-body{background:#111;text-align:center;margin:5px;margin-top:20px;color:#eee;font:14px tahoma;}
-table{font-size:24px;margin:auto;color:#555;margin-top:5px;border:3px solid;border-collapse:collapse;}
+body{background:#111;text-align:center;margin:5px;margin-top:8px;color:#eee;font:14px tahoma;}
+table{caret-color: transparent !important;font-size:24px;margin:auto;color:#555;margin-top:5px;border:2px solid #111;border-collapse:collapse;}
 
-td{background:#333;color:#8DF;outline:none;height:65px;min-width:65px;text-align:center;
- border-top:1px solid #555;border-left:1px solid #555;}
+td{background:#3334;color:#8DF;outline:none;height:65px;min-width:65px;text-align:center;
+ border-top:1px solid #5554;border-left:1px solid #5554;}
 
-    td:nth-child(3n+3) {border-right:3px solid #555; }
-        td#z{background:#222;}
-    tr:nth-child(3n+3) {border-bottom:3px solid; }
-    td:focus{background:#333;}
+    td:nth-child(3n+3) {border-right:5px solid #111; }
 
-    input{outline:none;color:#eee;border:1px solid #AAC;background:#222;text-align:center;margin-top:5px;margin-bottom:5px;display:block;width:100%;padding:5px;font-size:16px;font-family:monospace;}
+    tr:nth-child(3n+3) {border-bottom:5px solid #111;}
+    td.hibak{background:#222 !important;}
+    td:hover{background:#4465 !important;}
+    td.isfoc{background:#5575 !important;}
+    td.hinum{color:yellow !important;}
+    td.cellerror{color:red !important;}
+    input{outline:none;color:#eee;border:1px solid #444;background:#222;text-align:center;margin-top:5px;margin-bottom:5px;display:block;width:100%;padding:5px;font-size:16px;font-family:monospace;}
     span{font-weight:bold;font-size:12px;}
     button{color:#aaa;border:0;background:#222;font-size:20px;margin:12px;padding:6px;}button:hover{background:#333;}
 </style>
@@ -19,15 +22,17 @@ td{background:#333;color:#8DF;outline:none;height:65px;min-width:65px;text-align
 <input class="code" spellcheck=false placeholder="Paste sudoku string here">
 
 <table class="sudoku" border>
-<tr><td></td><td></td><td></td><td id=z></td><td id=z></td><td id=z></td><td></td><td></td><td></td></tr>
-<tr><td></td><td></td><td></td><td id=z></td><td id=z></td><td id=z></td><td></td><td></td><td></td></tr>
-<tr><td></td><td></td><td></td><td id=z></td><td id=z></td><td id=z></td><td></td><td></td><td></td></tr>
-<tr><td id=z></td><td id=z></td><td id=z></td><td></td><td></td><td></td><td id=z></td><td id=z></td><td id=z></td></tr>
-<tr><td id=z></td><td id=z></td><td id=z></td><td></td><td></td><td></td><td id=z></td><td id=z></td><td id=z></td></tr>
-<tr><td id=z></td><td id=z></td><td id=z></td><td></td><td></td><td></td><td id=z></td><td id=z></td><td id=z></td></tr>
-<tr><td></td><td></td><td></td><td id=z></td><td id=z></td><td id=z></td><td></td><td></td><td></td></tr>
-<tr><td></td><td></td><td></td><td id=z></td><td id=z></td><td id=z></td><td></td><td></td><td></td></tr>
-<tr><td></td><td></td><td></td><td id=z></td><td id=z></td><td id=z></td><td></td><td></td><td></td></tr>
+<tr><td id=b1></td><td id=b1></td><td id=b1></td><td id=b2></td><td id=b2></td><td id=b2></td><td id=b3></td><td id=b3></td><td id=b3></td></tr>
+<tr><td id=b1></td><td id=b1></td><td id=b1></td><td id=b2></td><td id=b2></td><td id=b2></td><td id=b3></td><td id=b3></td><td id=b3></td></tr>
+<tr><td id=b1></td><td id=b1></td><td id=b1></td><td id=b2></td><td id=b2></td><td id=b2></td><td id=b3></td><td id=b3></td><td id=b3></td></tr>
+
+<tr><td id=b4></td><td id=b4></td><td id=b4></td><td id=b5></td><td id=b5></td><td id=b5></td><td id=b6></td><td id=b6></td><td id=b6></td></tr>
+<tr><td id=b4></td><td id=b4></td><td id=b4></td><td id=b5></td><td id=b5></td><td id=b5></td><td id=b6></td><td id=b6></td><td id=b6></td></tr>
+<tr><td id=b4></td><td id=b4></td><td id=b4></td><td id=b5></td><td id=b5></td><td id=b5></td><td id=b6></td><td id=b6></td><td id=b6></td></tr>
+
+<tr><td id=b7></td><td id=b7></td><td id=b7></td><td id=b8></td><td id=b8></td><td id=b8></td><td id=b9></td><td id=b9></td><td id=b9></td></tr>
+<tr><td id=b7></td><td id=b7></td><td id=b7></td><td id=b8></td><td id=b8></td><td id=b8></td><td id=b9></td><td id=b9></td><td id=b9></td></tr>
+<tr><td id=b7></td><td id=b7></td><td id=b7></td><td id=b8></td><td id=b8></td><td id=b8></td><td id=b9></td><td id=b9></td><td id=b9></td></tr>
 </table>
 <button onclick=generate()>Generate Puzzle</button>
 <div class="info"></div>

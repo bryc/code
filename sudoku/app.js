@@ -176,11 +176,55 @@ window.onload = function() {
     input = document.querySelector("input.code");
     for(var i = 0,y = true; i < tbl.length; i++) {
         tbl[i].contentEditable = "true";
-        tbl[i].oninput = function(e){loadPuzzle(savePuzzle());}
+        tbl[i].oninput = function(e) {
+            if(e.data!=this.solution) this.classList.add('cellerror');
+            else { this.classList.remove('cellerror'); }
+            if(this.textContent===hicur) lolwut.push(this),this.classList.add('hinum');
+            if(this.textContent!==hicur) this.classList.remove('hinum');
+            loadPuzzle(savePuzzle());
+        }
         tbl[i].onkeypress = function(e) {
             if(e.keyCode<48||e.keyCode>57)return false;
             this.textContent = "";
         };
+        tbl[i].addEventListener('focus', function(){
+          this.classList.add('isfoc');
+        });
+
+        tbl[i].addEventListener('blur', function(){
+          this.classList.remove('isfoc');
+        });
+        var hicur, lolwut = [], lolwut2 = [];
+        tbl[i].onclick = function(e) {
+
+        for(var i = 0; i < lolwut2.length; i++)
+            lolwut2[i].classList.remove('hibak');
+
+        const idx = [...this.parentElement.children].indexOf(this);
+        lolwut2 = Array.from(document.querySelectorAll('td'))
+          .filter(el =>  el.id === this.id || el.parentNode === this.parentNode);
+          for(var i = 0; i < 9; i++) lolwut2.push(tbl[i*9+idx]);
+
+        for(var i = 0; i < lolwut2.length; i++)
+            lolwut2[i].classList.add('hibak');
+
+        ////////////////////////////////////////////////////////////////////////////////////
+            if(this.textContent==="") return;
+        for(var i = 0; i < lolwut.length; i++)
+            lolwut[i].classList.remove('hinum');
+        // if currently highlighted 
+
+        if(this.textContent===hicur) {hicur='';return;}
+
+        if(this.textContent!=="") hicur = this.textContent;
+
+        lolwut = Array.from(document.querySelectorAll('td'))
+          .filter(el => el.textContent === this.textContent);
+
+        for(var i = 0; i < lolwut.length; i++)
+            lolwut[i].classList.add('hinum');
+        }
+
     }
     input.oninput = function() {
         if(input.value==""){for(j=0;j<81;j++)tbl[j].innerHTML=""}

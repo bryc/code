@@ -134,9 +134,12 @@ function generate() {
 
     var outp = mask(puzzle), outt = document.querySelectorAll(".sudoku td");
     for (var i = 0; i < outt.length; i++) {
+        outt[i].classList = "";
         outt[i].innerHTML = outp[i] ? outp[i] : "";
-        outt[i].style.color = outp[i] ? "#888" : "";
+        outt[i].solution = puzzle[i];
+        outt[i].style.color = outp[i] ? "#999" : "";
         outt[i].style.fontWeight = outp[i] ? "bold" : "";
+       // outt[i].style.backgroundColor = outp[i] ? "#222" : "";
         outt[i].contentEditable = outp[i] ? false : true;
     }
     console.log('Sudoku Generated:', outp.toString().replace(/,/g, ''));
