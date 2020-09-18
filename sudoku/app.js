@@ -31,18 +31,18 @@ var crc8 = function(data) {
 
 function loadPuzzle(str2) {
     if(!str2) {return}
-        console.log(arst(str2) );
+    //   console.log(arst(str2) );
     // decode base64 to string
     var err = 0;
     //var str = atob(str2);
-    console.log(str2)
+   // console.log(str2)
     var arr = arst(atob(str2));
    // console.log(arr)
     //var arr = arrstr(str);
 
     arr = [arr[0]].concat(eee(arr.slice(1), [arr[0]]) );
         var hex = Array.prototype.map.call(arr, x => ('00'+x.toString(16).toUpperCase()).slice(-2)).join(' ');
-    console.log(arr.length, hex);
+ //   console.log(arr.length, hex);
     // load nibble-frames into data array
     for(var i=1, data=[], sum, sum2; i<arr.length; i++) {
         var byte = arr[i];

@@ -68,7 +68,7 @@ function generate() {
     for(let i = 0, num2; i < 81; i++) {
         shuffle(num);
         num2 = num.slice(-2);
-        console.log(num, num2)
+        //console.log(num, num2)
         for(let i = 0; i < puzzle.length; i++) {
             switch(puzzle[i]) {
                 case num2[0]: puzzle[i] = num2[1]; break;
@@ -123,16 +123,55 @@ function generate() {
         yield* solve(0);
     }
 
-
+    var count = 0;
     function mask(puzzle) {
+        //console.log("Te");
         var ct = 0, ls = [...Array(81).keys()].map((a)=>[Math.random(),a]).sort((a,b)=>a[0]-b[0]).map((a)=>a[1]),
         npuzz = puzzle.slice();
-        for(var i = 0, cnt=49+Math.random()*1|0; i < cnt; i++) npuzz[ls[i]] = 0;
+       // console.log(ls)
+        for(var i = 0, cnt=40; i < cnt; i++) npuzz[ls[i]] = 0;
         for(var sol of solver(npuzz, 0)) if(ct++, ct > 1) break;
+            
+        count++;
+        //console.log(sol)
         return ct === 1 ? npuzz : mask(puzzle);
     }
 
-    var outp = mask(puzzle), outt = document.querySelectorAll(".sudoku td");
+    function remove(puzzle, removals) {
+        
+        var prior = puzzle.slice();
+
+        // Remove one number
+        //console.log("REMOVING ", removals[0], puzzle[ removals[0] ]);
+        puzzle[ removals[0] ] = 0;
+        removals.shift();
+
+        // Try to Solve it
+        var ct = 0;
+        for(var sol of solver(puzzle.slice(), 0)) if(ct++, ct > 1) break;
+        
+        // If removal results in multiple solutions, undo
+        if(ct !== 1) puzzle = prior;
+        
+
+        //console.log(ct)
+
+        wtf++;
+      //  count++;
+        
+        return  wtf > 20 ? prior : remove(puzzle, removals);
+    }
+
+    var wtf = 0, ls = [], outp = mask(puzzle), outt = document.querySelectorAll(".sudoku td");
+
+    for(var i = 0; i < outp.length; i++) if(outp[i]) ls.push(i)
+    shuffle(ls)
+    //console.log(ls, outp[ls[0]])
+
+    console.log(outp.join(""))
+    outp = remove(outp, ls);
+    console.log(outp.join(""))
+    console.log("iterations: ", count)
     for (var i = 0; i < outt.length; i++) {
         outt[i].classList = "";
         outt[i].innerHTML = outp[i] ? outp[i] : "";
