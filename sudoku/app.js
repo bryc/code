@@ -214,7 +214,7 @@ window.onload = function() {
             lolwut[i].classList.remove('hinum');
         // if currently highlighted 
 
-        if(this.textContent===hicur) {hicur='';return;}
+        //if(this.textContent===hicur) {hicur='';return;}
 
         if(this.textContent!=="") hicur = this.textContent;
 
