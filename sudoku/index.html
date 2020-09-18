@@ -13,6 +13,7 @@ td{background:#3334;color:#8DF;outline:none;height:65px;min-width:65px;text-alig
     td.isfoc{background:#5575 !important;}
     td.given{color:#999;}
     td.hinum{color:yellow !important;}
+    td.noted{box-shadow: inset 0px 0px 3px 1px white;}
     td.cellerror{color:red !important;}
     input{outline:none;color:#eee;border:1px solid #444;background:#222;text-align:center;margin-top:5px;margin-bottom:5px;display:block;width:100%;padding:5px;font-size:16px;font-family:monospace;}
     span{font-weight:bold;font-size:12px;}
@@ -20,8 +21,8 @@ td{background:#3334;color:#8DF;outline:none;height:65px;min-width:65px;text-alig
 </style>
 
 <span class="label">Puzzle code:</span>
-<input class="code" spellcheck=false placeholder="Paste sudoku string here">
-
+<input id=c0de class="code" spellcheck=false placeholder="Paste sudoku string here">
+<input id=n0te class="code" placeholder="Enter cell notes here">
 <table class="sudoku" border>
 <tr><td id=b1></td><td id=b1></td><td id=b1></td><td id=b2></td><td id=b2></td><td id=b2></td><td id=b3></td><td id=b3></td><td id=b3></td></tr>
 <tr><td id=b1></td><td id=b1></td><td id=b1></td><td id=b2></td><td id=b2></td><td id=b2></td><td id=b3></td><td id=b3></td><td id=b3></td></tr>

@@ -169,11 +169,12 @@ function savePuzzle() {
     return btoa(arst(output)).replace(/=/g,"");
 }
 //////////////////////////////////////////////////////
-var tbl, info, input;
+var tbl, info, input, currentCell;
 window.onload = function() {
     tbl   = document.querySelectorAll("table.sudoku td");
     info  = document.querySelector("div.info");
-    input = document.querySelector("input.code");
+    input = document.querySelector("input#c0de");
+    n0te  = document.querySelector("input#n0te");
     for(var i = 0,y = true; i < tbl.length; i++) {
         tbl[i].contentEditable = "true";
         tbl[i].oninput = function(e) {
@@ -187,8 +188,37 @@ window.onload = function() {
             if(e.keyCode<48||e.keyCode>57)return false;
             this.textContent = "";
         };
+
+
+        tbl[i].oncontextmenu = function(){
+
+
+                if(this.classList.contains("noted"))
+                currentCell.classList.remove('noted');
+                else
+                currentCell.classList.add('noted');
+            return false;
+        }
+        n0te.oninput = function() {
+
+            if(currentCell) {
+                currentCell.notez = this.value;
+                if(this.value)
+                currentCell.classList.add('noted');
+                else
+                currentCell.classList.remove('noted');
+
+            }
+            
+            
+        }
+
+
+
         tbl[i].addEventListener('focus', function(){
           this.classList.add('isfoc');
+          currentCell = this;
+          n0te.value = this.notez || "";
         });
 
         tbl[i].addEventListener('blur', function(){
