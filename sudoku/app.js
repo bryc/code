@@ -177,7 +177,7 @@ window.onload = function() {
     for(var i = 0,y = true; i < tbl.length; i++) {
         tbl[i].contentEditable = "true";
         tbl[i].oninput = function(e) {
-            if(e.data!=this.solution) this.classList.add('cellerror');
+            if(this.solution && e.data != this.solution) this.classList.add('cellerror');
             else { this.classList.remove('cellerror'); }
             if(this.textContent===hicur) lolwut.push(this),this.classList.add('hinum');
             if(this.textContent!==hicur) this.classList.remove('hinum');
@@ -227,8 +227,12 @@ window.onload = function() {
 
     }
     input.oninput = function() {
-        if(input.value==""){for(j=0;j<81;j++)tbl[j].innerHTML=""}
-
+        for(j=0;j<81;j++)
+            tbl[j].innerHTML="",
+            tbl[j].classList = "",
+            tbl[j].solution = "",
+            tbl[j].contentEditable = "true";
+        
         if(input.value.length===81) {
             for(var packed=[], i = 0; i < 81; i += 2) {
                 var num1 = Number(input.value[i]);

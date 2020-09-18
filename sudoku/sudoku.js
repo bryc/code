@@ -176,8 +176,7 @@ function generate() {
         outt[i].classList = "";
         outt[i].innerHTML = outp[i] ? outp[i] : "";
         outt[i].solution = puzzle[i];
-        outt[i].style.color = outp[i] ? "#999" : "";
-        outt[i].style.fontWeight = outp[i] ? "bold" : "";
+        outp[i] && outt[i].classList.add('given');
        // outt[i].style.backgroundColor = outp[i] ? "#222" : "";
         outt[i].contentEditable = outp[i] ? false : true;
     }
