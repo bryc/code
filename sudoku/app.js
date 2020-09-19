@@ -177,6 +177,8 @@ window.onload = function() {
     n0te  = document.querySelector("input#n0te");
     for(var i = 0,y = true; i < tbl.length; i++) {
         tbl[i].contentEditable = "true";
+        tbl[i].notes = {};
+
         tbl[i].oninput = function(e) {
             if(this.solution && e.data != this.solution) this.classList.add('cellerror');
             else { this.classList.remove('cellerror'); }
@@ -192,33 +194,24 @@ window.onload = function() {
 
         tbl[i].oncontextmenu = function(){
 
-
+            this.notes[hicur] = !this.notes[hicur];
+            console.log(this.notes);
+                console.log(currentCell, hicur)
                 if(this.classList.contains("noted"))
                 currentCell.classList.remove('noted');
                 else
                 currentCell.classList.add('noted');
             return false;
         }
-        n0te.oninput = function() {
 
-            if(currentCell) {
-                currentCell.notez = this.value;
-                if(this.value)
-                currentCell.classList.add('noted');
-                else
-                currentCell.classList.remove('noted');
 
-            }
-            
-            
-        }
-
+        var notes = document.querySelectorAll('button')
 
 
         tbl[i].addEventListener('focus', function(){
           this.classList.add('isfoc');
           currentCell = this;
-          n0te.value = this.notez || "";
+          //n0te.value = this.notez || "";
         });
 
         tbl[i].addEventListener('blur', function(){
@@ -239,9 +232,14 @@ window.onload = function() {
             lolwut2[i].classList.add('hibak');
 
         ////////////////////////////////////////////////////////////////////////////////////
+
             if(this.textContent==="") return;
         for(var i = 0; i < lolwut.length; i++)
             lolwut[i].classList.remove('hinum');
+
+        var allz = document.querySelectorAll('td');
+        for(var i = 0; i < 81; i++)
+        allz[i].classList.remove('noted');
         // if currently highlighted 
 
         //if(this.textContent===hicur) {hicur='';return;}
@@ -253,7 +251,12 @@ window.onload = function() {
 
         for(var i = 0; i < lolwut.length; i++)
             lolwut[i].classList.add('hinum');
+
+        for(var i = 0; i < 81; i++)
+        allz[i].notes[hicur] && allz[i].classList.add('noted');
         }
+
+
 
     }
     input.oninput = function() {

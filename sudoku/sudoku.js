@@ -90,9 +90,9 @@ function generate() {
               rows  = [0,0,0,0,0,0,0,0,0],
               cols  = [0,0,0,0,0,0,0,0,0],
               blks  = [0,0,0,0,0,0,0,0,0],
-              row = function(n){return 0|n/9},
-              col = function(n){return n%9},
-              blk = function(n){return 3*(0|n/27) + (0|n%9/3)};
+              row = n => n/9 | 0,
+              col = n => n%9,
+              blk = n => 3*(n/27 | 0) + (n%9/3 | 0);
 
         for(let i = 0; i < 81; i++) {
             const mask = masks[board[i]];
