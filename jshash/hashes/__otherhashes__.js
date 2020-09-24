@@ -234,6 +234,7 @@ function DEKHash(data) {
 }
 
 // Java's hashCode() - 31*hash = (hash<<5)-hash
+// Originates as far back as 1981: Gosling Emacs: while (*s) h = h * 31 + *s++;
 
 function hashCode(data) {
     var hash = 0;
