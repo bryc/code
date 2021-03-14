@@ -69,7 +69,7 @@ function Alea(seed) {
 
 **Full disclosure: By necessity, this LCG implementation differs from the C++ original, `minstd_rand`. The below text was written under the assumption that were equivalent, which was wrong. While `ministd_rand` already has a reputation as being poor, the `Math.imul` version here may in fact be weaker. This is because the original stored the result of `x * 48271` in a 64-bit `long` type, while here, I'm effectively using a 32-bit `int` type.**
 
-**Technically JS is capable of doing the correct calculation natively, but it is 55-65% slower and still inferior quality:**
+**Technically JS is capable of doing the correct calculation natively, because the result will never exceed JS's 53-bit limitation, but it is 55-65% slower and still inferior in  quality to other, more faster generators in this list:**
 
 ```js
 function LCG(a) {
