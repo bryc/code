@@ -67,6 +67,20 @@ function Alea(seed) {
 
 ## LCG (Lehmer RNG)
 
+**Full disclosure: By necessity, this LCG implementation differs from the C++ original, `minstd_rand`. The below text was written under the assumption that were equivalent, which was wrong. While `ministd_rand` already has a reputation as being poor, the `Math.imul` version here may in fact be weaker. This is because the original stored the result of `x * 48271` in a 64-bit `long` type, while here, I'm effectively using a 32-bit `int` type.**
+
+**Technically JS is capable of doing the correct calculation natively, but it is 55-65% slower and still inferior quality:**
+
+```js
+function LCG(a) {
+    return function() {
+      return a = a * 48271 % 2147483647;
+    }
+}
+```
+
+**Original text below:**
+
 Commonly called a *Linear congruential generator (LCG)*, but in this case, more correctly called a *Multiplicative congruential generator (MCG)* or *Lehmer RNG*. It has a state and period of 2^31-1. It's blazingly fast in JavaScript (likely the fastest), but its quality is quite poor.
 
 ```js
