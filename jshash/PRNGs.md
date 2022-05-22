@@ -67,39 +67,7 @@ function Alea(seed) {
 
 ## LCG (Lehmer RNG)
 
-**Full disclosure: By necessity, this LCG implementation differs from the C++ original, `minstd_rand`. The below text was written under the assumption that were equivalent, which was wrong. While `ministd_rand` already has a reputation as being poor, the `Math.imul` version here may in fact be weaker. This is because the original stored the result of `x * 48271` in a 64-bit `long` type, while here, I'm effectively using a 32-bit `int` type.**
-
-**Technically JS is capable of doing the correct calculation natively, because the result will never exceed JS's 53-bit limitation, but it is 55-65% slower and still inferior in  quality to other, more faster generators in this list:**
-
-```js
-function LCG(a) {
-    return function() {
-      return a = a * 48271 % 2147483647;
-    }
-}
-```
-
-**Original text below:**
-
-Commonly called a *Linear congruential generator (LCG)*, but in this case, more correctly called a *Multiplicative congruential generator (MCG)* or *Lehmer RNG*. It has a state and period of 2^31-1. It's blazingly fast in JavaScript (likely the fastest), but its quality is quite poor.
-
-```js
-function LCG(a) {
-    return function() {
-      a = Math.imul(48271, a) | 0 % 2147483647;
-      return (a & 2147483647) / 2147483648;
-    }
-}
-
-// Here are some optimized ES6 one-liners:
-var LCG=s=>()=>(2**31-1&(s=Math.imul(48271,s)))/2**31; // Same as above
-var LCG=s=>()=>((s=Math.imul(741103597,s))>>>0)/2**32; // 32-bit version, likely far better
-var LCG=s=>()=>((s=Math.imul(1597334677,s))>>>0)/2**32; // Another 32-bit version
-```
-
-The Lehmer RNG is the *minimal standard* RNG as proposed by Park–Miller in 1988 & 1993 and implemented in C++11 as `minstd_rand`. Keep in mind that the state and period are only 31-bit (31 bits give 2 billion possible states, 32 bits give double that). Mathematically, LCGs have different parameters such as _a_, _m_ and _c_, which is often up to the implementor. The MCG or Lehmer RNG described here is a special case when _c_ is always zero. Other popular multipliers in sequence: 16807, 48271, 69621, and 39373.
-
-I don't recommend using LCG/MCG, as they seems to have quality problems. If you must use it, always **discard** the first few results, ensure the **seed is odd**, and use a larger multiplier.
+Section removed temporarily because I had an inaccurate interpretation of LCG; will add back when I have a better understanding. But in general, LCGs are not very good. Leaving references.
 
 **References:**
 - [LCG on Wikipedia](https://en.wikipedia.org/wiki/Linear_congruential_generator)
