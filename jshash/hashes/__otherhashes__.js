@@ -233,15 +233,46 @@ function DEKHash(data) {
     return hash >>> 0;
 }
 
-// Java's hashCode() - 31*hash = (hash<<5)-hash
-// Originates as far back as 1981: Gosling Emacs: while (*s) h = h * 31 + *s++;
+/* 33times / 31times - Gosling variants
+---------------------------------------------------------
+h = (h << 5) + h + c; // h=0; 1981 Gosling original, h=5381; 1990 Dan Bernstein
+h = (h << 5) - h + c; // h=0; 1988 BKDR, 1990 C. Torek, 1997 Java (signed)
+h = (h << 5) + h ^ c; // h=5381; 1996? Dan Bernstein XOR variant
+*/
 
-function hashCode(data) {
+// DJB2 - Identical to Gosling's original, but has a starting value of 5381 instead of 0.
+
+function DJB2(data) {
+    var hash = 5381;
+    for(var i = 0; i < data.length; i++) {
+        hash = (hash << 5) + hash + data[i];
+    }
+    return hash >>> 0;
+}
+
+// DJB2a - XOR was changed to ADD
+
+function DJB2a(data) {
+    var hash = 5381;
+    for(var i = 0; i < data.length; i++) {
+        hash = (hash << 5) + hash ^ data[i];
+    }
+    return hash >>> 0;
+}
+
+// BKDRHash : Brian Kernighan and Dennis Ritchie
+// From 1988 2nd edition of K&R C Programming Language
+// Also used by Chris Torek in 1990
+// Identical to Java's hashCode, except Java's output is signed.
+// Use hash | 0 instead of hash >>> 0 to match Java output.
+// Note: Some versions of hashCode may use h=1 instead of h=0.
+
+function BKDRHash(data) {
     var hash = 0;
     for(var i = 0; i < data.length; i++) {
-        hash = Math.imul(31, hash) + data[i] | 0; 
+        hash = (hash << 5) - hash + data[i];
     }
-    return hash;
+    return hash >>> 0;
 }
 
 // Google Analytics URL domain name hash. Not that good. Still gotta clean it up though.
@@ -280,37 +311,6 @@ function GetHashCodeB(key) {
         hash2 = (hash2 << 5) + hash2 + (hash2 >> 27) ^ key[i+1];
     }
     return hash1 + Math.imul(hash2, 1566083941) | 0;
-}
-
-// DJB2 - not sure which is which, but this was one of the DJB hashes?
-
-function DJB2(data) {
-    var hash = 5381;
-    for(var i = 0; i < data.length; i++) {
-        hash += (hash << 5) + data[i];
-    }
-    return hash;
-}
-
-// DJB2a - not sure which is which, but this was one of the DJB hashes?
-
-function DJB2a(data) {
-    var hash = 5381;
-    for(var i = 0; i < data.length; i++) {
-        hash = Math.imul(33, hash + data[i]);
-    }
-    return hash;
-}
-
-// BKDRHash : Brian Kernighan and Dennis Ritchie
-// From 1988 2nd edition of K&R C Programming Language
-
-function BKDRHash(data) {
-    var hash = 0, seed = 131; // 31, 131, 1313 etc.
-    for(var i = 0; i < data.length; i++) {
-        hash = Math.imul(hash, seed) + data[i];
-    }
-    return hash;
 }
 
 // RSHash - Robert Sedgewick hash, 1990 book "Algorithms in C"
