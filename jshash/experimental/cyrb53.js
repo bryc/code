@@ -5,9 +5,10 @@
     Public domain. Attribution appreciated.
 */
 const cyrb53 = function(str, seed = 0) {
+    const encoded = new TextEncoder().encode(str);
     let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
     for (let i = 0, ch; i < str.length; i++) {
-        ch = str.charCodeAt(i);
+        ch = encoded[i];
         h1 = Math.imul(h1 ^ ch, 2654435761);
         h2 = Math.imul(h2 ^ ch, 1597334677);
     }
