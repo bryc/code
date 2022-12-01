@@ -19,12 +19,12 @@ function MurmurHash3_x86_128(key, seed = 0) {
         return h;
     }
     
-    var k, p1 = 597399067, p2 = 2869860233, p3 = 951274213, p4 = 2716044179;
+    var p1 = 597399067, p2 = 2869860233, p3 = 951274213, p4 = 2716044179;
 
-    var h1 = seed ^ p1,
-        h2 = seed ^ p2,
-        h3 = seed ^ p3,
-        h4 = seed ^ p4;
+    var k1, h1 = seed ^ p1,
+        k2, h2 = seed ^ p2,
+        k3, h3 = seed ^ p3,
+        k4, h4 = seed ^ p4;
 
     for(var i = 0, b = key.length & -16; i < b;) {
         k1 = key[i+3] << 24 | key[i+2] << 16 | key[i+1] << 8 | key[i];
