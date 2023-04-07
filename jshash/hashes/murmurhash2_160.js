@@ -11,6 +11,10 @@
     It's quite fast, but each additional hash has an impact on performance.
     Have no idea if its output is as good a 160-bit hash or if it can be
     safely downscaled to 128, 96, 64 etc. But it seems to be good.
+    
+    Avalanche behavior is... slightly problematic.
+    h3^h1 and h4^h1 have some noticeable bias.
+    Highly recommend using murmurhash3_128 instead.  
 */
 
 function MurmurHash2_160(key, seed = 0) {
