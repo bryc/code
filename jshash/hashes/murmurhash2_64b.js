@@ -12,8 +12,12 @@
 
     The original function is actually not a true 64-bit hash
     and in some cases only has the collision resistance
-    of a 32-bit hash. This version incorporates changes that
-    should solve this, but gives different hash results.
+    of a 32-bit hash. This version incorporates changes
+    (h2 ^= h1) that should solve this, but gives different hash
+    results.
+    
+    2023 update: Avalanche issues occur when there's trailing bytes.
+    Not sure if my fix didn't work or if its a separate issue.
 */
 
 function MurmurHash2_64B(key, seed = 0) {
@@ -41,7 +45,7 @@ function MurmurHash2_64B(key, seed = 0) {
         case 3: h2 ^= key[i+2] << 16;
         case 2: h2 ^= key[i+1] << 8;
         case 1: h2 ^= key[i];
-                h2 = Math.imul(h2, m);
+                h2 = Math.imul(h2, m); h2 ^= h1;
     }
 
     h1 ^= h2 >>> 18; h1 = Math.imul(h1, m);
