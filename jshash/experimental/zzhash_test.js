@@ -1,6 +1,12 @@
 /* 
 Attempt to port 128-bit zzHash to JavaScript
-Probably incorrect.
+Probably incorrect. Haven't verified it yet.
+
+Avalanche: seems OK except for these combinations:
+- v1^v4 and v2^v4 have minor bias
+- v5 has significant bias
+- v6^v4 has HUGE bias
+- v6^v3 and v2^v6 has minor bias
 */
 
 function zzHash128(key, seed = 0) {
