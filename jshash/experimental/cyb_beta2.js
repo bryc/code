@@ -3,6 +3,9 @@
     -----------------
     This is a WIP, hasn't been fully tested.
     But it's very fast and has good basic avalanching and collision resistance.
+    
+    
+    TERRIBLE Avalanche behavior! Don't recommend at all.
 */
 
 function cyb_beta2(key, seed = 0) {
