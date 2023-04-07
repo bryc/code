@@ -2,6 +2,8 @@
     This is an attempt to modify xxHash to produce a 128-bit hash. It's speed is pretty good.
     xxHash had to be modified heavily (removing v0, and only using v1-v4), changing final mix primes.
     So don't use it, it could be spectacularly bad.
+    
+    Avalanche behavior seems good, no bias?!? Was surprised. Maybe not bad after all.
 */
 
 function badxxHashMod(key, seed = 0) {
