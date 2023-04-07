@@ -461,13 +461,26 @@ function splitmix32(a) {
     return function() {
       a |= 0; a = a + 0x9e3779b9 | 0;
       var t = a ^ a >>> 15; t = Math.imul(t, 0x85ebca6b);
-      t = t ^ t >>> 13; t = Math.imul(t, 0xc2b2ae35);
+          t = t ^ t >>> 13; t = Math.imul(t, 0xc2b2ae35);
       return ((t = t ^ t >>> 16) >>> 0) / 4294967296;
     }
 }
 ```
 
 This is based on an algorithm known as `SplitMix` included in Java JDK8. It uses 64-bit arithmetic and doesn't define a 32-bit version. However, It is derived from the `fmix64` finalizer used in MurmurHash3 and appears to be an application of Weyl sequences. MurmurHash3 also contains a 32-bit equivalent of this function, `fmix32`. The constant `0x9e3779b` is the 32-bit truncation of the golden ratio, which is also what is used in the original.
+
+This mixing function has been studied quite heavily, and improved constants have been found. This is the best one found so far:
+
+```js
+function splitmix32(a) {
+    return function() {
+      a |= 0; a = a + 0x9e3779b9 | 0;
+      var t = a ^ a >>> 16; t = Math.imul(t, 0x21f0aaad);
+          t = t ^ t >>> 15; t = Math.imul(t, 0x735a2d97);
+      return ((t = t ^ t >>> 15) >>> 0) / 4294967296;
+    }
+}
+```
 
 **References:**
 - [Fast Splittable Pseudorandom Number Generators (2014)](http://gee.cs.oswego.edu/dl/papers/oopsla14.pdf)
