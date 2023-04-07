@@ -9,6 +9,8 @@
     This version works around this by ensuring the initial
     value of h1-h4 are unique by XORing c1-c4 to them.
     If you need compatibility with the original, remove the XOR masks.
+    
+    Avalanche behavior is extremely good. This is probably the best choice.
 */
 
 function MurmurHash3_x86_128(key, seed = 0) {
