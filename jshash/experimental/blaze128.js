@@ -3,6 +3,9 @@
     Uses some ideas from zzHash (+xxHash).
     It is faster than MurmurHash3_x86 and slightly faster than my XXH128 attempt.
     I think it can be improved further.
+    
+    Avalanche Results:
+    Surprisngly impressive. However, slight bias with h2^h4 and odd issue with h1^h2, indicating mixing issues.
 */
 
 function BlazeHash128(key, seed = 0) {
