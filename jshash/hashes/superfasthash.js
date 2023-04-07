@@ -8,7 +8,10 @@
 
     Seems to have more collisions than normal. Fails my rolling bit test
     with 2 of 10240 collisions, implying worse-than-chance collisions.
-    Doesn't seem AS bad as people think though. 
+    Doesn't seem AS bad as people think though.
+    
+    Strict Avalanche test shows that it fails moderately.
+    This is definitely a problematic hash.
 */
 
 function SuperFastHash(key) {
