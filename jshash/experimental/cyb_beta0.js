@@ -3,6 +3,8 @@
     ---------------
     Fast, experimental 32-bit hash by bryc (github.com/bryc)
     Based on MurmurHash2
+    
+    Not very good avalanche behavior.
 */
 
 function cyb_beta0(key) {
