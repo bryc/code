@@ -72,8 +72,8 @@ function BlazeHashC(key, seed = 0) {
         h1 = Math.imul(h1 ^ key[i], 597399067);
         h2 = Math.imul(h2 ^ key[i], 374761393);
     }
-    h1 ^= Math.imul(h1 ^ (h2 >>> 15), 1935289751);
-    h2 ^= Math.imul(h2 ^ (h1 >>> 15), 4082773399);
-    h2 ^= h1 >>> 16; h1 ^= h2 >>> 16;
+    h1 ^= Math.imul(h1 ^ (h2 >>> 15), 0x735a2d97);
+    h2 ^= Math.imul(h2 ^ (h1 >>> 15), 0xcaf649a9);
+    h1 ^= h2 >>> 16; h2 ^= h1 >>> 16;
     return [h1 >>> 0, h2 >>> 0]; // 53bit: 2097152 * (h2>>>0) + (h1>>>11)
 }
