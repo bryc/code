@@ -38,9 +38,9 @@ function BlazeHash(key, seed = 0) {
 
 It's speed mostly comes from the fact that it reads 8 bytes at a time and performs only the minimum amount of operations required to pass strict avalanche criterion. I haven't yet checked it in SMHasher, so further tweaks may be required to ensure both h1 and h2 pass as a 64-bit hash.
 
-It has _very_ good avalanche behavior, though in some rare cases_very_ slight bias may randomly pop up. I did my best to minimize it though. The only way to fully eliminate it will unfortunately involve adding extra operations, but before that i need to use even more sensitive tests.
+It has _quite_ good avalanche behavior, though in some rare cases_very_ slight bias may randomly pop up. I did my best to minimize it though. The only way to fully eliminate it will unfortunately involve adding extra operations, but before that i need to use even more sensitive tests.
 
-At some point I would also like to try to see if a 128-bit version of BlazeHash can beat the speed of MurmurHash3_128 port. It's really quite fast and also very good quality (in fact, it's probably the best choice for a robust hash in JS), so it'll be hard to beat
+At some point I would also like to try to see if a 128-bit version of BlazeHash can beat the speed of my MurmurHash3_128 port. It's really quite fast and also very good quality (in fact, it's probably the best choice for a robust hash in JS), so it'll be hard to beat
 
 
 *****
