@@ -32,48 +32,28 @@ function BlazeHash(key, seed = 0) {
     return [h1 >>> 0, h2 >>> 0]; // 53bit: 4294967296 * (2097151 & h2) + (h1>>>0)
 }
 
-// An alternate version that reads 4 bytes at a time instead of 8, probably inefficient. Improved version of old Cyb-Beta 1.
+// BlazeHashB
+// An alternate version that reads 4 bytes at a time instead of 8
+// Update 2023: Avalanche behavior seems better now.
 
 function BlazeHashB(key, seed = 0) {
-    var p1 = 597399067, p2 = 374761393, p3 = 2246822507, p4 = 3266489909;
     var h1 = 0xcafebabe ^ seed, h2 = 0xdeadbeef ^ seed;
     for(var k, i = 0, b = key.length & -4; i < b; i += 4) {
         k = key[i+3] << 24 | key[i+2] << 16 | key[i+1] << 8 | key[i];
-        h1 ^= k; h1 = Math.imul(h1 ^ h1 >>> 16, p1) ^ h2;
-        h2 ^= k; h2 = Math.imul(h2 ^ h2 >>> 24, p2) ^ h1;
+        h1 ^= k; h1 = Math.imul(h1 ^ h1 >>> 16, 597399067) ^ h2;
+        h2 ^= k; h2 = Math.imul(h2 ^ h2 >>> 24, 374761393) ^ h1;
     }
     k = 0;
     switch(key.length & 3) {
         case 3: k ^= key[i+2] << 16;
         case 2: k ^= key[i+1] << 8;
         case 1: k ^= key[i];
-        h1 ^= k; h1 = Math.imul(h1 ^ h1 >>> 16, p1) ^ h2;
-        h2 ^= k; h2 = Math.imul(h2 ^ h2 >>> 24, p2) ^ h1;
+        h1 ^= k; h1 = Math.imul(h1 ^ h1 >>> 16, 597399067) ^ h2;
+        h2 ^= k; h2 = Math.imul(h2 ^ h2 >>> 24, 374761393) ^ h1;
     }
     h1 ^= key.length;
-    h1 = Math.imul(h1 ^ h1 >>> 16, p3) ^ Math.imul(h2 ^ h2 >>> 13, p4);
-    h2 = Math.imul(h2 ^ h2 >>> 16, p3) ^ Math.imul(h1 ^ h1 >>> 13, p4);
-    return [h1 >>> 0, h2 >>> 0]; // 53bit: 4294967296 * (2097151 & h2) + (h1>>>0)
-}
-
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// This appears to be basically just an old version of cyrb53 with different constants.
-// I updated it to use the better final mixer, so now it passes SAC even with the different constants.
-
-// An alternate version that reads 1 byte at a time. It's slower (though still fast generally speaking) yet simple.
-// The extra mixing in previous functions seem unnecessary due to the multiplication occuring for every byte.
-
-function BlazeHashC(key, seed = 0) {
-    let h1 = 0xcafebabe ^ seed, h2 = 0xdeadbeef ^ seed;
-    for(let i = 0; i < key.length; i++) {
-        h1 = Math.imul(h1 ^ key[i], 597399067);
-        h2 = Math.imul(h2 ^ key[i], 374761393);
-    }
     h1 ^= Math.imul(h1 ^ (h2 >>> 15), 0x735a2d97);
     h2 ^= Math.imul(h2 ^ (h1 >>> 15), 0xcaf649a9);
     h1 ^= h2 >>> 16; h2 ^= h1 >>> 16;
-    return [h1 >>> 0, h2 >>> 0]; // 53bit: 2097152 * (h2>>>0) + (h1>>>11)
+    return 4294967296 * (2097151 & h2) + (h1>>>0);
 }
