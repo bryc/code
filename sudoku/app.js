@@ -174,13 +174,14 @@ window.onload = function() {
     tbl   = document.querySelectorAll("table.sudoku td");
     info  = document.querySelector("div.info");
     input = document.querySelector("input#c0de");
+    rawb  = document.querySelector("button#raw");
     n0te  = document.querySelector("input#n0te");
     for(var i = 0,y = true; i < tbl.length; i++) {
         tbl[i].contentEditable = "true";
         tbl[i].notes = {};
 
         tbl[i].oninput = function(e) {
-            if(this.solution && e.data != this.solution) this.classList.add('cellerror');
+            if(e.data && this.solution && e.data != this.solution) this.classList.add('cellerror');
             else { this.classList.remove('cellerror'); }
             if(this.textContent===hicur) lolwut.push(this),this.classList.add('hinum');
             if(this.textContent!==hicur) this.classList.remove('hinum');
@@ -260,6 +261,9 @@ window.onload = function() {
 
     }
     input.oninput = function() {
+		input.value = input.value.replaceAll('-', '');
+		input.value = input.value.replaceAll('|', '');
+		input.value = input.value.replaceAll(' ', '');
         for(j=0;j<81;j++)
             tbl[j].innerHTML="",
             tbl[j].classList = "",
@@ -287,5 +291,15 @@ window.onload = function() {
         //var b64 = /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}|[A-Za-z0-9+/]{2})$/;
         //if(b64.test(input.value))
             
+    };
+	rawb.onclick = function() {
+        var gay = Array.from(document.querySelectorAll('td'));
+        var strr = "";
+        for(var i = 0; i < gay.length; i++) {
+            if(gay[i].innerText) strr += gay[i].innerText;
+            else strr += "0";
+        }
+        //console.log(strr)
+        input.value = strr;
     };
 };

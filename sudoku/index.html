@@ -1,4 +1,88 @@
 <style>
+body {
+    text-align:center;
+    margin:5px;
+    margin-top:8px;
+    font:14px tahoma;
+}
+table {
+    caret-color:transparent !important;
+    font-size:24px;
+    margin:auto;
+    margin-top:5px;
+    border-collapse:collapse;
+}
+td {
+    outline:none;
+    height:65px;
+    min-width:65px;
+    text-align:center;
+}
+input {
+    outline:none;
+    text-align:center;
+    margin-top:5px;
+    margin-bottom:5px;
+    display:block;
+    width:100%;
+    padding:5px;
+    font-size:16px;
+    font-family:monospace;
+}
+span {
+    font-weight:bold;
+    font-size:12px;
+}
+button {
+    border:0;
+    font-size:20px;
+    margin:12px;
+    padding:6px;
+}
+
+
+@media (prefers-color-scheme: light) {
+    :root {
+    --c0:rgb(85, 85, 85);   /* background */
+    --c1:#000;              /* text color */
+    --c2:#555;
+    --c3:#FFF;
+    --c4:#0099d4;
+    --c44:#0099d422;
+    --c5:rgb(204,204,204);
+    --c6:#666666;
+    --c7:rgb(247, 211, 88); /* hover */
+    --c8:rgb(247, 211, 88); /* selected */
+    --c9:#5baa00;--c99:#5baa0022;
+    --cA:#333;
+    --cB:red;
+    --cC:rgb(247, 242, 224);
+    }
+}
+
+
+
+
+@media (prefers-color-scheme: dark) {
+    :root {
+    --c0:#111;
+    --c1:#eee;
+    --c2:#555;
+    --c3:#3334;
+    --c4:#8DF;
+    --c5:#5554;
+    --c6:#aaa;
+    --c7:#4465;
+    --c8:#5575;
+    --c9:yellow;
+    --cA:white;
+    --cB:red;
+    --cC:#222;
+    }
+}
+
+/*
+
 
 body{background:#111;text-align:center;margin:5px;margin-top:8px;color:#eee;font:14px tahoma;}
 table{caret-color: transparent !important;font-size:24px;margin:auto;color:#555;margin-top:5px;border:2px solid #111;border-collapse:collapse;}
@@ -21,11 +105,70 @@ td{background:#3334;color:#8DF;outline:none;height:65px;min-width:65px;text-alig
     button{color:#aaa;border:0;background:#222;font-size:20px;margin:12px;padding:6px;}button:hover{background:#333;}
 	*{  mix-blend-mode: difference;
 }
-</style>
 
+*/
+body {
+    color:var(--c1);
+    background:var(--c3);
+  }
+  table {
+    color:var(--c2);
+    border:1px solid var(--c0);
+  }
+  td {
+    background:var(--c3);
+    color:var(--c4);
+    border:1px solid var(--c5);
+
+  }
+
+  input{
+    color:var(--c1);
+    border:1px solid var(--c5);
+    background:var(--c3);
+  }
+
+  button {
+    color:var(--c6);
+    background:var(--c3);
+  }
+
+  button:hover{
+    background:var(--c5);
+}
+  td:nth-child(3n):not(:last-child) {
+    border-right:5px solid var(--c0);
+}
+  tr:nth-child(3n):not(:last-child) {
+    border-bottom:5px solid var(--c0);
+}
+  td.hibak{background:var(--cC)  !important;}
+  td:hover{background:var(--c7) !important;}
+  td.isfoc{background:var(--c8) !important;}
+
+  
+
+  td.given{color:var(--c6)}
+  td.given:hover{background:var(--c5) !important}
+  td.hinum{
+    color:var(--c9) !important;
+    box-shadow: inset 0px 0px 9px 1px var(--c9);
+}
+  td.hinum:hover{background:var(--c99)  !important;}
+  td.noted{box-shadow: inset 0px 0px 9px 1px var(--c4);}
+  td.noted:hover{background:var(--c44)  !important;}
+  td.isfoc.noted{background:var(--c44)  !important;}
+  td.cellerror{
+    color:var(--cB) !important;
+    box-shadow: inset 0px 0px 9px 1px var(--cB);
+
+}
+
+</style>
+<button style="margin:0" id=raw>Show raw code</button>
 <span class="label">Puzzle code:</span>
 <input id=c0de class="code" spellcheck=false placeholder="Paste sudoku string here">
-<div id=n0tez><button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button></div>
+<!--<div id=n0tez><button>1</button><button>2</button><button>3</button><button>4</button><button>5</button><button>6</button><button>7</button><button>8</button><button>9</button></div>-->
 <table class="sudoku" border>
 <tr><td id=b1></td><td id=b1></td><td id=b1></td><td id=b2></td><td id=b2></td><td id=b2></td><td id=b3></td><td id=b3></td><td id=b3></td></tr>
 <tr><td id=b1></td><td id=b1></td><td id=b1></td><td id=b2></td><td id=b2></td><td id=b2></td><td id=b3></td><td id=b3></td><td id=b3></td></tr>
