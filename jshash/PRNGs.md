@@ -253,7 +253,7 @@ The latest (as of May 2018) in the Xorshift-derivative series, Xoshiro family no
 ```js
 function xoshiro128ss(a, b, c, d) {
     return function() {
-        var t = b << 9, r = a * 5; r = (r << 7 | r >>> 25) * 9;
+        var t = b << 9, r = b * 5; r = (r << 7 | r >>> 25) * 9;
         c = c ^ a; d = d ^ b; b = b ^ c; a = a ^ d; c = c ^ t;
         d = d << 11 | d >>> 21;
         return (r >>> 0) / 4294967296;
