@@ -438,6 +438,8 @@ function tyche(a, b, c, d) {
 
 Mulberry32 is minimalistic generator utilizing a 32-bit state, originally intended for embedded applications. It appears to be very good; the author states it passes all tests of gjrand, and this JavaScript implementation is very fast. But since the state is 32-bit like Xorshift, it's period (how long the random sequence lasts before repeating) is significantly less than those with 128-bit states, but it's still quite large, at around 4 billion.
 
+Update: According to a [later comment by the author](https://gist.github.com/tommyettinger/46a874533244883189143505d203312c?permalink_comment_id=4365431#gistcomment-4365431), this generator appears to skip a third of all 32-bit values. This is not necessarily a fatal issue, but it may be advisable to skip it for serious applications. The author instead recommends SplitMix32 which is unaffected by the issue.
+
 ```js
 function mulberry32(a) {
     return function() {
