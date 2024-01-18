@@ -456,7 +456,7 @@ function mulberry32(a) {
 
 ## SplitMix32
 
-SplitMix32 is a transformation of the `fmix32` finalizer from MurmurHash3 into a PRNG. It has a 32-bit internal state, like Xorshift and Mulberry32. 
+SplitMix32 is a transformation of the `fmix32` finalizer from MurmurHash3 into a PRNG. It has a 32-bit internal state, like Xorshift and Mulberry32. However, the first shift value is 15 instead of 16, which apparently has improved statistics, but I can't confirm. There's a slightly improved variant below with even more optimized constants, that may perform better yet.
 
 ```js
 function splitmix32(a) {
