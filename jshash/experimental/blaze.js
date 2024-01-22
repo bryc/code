@@ -1,6 +1,7 @@
 /*
-    BlazeHash (64-bit)
-    c) 2018 bryc (github.com/bryc)
+    BlazeHash (64-bit) - still experimental and subject to change.
+    (c) 2018-2024 bryc (github.com/bryc)
+    License: Public domain. Attribution appreciated.
     Intended for blazing fast hashing of byte arrays. Produces two uncorrelated 32-bit hashes in parallel.
 */
 
@@ -28,7 +29,7 @@ function BlazeHash(key, seed = 0) {
     h2 ^= Math.imul(h2 ^ (h1 >>> 15), 0xcaf649a9);
     h1 ^= h2 >>> 16; h2 ^= h1 >>> 16;
     return [h1 >>> 0, h2 >>> 0];
-    //return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+    //return 2097152 * (h2 >>> 0) + (h1 >>> 11);
 }
 
 // BlazeHashB
@@ -53,5 +54,5 @@ function BlazeHashB(key, seed = 0) {
     h1 ^= Math.imul(h1 ^ (h2 >>> 15), 0x735a2d97);
     h2 ^= Math.imul(h2 ^ (h1 >>> 15), 0xcaf649a9);
     h1 ^= h2 >>> 16; h2 ^= h1 >>> 16;
-    return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+    return 2097152 * (h2 >>> 0) + (h1 >>> 11);
 }
