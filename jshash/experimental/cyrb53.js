@@ -19,15 +19,15 @@ const cyrb53 = function(str, seed = 0) {
 };
 
 /*
-    cyrb53a (c) 2023 bryc (github.com/bryc)
+    cyrb53a beta (c) 2023 bryc (github.com/bryc)
     License: Public domain. Attribution appreciated.
     The original cyrb53 has a slight mixing bias in the low bits of h1.
     This shouldn't be a huge problem, but I want to try to improve it.
     This new version should have improved avalanche behavior, but
-    it is not quite final, I may still find improvements.
-    So don't expect it to always produce the same output.
+    it is not final, and changes to the algorithm are expected.
+    So don't expect this function to produce the same output in the future!
 */
-const cyrb53a = function(str, seed = 0) {
+const cyrb53a_beta = function(str, seed = 0) {
   let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
   for(let i = 0, ch; i < str.length; i++) {
     ch = str.charCodeAt(i);
