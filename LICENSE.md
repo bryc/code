@@ -1,4 +1,4 @@
-Public domain. Software licenses are annoying. If your code is sacred, don't publish it. If you want to mess with people, stay closed source. If your country lacks a public domain, you should probably start a revolution.
+Public domain. Software licenses are annoying. If your code is sacred, don't publish it. If your country lacks a public domain, you should probably start a revolution.
 
 If for whatever reason you cannot use works in the public domain, as a fallback license, I approve the use of [MIT](https://opensource.org/license/mit), as follows:
 
