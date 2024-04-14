@@ -1,6 +1,6 @@
 /*
     cyrb53 (c) 2018 bryc (github.com/bryc)
-    License: Public domain. Attribution appreciated.
+    License: Public domain (or MIT if needed). Attribution appreciated.
     A fast and simple 53-bit string hash function with decent collision resistance.
     Largely inspired by MurmurHash2/3, but with a focus on speed/simplicity.
 */
@@ -20,12 +20,11 @@ const cyrb53 = function(str, seed = 0) {
 
 /*
     cyrb53a beta (c) 2023 bryc (github.com/bryc)
-    License: Public domain. Attribution appreciated.
+    License: Public domain (or MIT if needed). Attribution appreciated.
+    This is a work-in-progress, and changes to the algorithm are expected.
     The original cyrb53 has a slight mixing bias in the low bits of h1.
-    This shouldn't be a huge problem, but I want to try to improve it.
-    This new version should have improved avalanche behavior, but
-    it is not final, and changes to the algorithm are expected.
-    So don't expect this function to produce the same output in the future!
+    This doesn't affect collision rate, but I want to try to improve it.
+    This new version has preliminary improvements in avalanche behavior.
 */
 const cyrb53a_beta = function(str, seed = 0) {
   let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
