@@ -29,7 +29,7 @@
         SeedBIC             : [3]
         SeedBitflip         : [3, 4]
 
-    I'm no sure how severe the failures are, but at the very least, I think it is clear that h1 isn't as good as h2. 
+    I'm not sure how severe these failures are, but at the very least, I think it is clear that h1 isn't as good as h2. 
     I would not suggest using it as a 53/64-bit hash until both halves were to pass SMHasher3.
 */
 
