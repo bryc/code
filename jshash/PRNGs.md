@@ -307,7 +307,6 @@ function jsf32b(a, b, c, d) {
         var t = a - (b << 23 | b >>> 9) | 0;
         a = b ^ (c << 16 | c >>> 16) | 0;
         b = c + (d << 11 | d >>> 21) | 0;
-        b = c + d | 0;
         c = d + t | 0;
         d = a + t | 0;
         return (d >>> 0) / 4294967296;
