@@ -316,7 +316,7 @@ function jsf32b(a, b, c, d) {
 
 // Seed procedure as recommended by the author:
 var seed = 0; // any unsigned 32-bit integer.
-var jsf = jsf32([0xF1EA5EED, seed, seed, seed]);
+var jsf = jsf32(0xF1EA5EED, seed, seed, seed);
 for(var i = 0; i < 20; i++) jsf();
 
 // https://gist.github.com/imneme/85cff47d4bad8de6bdeb671f9c76c814
@@ -350,7 +350,7 @@ function gjrand32(a, b, c, d) {
 
 // Seed procedure as recommended by the author (close enough):
 var seed = 0; // any unsigned 32-bit integer.
-var advance = gjrand32([0xCAFEF00D, 0xBEEF5EED, seed, seed]);
+var advance = gjrand32(0xCAFEF00D, 0xBEEF5EED, seed, seed);
 for(var i = 0; i < 14; i++) advance();
 ```
 
